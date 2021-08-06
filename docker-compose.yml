@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  simple-mm:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.server
+      args:
+        USER_ID: "${USER_ID:-1000}" 
+        GROUP_ID: "${GROUP_ID:-1000}"
+    ports:
+      - '8010:8010'
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://violet:evergarden@db-00:5432/test_db?encoding=utf8&pool=5&timeout=5000
+    volumes:
+      - .:/opt/app
+    links:
+      - db-00
+    depends_on:
+      - db-00
+
+  nginx-00:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.nginx
+    links:
+      - simple-mm
+    ports:
+      - '8020:8020'
+
+  db-00:
+    image: postgres:13.3
+    volumes:
+      - simple-mm-db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: violet
+      POSTGRES_PASSWORD: evergarden
+      POSTGRES_DB: test_db
+
+volumes:
+  simple-mm-db:

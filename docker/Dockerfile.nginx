@@ -1,0 +1,6 @@
+FROM nginx:latest
+COPY nginx/reverse-proxy.conf /etc/nginx/conf.g/reverse-proxy.conf
+EXPOSE 8020
+STOPSIGNAL SIGTERM
+CMD ["nginx", "-g", "daemon off;"] 
+

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#
+# Default argumentless functionality
+#
+if [[ $# -eq 0 ]]; then
+	echo "Starting all services..."
+	tmux new -s polycute-rails -d "docker-compose up"
+	exit 0
+fi
+
+#
+# Specific service functionality allowing for the starting of the individual services.
+#
+# Note: Services which are required by the chosen service will also be started.
+#
+echo "Starting specified service..."
+case "$1" in
+	'db' | 'd') 
+		tmux new -s polycute-db -d 'docker-compose up -d db-00'
+		exit 0
+	;;
+
+	'rails' | 'r')
+		export DATABASE_URL="postgresql://violet:evergarden@localhost:5432/test_db?encoding=utf8&pool=5&timeout=5000"
+		$(dirname "$0")/rails s
+	;;
+esac
+
+# Failure in case anyone ever tries to use this in a pipe.
+exit 1

@@ -1,0 +1,9 @@
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - db/**/*
+    - spec/**/*
+    - features/**/*
+    - lib/tasks/**/*
+  IgnoredPatterns:
+    - '\s*#\s.*'
