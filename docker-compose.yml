@@ -13,12 +13,15 @@ services:
       - .env
     environment:
       DATABASE_URL: postgresql://violet:evergarden@db-00:5432/test_db?encoding=utf8&pool=5&timeout=5000
+      REDIS_URL: redis://redis-00:6379/0
     volumes:
       - .:/opt/app
     links:
       - db-00
+      - redis-00
     depends_on:
       - db-00
+      - redis-00
 
   nginx-00:
     build:
@@ -39,6 +42,18 @@ services:
       POSTGRES_USER: violet
       POSTGRES_PASSWORD: evergarden
       POSTGRES_DB: test_db
+    
+  redis-00:
+    image: redis:6.2.6-alpine
+    command: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - simple-mm-redis:/var/lib/redis
+      - $PWD/config/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_REPLICATION_MODE=master
 
 volumes:
   simple-mm-db:
+  simple-mm-redis:
