@@ -20,7 +20,7 @@ end
   players.each do |player|
     match_player = MatchPlayer.create(player_id: player.id)
 
-    if team_a.match_players.count <= 5
+    if team_a.match_players.count <= 4
       match_player.update(match_team_id: team_a.id)
     else
       match_player.update(match_team_id: team_b.id)

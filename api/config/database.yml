@@ -1,7 +1,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  database_url: <%= ENV['DATABASE_URL'] %>
+  database_url: <%= ENV.fetch('DATABASE_URL'){ "postgresql://violet:evergarden@localhost:5432/test_db?encoding=utf8&pool=5&timeout=5000" } %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS"){ 5 } %>
   timeout: 5000
 
