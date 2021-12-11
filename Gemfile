@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.2'
+ruby '3.0.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.1.3'
@@ -65,7 +65,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'pry', '~> 0.12.2'
 gem 'rubocop', '~> 0.79.0'
 gem 'pg', '>= 1.2.2'
-gem 'unicorn', '~> 5.5.5'
+gem 'unicorn', '~> 6.0.0'
 gem 'redis-rails', '>= 5.0.2'
 gem 'sidekiq', '>= 6.0.4'
 gem 'aasm'

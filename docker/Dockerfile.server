@@ -1,4 +1,4 @@
-FROM ruby:2.7.2 AS polycute-development
+FROM ruby:3.0.3 AS simple-mm-development
 
 ARG USER_ID
 ARG GROUP_ID

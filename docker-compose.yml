@@ -33,7 +33,7 @@ services:
       - '8020:8020'
 
   db-00:
-    image: postgres:13.3
+    image: postgres:14.1
     volumes:
       - simple-mm-db:/var/lib/postgresql/data
     ports:
