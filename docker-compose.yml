@@ -10,13 +10,13 @@ services:
     ports:
       - '8010:8010'
     env_file:
-      - .env
+      - ./api/.env
     environment:
       DATABASE_URL: postgresql://violet:evergarden@db-00:5432/test_db?encoding=utf8&pool=5&timeout=5000
       SIDEKIQ_REDIS_URL: redis://redis-00:6379/0
       CACHE_REDIS_URL: redis://redis-00:6379/1
     volumes:
-      - .:/opt/app
+      - ./api/:/opt/app
     links:
       - db-00
       - redis-00
@@ -51,7 +51,7 @@ services:
       - "6379:6379"
     volumes:
       - simple-mm-redis:/var/lib/redis
-      - $PWD/config/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./api/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
       - REDIS_REPLICATION_MODE=master
 
