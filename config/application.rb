@@ -21,6 +21,8 @@ module Polycute
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+
+    # For use with the root route for the API
     config.version = '0.0.1'
 
     # Setting up sidekiq

@@ -5,7 +5,7 @@
 #
 if [[ $# -eq 0 ]]; then
 	echo "Starting all services..."
-	tmux new -s polycute-rails -d "docker-compose up"
+	tmux new -s simple-mm -d "docker-compose up"
 	exit 0
 fi
 
@@ -17,7 +17,7 @@ fi
 echo "Starting specified service..."
 case "$1" in
 	'db' | 'd') 
-		tmux new -s polycute-db -d 'docker-compose up -d db-00'
+		tmux new -s simple-mm-db -d 'docker-compose up -d db-00'
 		exit 0
 	;;
 

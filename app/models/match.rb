@@ -43,8 +43,6 @@ class Match < ApplicationRecord
 
     event :abort, before: :log_game_aborted do
       transitions to: :aborted
-
-      log_game_aborted
     end
   end
 
@@ -59,11 +57,5 @@ class Match < ApplicationRecord
     logger.info("Match#create_match_teams | Created match teams: [#{match_teams.map(&:id).join(", ")}]")
 
     return match_teams
-  end
-
-  private
-
-  def log_game_aborted
-    logger.warn("{ event: 'MATCH_ABORTED', message: 'Match #{id} aborted from #{state}' }")
   end
 end
