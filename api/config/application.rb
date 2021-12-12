@@ -27,5 +27,8 @@ module Polycute
 
     # Setting up sidekiq
     config.active_job.queue_adapter = :sidekiq
+
+    # Ensures schema won't lose information in 'ruby' (.rb) format
+    config.active_record.schema_format = :sql
   end
 end

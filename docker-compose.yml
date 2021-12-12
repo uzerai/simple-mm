@@ -16,7 +16,7 @@ services:
       JOB_WORKER_URL: redis://redis-00:6379/0
       CACHE_URL: redis://redis-00:6379/1
     volumes:
-      - ./api/:/opt/app
+      - ./api:/opt/app
     links:
       - db-00
       - redis-00
@@ -24,14 +24,14 @@ services:
       - db-00
       - redis-00
 
-  nginx-00:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.nginx
-    links:
-      - simple-mm
-    ports:
-      - '8020:8020'
+  # nginx-00:
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./nginx/reverse-proxy.conf /etc/nginx/conf.g/reverse-proxy.conf
+  #   links:
+  #     - simple-mm
+  #   ports:
+  #     - '8020:8020'
 
   db-00:
     image: postgres:14.1

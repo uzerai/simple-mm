@@ -1,5 +1,21 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: matches
+#
+#  id            :bigint           not null, primary key
+#  ended_at      :date
+#  started_at    :date
+#  state         :string
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  match_type_id :bigint           not null
+#
+# Indexes
+#
+#  index_matches_on_match_type_id  (match_type_id)
+#
 class Match < ApplicationRecord
   include AASM
 
@@ -8,6 +24,9 @@ class Match < ApplicationRecord
   logger = Rails.logger
   
   has_many :match_teams, dependent: :destroy
+  has_many :match_players, through: :match_teams
+  has_many :players, through: :match_players
+  belongs_to :match_type, required: true
 
   aasm column: :state do
     # queued - for when the match has been created and is available to be found and the match contains no match teams
@@ -57,5 +76,11 @@ class Match < ApplicationRecord
     logger.info("Match#create_match_teams | Created match teams: [#{match_teams.map(&:id).join(", ")}]")
 
     return match_teams
+  end
+
+  def rating
+    ratings = match_players.pluck(:start_rating)
+    
+    return ratings.reduce(:+).to_f / ratings.size
   end
 end
