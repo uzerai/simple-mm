@@ -3,18 +3,15 @@
 -->
 <template>
   <div id="main" class="">
-    <div id="top-bar" class="w-full h-10 bg-black">
-
-    </div>
+    <div id="top-bar" class="w-full h-10 bg-black"></div>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'Main',
-    props: {},
-    methods: {}
-  }
+export default {
+  name: "Main",
+  props: {},
+  methods: {},
+};
 </script>
-
