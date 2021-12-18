@@ -12,7 +12,7 @@
 </template>
 
 <script>
-  import PlayerTable from './components/PlayerTable.vue'
+  import PlayerTable from './PlayerTable.vue'
   import { createConsumer } from "@rails/actioncable"
 
   export default {
