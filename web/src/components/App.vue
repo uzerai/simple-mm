@@ -1,5 +1,5 @@
 <template>
-  <div className="float grid place-items-center h-screen">
+  <div className="absolute top-0 w-full grid place-items-center h-screen">
     <div className="bg-blue-200 p-8 rounded-lg">
       <h1 className="text-3xl font-bold text-gray-900">Simple Matchmaking</h1>
       <hr className="my-2 border-gray-700" />
