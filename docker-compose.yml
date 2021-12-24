@@ -28,11 +28,13 @@ services:
   web-00:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile.web
+      dockerfile: ./docker/Dockerfile.web-dev
+    volumes:
+      - ./web:/app
     links:
       - simple-mm
     ports:
-      - '8020:80'
+      - '8020:8080'
 
   db-00:
     image: postgres:14.1
