@@ -15,7 +15,12 @@ api/tmp/**
 api/storage/*
 !api/storage/.keep
 
+# Ignore workspace-specific files.
 /.idea
+# ideally, use asdf instead of rbenv 
+#  -- create this file with matching ruby version to .tool-versions if you wish to use rbenv
+.ruby-version
+
 
 api/public/assets
 
