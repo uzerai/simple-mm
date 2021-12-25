@@ -2,7 +2,7 @@
 #
 # Table name: match_types
 #
-#  id         :bigint           not null, primary key
+#  id         :uuid             not null, primary key
 #  name       :string           not null
 #  team_count :integer          not null
 #  team_size  :integer          not null

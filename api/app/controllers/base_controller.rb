@@ -2,6 +2,9 @@
 
 class BaseController < ActionController::Base
   # This class contains sections of code intended to serve utility in _all_ functions of the application.
+
+  # We're skipping forgery protection as all requests will either have a JWT token which is 
+  # authenticated before_action or re-freshed on 
   skip_forgery_protection
 
   # --- Before action section:
@@ -10,8 +13,12 @@ class BaseController < ActionController::Base
   before_action :ensure_content_type
   before_action :authorized
 
-  logger = Rails.logger
+  # The basic logger in all controllers
+  attr_reader :logger, :user
 
+  def initialize
+    logger = Rails.logger
+  end
     
   # --- Private functionality shared for all controllers ---
   private
@@ -55,7 +62,7 @@ class BaseController < ActionController::Base
   def current_user
     if decoded_token
       user_id = decoded_token[0]['user_id']
-      @user ||= User.find_by(id: user_id)
+      user ||= User.find_by(id: user_id)
     else 
       nil
     end

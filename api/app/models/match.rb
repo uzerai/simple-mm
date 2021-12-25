@@ -4,7 +4,7 @@
 #
 # Table name: matches
 #
-#  id            :bigint           not null, primary key
+#  id            :uuid             not null, primary key
 #  ended_at      :date
 #  started_at    :date
 #  state         :string

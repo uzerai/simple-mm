@@ -7,7 +7,7 @@ class UsersController < ApplicationController
     if @user.valid?
       render json: { token: current_user_token }
     else
-      render json: {error: "Invalid username or password"}, status: :unauthenticated
+      render json: { error: "Invalid username or password." }, status: :unauthenticated
     end
   end
 
@@ -17,10 +17,9 @@ class UsersController < ApplicationController
     if @user && @user.authenticate(params[:password])
       render json: { token: current_user_token }	
     else
-      render json: {error: "Invalid username or password"}, status: :unauthenticated
+      render json: { error: "Invalid username or password." }, status: :unauthenticated
     end
   end
-
 
   def auto_login
     render json: @user
@@ -36,7 +35,7 @@ class UsersController < ApplicationController
 		encode_token({
     	user_id: @user.id, 
     	players: @user.players
-    		.as_json(only: [:id, :game_id]) 
+    		.as_json(only: [:id, :game_id])
   	})
   end
 

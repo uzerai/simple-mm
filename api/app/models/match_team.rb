@@ -4,7 +4,7 @@
 #
 # Table name: match_teams
 #
-#  id         :bigint           not null, primary key
+#  id         :uuid             not null, primary key
 #  avg_rating :integer          not null
 #  outcome    :string
 #  created_at :datetime         not null

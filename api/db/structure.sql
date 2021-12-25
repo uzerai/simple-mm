@@ -9,6 +9,20 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -30,7 +44,7 @@ CREATE TABLE public.ar_internal_metadata (
 --
 
 CREATE TABLE public.games (
-    id bigint NOT NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
     name character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
@@ -38,30 +52,11 @@ CREATE TABLE public.games (
 
 
 --
--- Name: games_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.games_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: games_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.games_id_seq OWNED BY public.games.id;
-
-
---
 -- Name: match_players; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.match_players (
-    id bigint NOT NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
     start_rating integer,
     end_rating integer,
     match_team_id bigint,
@@ -72,30 +67,11 @@ CREATE TABLE public.match_players (
 
 
 --
--- Name: match_players_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.match_players_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: match_players_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.match_players_id_seq OWNED BY public.match_players.id;
-
-
---
 -- Name: match_teams; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.match_teams (
-    id bigint NOT NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
     outcome character varying,
     avg_rating integer NOT NULL,
     match_id bigint,
@@ -105,30 +81,11 @@ CREATE TABLE public.match_teams (
 
 
 --
--- Name: match_teams_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.match_teams_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: match_teams_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.match_teams_id_seq OWNED BY public.match_teams.id;
-
-
---
 -- Name: match_types; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.match_types (
-    id bigint NOT NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
     name character varying NOT NULL,
     team_size integer NOT NULL,
     team_count integer NOT NULL,
@@ -139,30 +96,11 @@ CREATE TABLE public.match_types (
 
 
 --
--- Name: match_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.match_types_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: match_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.match_types_id_seq OWNED BY public.match_types.id;
-
-
---
 -- Name: matches; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.matches (
-    id bigint NOT NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
     started_at date,
     ended_at date,
     state character varying,
@@ -173,30 +111,11 @@ CREATE TABLE public.matches (
 
 
 --
--- Name: matches_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.matches_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: matches_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.matches_id_seq OWNED BY public.matches.id;
-
-
---
 -- Name: players; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.players (
-    id bigint NOT NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
     username character varying,
     rating integer,
     user_id bigint NOT NULL,
@@ -204,25 +123,6 @@ CREATE TABLE public.players (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-
-
---
--- Name: players_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.players_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: players_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.players_id_seq OWNED BY public.players.id;
 
 
 --
@@ -239,80 +139,12 @@ CREATE TABLE public.schema_migrations (
 --
 
 CREATE TABLE public.users (
-    id bigint NOT NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
     email character varying,
     password_digest character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-
-
---
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.users_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
-
-
---
--- Name: games id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.games ALTER COLUMN id SET DEFAULT nextval('public.games_id_seq'::regclass);
-
-
---
--- Name: match_players id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.match_players ALTER COLUMN id SET DEFAULT nextval('public.match_players_id_seq'::regclass);
-
-
---
--- Name: match_teams id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.match_teams ALTER COLUMN id SET DEFAULT nextval('public.match_teams_id_seq'::regclass);
-
-
---
--- Name: match_types id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.match_types ALTER COLUMN id SET DEFAULT nextval('public.match_types_id_seq'::regclass);
-
-
---
--- Name: matches id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.matches ALTER COLUMN id SET DEFAULT nextval('public.matches_id_seq'::regclass);
-
-
---
--- Name: players id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.players ALTER COLUMN id SET DEFAULT nextval('public.players_id_seq'::regclass);
-
-
---
--- Name: users id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
 
 
 --
@@ -443,6 +275,7 @@ CREATE INDEX index_players_on_user_id ON public.players USING btree (user_id);
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20210807081945'),
 ('20210807081946'),
 ('20210807081947'),
 ('20210807081948'),

@@ -2,7 +2,7 @@
 
 class CreatePlayers < ActiveRecord::Migration[6.1]
   def change
-    create_table :players do |t|
+    create_table :players, id: :uuid, default: 'gen_random_uuid()' do |t|
       t.string :username
       t.integer :rating
     

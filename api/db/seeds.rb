@@ -12,7 +12,7 @@ MatchType.create(name: "5v5 - TEAM", team_size: 5, team_count: 2, game: game)
 MatchType.create(name: "1v1v1 - FFA", team_size: 1, team_count: 3, game: game)
 
 10.times do |id|
-  user = User.create(email: "user_#{id}@email.com", password: "user_#{id}")
+  user = User.create(email: "user_#{id + 1}@email.com", password: "user_#{id + 1}")
   Player.create(username: "Player_#{id + 1}", rating: rand(1000..2000), user: user, game: game)
 end
 

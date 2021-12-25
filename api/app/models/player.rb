@@ -4,7 +4,7 @@
 #
 # Table name: players
 #
-#  id         :bigint           not null, primary key
+#  id         :uuid             not null, primary key
 #  rating     :integer
 #  username   :string
 #  created_at :datetime         not null
