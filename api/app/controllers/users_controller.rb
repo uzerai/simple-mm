@@ -1,6 +1,5 @@
 class UsersController < ApplicationController
 	before_action :authorized, only: [:auto_login]
-	before_action :ensure_content_type, only: [:auto_login]
 
 	  # REGISTER
   def create
@@ -18,7 +17,7 @@ class UsersController < ApplicationController
   	puts "email: #{params[:email]}"
   	puts "password: #{params[:password]}"
     @user = User.find_by(email: params[:email])
-    
+
     if @user && @user.authenticate(params[:password])
       token = encode_token({user_id: @user.id})
       render json: {user: @user, token: token}
