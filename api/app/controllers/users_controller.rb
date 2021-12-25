@@ -40,7 +40,9 @@ class UsersController < ApplicationController
 		encode_token({
     	user_id: @user.id, 
     	players: @user.players
-    		.as_json(only: [:id, :game_id])
+    		.as_json(only: [:id, :game_id]),
+      expire: Time.zone.now + 14.hours,
+      permissions: []
   	})
   end
 

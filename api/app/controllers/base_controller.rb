@@ -17,7 +17,7 @@ class BaseController < ActionController::Base
   attr_accessor :logger, :user, :errors, :results
 
   def initialize
-    logger = Rails.logger
+    @logger = Rails.logger
   end
     
   # --- Private functionality shared for all controllers ---
@@ -74,8 +74,11 @@ class BaseController < ActionController::Base
     end
   end
 
+  # TODO: Render using a default json serializer which reacts to raised Errors and 
+  # maybe add this to its own lib/ include which appends these methods if the 
+  # controller defines something like `uses_default_response_structure
+  # 
   # --- Very simple consistent response format. Works for now.
-  # TODO: Change if necessary.
   def add_error(code = 500, message = "Error.")
     @errors = [] if @errors.nil?
     @errors.push({
@@ -83,7 +86,7 @@ class BaseController < ActionController::Base
       message: message
     })
   end
-
+  
   def render_response(status = :ok)
     render json: {
       results: @results,
