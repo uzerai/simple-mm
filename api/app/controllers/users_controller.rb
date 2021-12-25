@@ -5,9 +5,17 @@ class UsersController < ApplicationController
     @user = User.create(user_params)
 
     if @user.valid?
-      render json: { token: current_user_token }
+      render json: { results: { token: current_user_token }, errors: nil }
     else
-      render json: { error: "Invalid username or password." }, status: :unauthenticated
+      render json: { 
+        results: nil, 
+        errors: [ 
+          { 
+            code: :unauthenticated, 
+            message: "Invalid username or password." 
+          } 
+        ] 
+      }, status: :unauthenticated
     end
   end
 
@@ -15,14 +23,28 @@ class UsersController < ApplicationController
     @user = User.find_by(email: params[:email])
 
     if @user && @user.authenticate(params[:password])
-      render json: { token: current_user_token }	
+      render json: { 
+        results: { token: current_user_token },
+        errors: nil,
+      }	
     else
-      render json: { error: "Invalid username or password." }, status: :unauthenticated
+      render json: { 
+        results: nil,
+        errors: [
+          { 
+            code: :unauthenticated,
+            message: "Invalid username or password."
+          }
+        ]
+      }, status: :unauthenticated
     end
   end
 
   def auto_login
-    render json: @user
+    render json: { 
+      results: { token: current_user_token },
+      errors: nil
+    }
   end
 
   private

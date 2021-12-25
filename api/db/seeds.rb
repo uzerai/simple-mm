@@ -8,7 +8,7 @@
 
 game = Game.create(name: "GAMENAME")
 MatchType.create(name: "1v1 - SOLO", team_size: 1, team_count: 2, game: game)
-MatchType.create(name: "5v5 - TEAM", team_size: 5, team_count: 2, game: game)
+match_type = MatchType.create(name: "5v5 - TEAM", team_size: 5, team_count: 2, game: game)
 MatchType.create(name: "1v1v1 - FFA", team_size: 1, team_count: 3, game: game)
 
 10.times do |id|
@@ -17,10 +17,9 @@ MatchType.create(name: "1v1v1 - FFA", team_size: 1, team_count: 3, game: game)
 end
 
 20.times do |_number|
-  match_type = MatchType.first
-  match = Match.create(started_at: Time.zone.now, ended_at: Time.zone.now + 1.hour, state: Match::STATE_COMPLETED, match_type: match_type)
-  team_a = MatchTeam.create(avg_rating: 0, outcome: nil, match_id: match.id)
-  team_b = MatchTeam.create(avg_rating: 0, outcome: nil, match_id: match.id)
+  game_match = Match.create(started_at: Time.zone.now, ended_at: Time.zone.now + 1.hour, state: Match::STATE_COMPLETED, match_type: match_type)
+  team_a = MatchTeam.create(avg_rating: 0, outcome: nil, match: game_match)
+  team_b = MatchTeam.create(avg_rating: 0, outcome: nil, match: game_match)
 
   players = Player.all.shuffle
 
