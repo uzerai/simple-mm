@@ -8,7 +8,7 @@
 #  team_size  :integer          not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  game_id    :bigint           not null
+#  game_id    :uuid             not null
 #
 # Indexes
 #

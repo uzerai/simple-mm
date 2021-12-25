@@ -9,8 +9,8 @@
 #  username   :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  game_id    :bigint           not null
-#  user_id    :bigint           not null
+#  game_id    :uuid             not null
+#  user_id    :uuid             not null
 #
 # Indexes
 #

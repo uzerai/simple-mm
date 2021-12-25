@@ -10,7 +10,7 @@
 #  state         :string
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  match_type_id :bigint           not null
+#  match_type_id :uuid             not null
 #
 # Indexes
 #

@@ -6,8 +6,8 @@ class CreateMatchPlayers < ActiveRecord::Migration[6.1]
       t.integer :start_rating
       t.integer :end_rating
 
-      t.references :match_team
-      t.references :player
+      t.references :match_team, type: :uuid
+      t.references :player, type: :uuid
       
       t.timestamps
     end

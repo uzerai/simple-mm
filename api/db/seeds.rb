@@ -17,7 +17,7 @@ MatchType.create(name: "1v1v1 - FFA", team_size: 1, team_count: 3, game: game)
 end
 
 20.times do |_number|
-  match_type = MatchType.find(1)
+  match_type = MatchType.first
   match = Match.create(started_at: Time.zone.now, ended_at: Time.zone.now + 1.hour, state: Match::STATE_COMPLETED, match_type: match_type)
   team_a = MatchTeam.create(avg_rating: 0, outcome: nil, match_id: match.id)
   team_b = MatchTeam.create(avg_rating: 0, outcome: nil, match_id: match.id)
@@ -25,12 +25,12 @@ end
   players = Player.all.shuffle
 
   players.each do |player|
-    match_player = MatchPlayer.create(player_id: player.id, start_rating: player.rating)
+    match_player = MatchPlayer.create(player: player, start_rating: player.rating)
 
     if team_a.match_players.count <= 4
-      match_player.update(match_team_id: team_a.id)
+      match_player.update(match_team: team_a)
     else
-      match_player.update(match_team_id: team_b.id)
+      match_player.update(match_team: team_b)
     end
   end
   

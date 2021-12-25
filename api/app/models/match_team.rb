@@ -9,7 +9,7 @@
 #  outcome    :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  match_id   :bigint
+#  match_id   :uuid
 #
 # Indexes
 #

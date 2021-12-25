@@ -59,8 +59,8 @@ CREATE TABLE public.match_players (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     start_rating integer,
     end_rating integer,
-    match_team_id bigint,
-    player_id bigint,
+    match_team_id uuid,
+    player_id uuid,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -74,7 +74,7 @@ CREATE TABLE public.match_teams (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     outcome character varying,
     avg_rating integer NOT NULL,
-    match_id bigint,
+    match_id uuid,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -89,7 +89,7 @@ CREATE TABLE public.match_types (
     name character varying NOT NULL,
     team_size integer NOT NULL,
     team_count integer NOT NULL,
-    game_id bigint NOT NULL,
+    game_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -104,7 +104,7 @@ CREATE TABLE public.matches (
     started_at date,
     ended_at date,
     state character varying,
-    match_type_id bigint NOT NULL,
+    match_type_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -118,8 +118,8 @@ CREATE TABLE public.players (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     username character varying,
     rating integer,
-    user_id bigint NOT NULL,
-    game_id bigint NOT NULL,
+    user_id uuid NOT NULL,
+    game_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );

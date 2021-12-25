@@ -9,8 +9,8 @@
 #  start_rating  :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  match_team_id :bigint
-#  player_id     :bigint
+#  match_team_id :uuid
+#  player_id     :uuid
 #
 # Indexes
 #

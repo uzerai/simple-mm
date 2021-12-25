@@ -6,7 +6,7 @@ class CreateMatchTeams < ActiveRecord::Migration[6.1]
       t.string :outcome, null: true
       t.integer :avg_rating, null: false
 
-      t.references :match
+      t.references :match, type: :uuid
 
       t.timestamps
     end
