@@ -2,7 +2,6 @@
 
 class BaseController < ActionController::Base
   # This class contains sections of code intended to serve utility in _all_ functions of the application.
-
   skip_forgery_protection
 
   # --- Before action section:
@@ -11,10 +10,11 @@ class BaseController < ActionController::Base
   before_action :ensure_content_type
   before_action :authorized
 
-    
-  private
+  logger = Rails.logger
 
+    
   # --- Private functionality shared for all controllers ---
+  private
 
   # Validation function which is used for the 'before_action' hook 
   # to ensure the received request content-type header is of the correct type(s)
@@ -46,20 +46,23 @@ class BaseController < ActionController::Base
         # TODO: Remove ENV.fetch: replace with more elegant fetch of secret.
         JWT.decode(token, ENV.fetch('JWT_SIGN_SECRET'), true, algorithm: 'HS256')
       rescue JWT::DecodeError
+        logger.warn("Decode Error: Could not decode token.")
         nil
       end
     end
   end
 
-  def logged_in_user
+  def current_user
     if decoded_token
       user_id = decoded_token[0]['user_id']
-      @user = User.find_by(id: user_id)
+      @user ||= User.find_by(id: user_id)
+    else 
+      nil
     end
   end
 
   def logged_in?
-    !!logged_in_user
+    !!decoded_token
   end
 
   def authorized

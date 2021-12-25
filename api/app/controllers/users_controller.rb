@@ -1,28 +1,23 @@
 class UsersController < ApplicationController
 	before_action :authorized, only: [:auto_login]
 
-	  # REGISTER
   def create
     @user = User.create(user_params)
+
     if @user.valid?
-      token = encode_token({user_id: @user.id})
-      render json: {user: @user, token: token}
+      render json: { token: current_user_token }
     else
-      render json: {error: "Invalid username or password"}
+      render json: {error: "Invalid username or password"}, status: :unauthenticated
     end
   end
 
-  # LOGGING IN
   def login
-  	puts "email: #{params[:email]}"
-  	puts "password: #{params[:password]}"
     @user = User.find_by(email: params[:email])
 
     if @user && @user.authenticate(params[:password])
-      token = encode_token({user_id: @user.id})
-      render json: {user: @user, token: token}
+      render json: { token: current_user_token }	
     else
-      render json: {error: "Invalid username or password"}
+      render json: {error: "Invalid username or password"}, status: :unauthenticated
     end
   end
 
@@ -35,6 +30,14 @@ class UsersController < ApplicationController
 
   def user_params
     params.permit(:email, :password)
+  end
+
+  def current_user_token
+		encode_token({
+    	user_id: @user.id, 
+    	players: @user.players
+    		.as_json(only: [:id, :game_id]) 
+  	})
   end
 
 end
