@@ -1,3 +1,5 @@
+# Rack lint hack for websocket upgrade statuses (code: -1) not soft-erroring during 
+# unicorn running, as Rack expects statuses only between 100 -> 600
 class ::Rack::Lint
   alias check_status_orig check_status
   alias check_headers_orig check_headers
@@ -7,7 +9,9 @@ class ::Rack::Lint
   alias _call_orig _call
 
   def _call(env)
-    @web_socket = env['REQUEST_PATH'] == '/cable'
+    # If the request is to our ActionCable websocket path, denote 
+    # that it is a web socket.
+    @web_socket = (env['REQUEST_PATH'] == '/cable')
     _call_orig(env)
   end
 
