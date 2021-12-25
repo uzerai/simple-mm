@@ -13,8 +13,8 @@ class BaseController < ActionController::Base
   before_action :ensure_content_type
   before_action :authorized
 
-  # The basic logger in all controllers
-  attr_reader :logger, :user
+  # The basic logger in al™l controllers
+  attr_accessor :logger, :user, :errors, :results
 
   def initialize
     logger = Rails.logger
@@ -26,15 +26,10 @@ class BaseController < ActionController::Base
   # Validation function which is used for the 'before_action' hook 
   # to ensure the received request content-type header is of the correct type(s)
   def ensure_content_type
-    render json: {
-      results: "Error",
-      errors: [
-        {
-          code: 415,
-          message: "Content-Type 'application/json' required."
-        }
-      ]
-    }, status: 415 unless request.headers['Content-Type'] == 'application/json'
+    unless request.headers['Content-Type'] == 'application/json'
+      add_error(415, "Content-Type 'application/json' required.")
+      render_response
+    end
   end
 
   def auth_header
@@ -62,7 +57,7 @@ class BaseController < ActionController::Base
   def current_user
     if decoded_token
       user_id = decoded_token[0]['user_id']
-      user ||= User.find_by(id: user_id)
+      @user ||= User.find_by(id: user_id)
     else 
       nil
     end
@@ -73,7 +68,27 @@ class BaseController < ActionController::Base
   end
 
   def authorized
-    render json: { message: 'Please log in' }, status: :unauthorized unless logged_in?
+    unless logged_in?
+      add_error(:unauthorized, 'Please log in.')
+      render_response(:unauthorized)
+    end
+  end
+
+  # --- Very simple consistent response format. Works for now.
+  # TODO: Change if necessary.
+  def add_error(code = 500, message = "Error.")
+    @errors = [] if @errors.nil?
+    @errors.push({
+      code: code,
+      message: message
+    })
+  end
+
+  def render_response(status = :ok)
+    render json: {
+      results: @results,
+      errors: @errors
+    }, status: status
   end
 end
   
