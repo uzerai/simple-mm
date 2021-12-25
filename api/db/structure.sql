@@ -26,15 +26,46 @@ CREATE TABLE public.ar_internal_metadata (
 
 
 --
+-- Name: games; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.games (
+    id bigint NOT NULL,
+    name character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: games_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.games_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: games_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.games_id_seq OWNED BY public.games.id;
+
+
+--
 -- Name: match_players; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.match_players (
     id bigint NOT NULL,
-    player_id bigint,
-    match_team_id bigint,
     start_rating integer,
     end_rating integer,
+    match_team_id bigint,
+    player_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -65,9 +96,9 @@ ALTER SEQUENCE public.match_players_id_seq OWNED BY public.match_players.id;
 
 CREATE TABLE public.match_teams (
     id bigint NOT NULL,
-    match_id bigint,
     outcome character varying,
     avg_rating integer NOT NULL,
+    match_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -101,6 +132,7 @@ CREATE TABLE public.match_types (
     name character varying NOT NULL,
     team_size integer NOT NULL,
     team_count integer NOT NULL,
+    game_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -131,10 +163,10 @@ ALTER SEQUENCE public.match_types_id_seq OWNED BY public.match_types.id;
 
 CREATE TABLE public.matches (
     id bigint NOT NULL,
-    match_type_id bigint NOT NULL,
     started_at date,
     ended_at date,
     state character varying,
+    match_type_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -167,6 +199,8 @@ CREATE TABLE public.players (
     id bigint NOT NULL,
     username character varying,
     rating integer,
+    user_id bigint NOT NULL,
+    game_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -198,6 +232,45 @@ ALTER SEQUENCE public.players_id_seq OWNED BY public.players.id;
 CREATE TABLE public.schema_migrations (
     version character varying NOT NULL
 );
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id bigint NOT NULL,
+    email character varying,
+    password_digest character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: games id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.games ALTER COLUMN id SET DEFAULT nextval('public.games_id_seq'::regclass);
 
 
 --
@@ -236,11 +309,26 @@ ALTER TABLE ONLY public.players ALTER COLUMN id SET DEFAULT nextval('public.play
 
 
 --
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
 -- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: games games_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.games
+    ADD CONSTRAINT games_pkey PRIMARY KEY (id);
 
 
 --
@@ -292,6 +380,14 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: index_match_players_on_match_team_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -313,10 +409,31 @@ CREATE INDEX index_match_teams_on_match_id ON public.match_teams USING btree (ma
 
 
 --
+-- Name: index_match_types_on_game_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_match_types_on_game_id ON public.match_types USING btree (game_id);
+
+
+--
 -- Name: index_matches_on_match_type_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_matches_on_match_type_id ON public.matches USING btree (match_type_id);
+
+
+--
+-- Name: index_players_on_game_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_players_on_game_id ON public.players USING btree (game_id);
+
+
+--
+-- Name: index_players_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_players_on_user_id ON public.players USING btree (user_id);
 
 
 --
@@ -326,7 +443,9 @@ CREATE INDEX index_matches_on_match_type_id ON public.matches USING btree (match
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20210807081946'),
 ('20210807081947'),
+('20210807081948'),
 ('20210807140822'),
 ('20210807140823'),
 ('20210807140824'),

@@ -70,6 +70,7 @@ GEM
     archive-zip (0.12.0)
       io-like (~> 0.3.0)
     ast (2.4.2)
+    bcrypt (3.1.16)
     bindex (0.8.1)
     bootsnap (1.9.3)
       msgpack (~> 1.0)
@@ -101,6 +102,7 @@ GEM
     jaro_winkler (1.5.4)
     jbuilder (2.11.3)
       activesupport (>= 5.0.0)
+    jwt (2.3.0)
     kgio (2.11.4)
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -228,10 +230,12 @@ PLATFORMS
 DEPENDENCIES
   aasm (~> 5.2.0)
   annotate
+  bcrypt (~> 3.1.12)
   bootsnap (>= 1.1.0)
   capybara (>= 2.15)
   chromedriver-helper
   jbuilder (~> 2.5)
+  jwt
   listen (>= 3.0.5, < 3.2)
   pg (>= 1.2.2)
   pry (~> 0.12.2)
@@ -253,4 +257,4 @@ RUBY VERSION
    ruby 3.0.3p157
 
 BUNDLED WITH
-   2.2.33
+   2.3.3

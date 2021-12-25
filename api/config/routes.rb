@@ -6,4 +6,6 @@ Rails.application.routes.draw do
   get '/', to: 'application#root', as: 'version-check'
    
   resources :players
+
+  post '/login', to: 'users#login', as: 'user-login'
 end

@@ -6,12 +6,14 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-MatchType.create(name: "1v1 - SOLO", team_size: 1, team_count: 2)
-MatchType.create(name: "5v5 - TEAM", team_size: 5, team_count: 2)
-MatchType.create(name: "1v1v1 - FFA", team_size: 1, team_count: 3)
+game = Game.create(name: "GAMENAME")
+MatchType.create(name: "1v1 - SOLO", team_size: 1, team_count: 2, game: game)
+MatchType.create(name: "5v5 - TEAM", team_size: 5, team_count: 2, game: game)
+MatchType.create(name: "1v1v1 - FFA", team_size: 1, team_count: 3, game: game)
 
 10.times do |id|
-  Player.create(username: "Player_#{id + 1}", rating: rand(1000..2000))
+  user = User.create(email: "user_#{id}@email.com", password: "user_#{id}")
+  Player.create(username: "Player_#{id + 1}", rating: rand(1000..2000), user: user, game: game)
 end
 
 20.times do |_number|
