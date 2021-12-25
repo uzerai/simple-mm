@@ -1,4 +1,4 @@
-import HomePage from './pages/Home';
+import HomePage from "./pages/Home";
 import PlayerTable from "./components/PlayerTable";
 
 export default [
