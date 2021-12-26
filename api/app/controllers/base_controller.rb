@@ -14,7 +14,7 @@ class BaseController < ActionController::Base
   before_action :authorized
 
   # The basic logger in al™l controllers
-  attr_accessor :logger, :user, :errors, :results
+  attr_accessor :logger, :user, :current_user_token, :errors, :results
 
   def initialize
     @logger = Rails.logger
@@ -42,11 +42,16 @@ class BaseController < ActionController::Base
 
   def decoded_token
     if auth_header
+      # The header should have format 'Bearer <JWT>'
       token = auth_header.split(' ')[1]
 
       begin
         # TODO: Remove ENV.fetch: replace with more elegant fetch of secret.
-        JWT.decode(token, ENV.fetch('JWT_SIGN_SECRET') { 'defaultsecret' }, true, algorithm: 'HS256')
+        @current_user_token = JWT.decode(token, ENV.fetch('JWT_SIGN_SECRET') { 'defaultsecret' }, true, algorithm: 'HS256')
+
+        # Validate not-expired token
+        expire_time =  Time.zone.parse(@current_user_token['expire'])
+        return nil unless expire_time > Time.zone.now
       rescue JWT::DecodeError
         logger.warn("Decode Error: Could not decode token.")
         nil

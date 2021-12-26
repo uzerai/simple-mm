@@ -8,6 +8,11 @@ class PlayersController < ApplicationController
 
   def show
     @results = Player.find(params[:id]).as_json(include: :matches)
+
+    unless @results.present?
+      add_error(:not_found, "Player not found.")
+    end
+    
     render_response
   end
 end
