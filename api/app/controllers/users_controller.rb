@@ -42,7 +42,7 @@ class UsersController < ApplicationController
     	players: @user.players
     		.as_json(only: [:id, :game_id]),
       valid: Time.zone.now
-      expire: Time.zone.now + 14.hours,
+      expire: Time.zone.now + ENV.fetch('JWT_TOKEN_EXPIRE_HOURS') { 12 }.to_i.hours,
       permissions: []
   	})
   end

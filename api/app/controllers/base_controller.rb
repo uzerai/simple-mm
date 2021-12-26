@@ -37,7 +37,7 @@ class BaseController < ActionController::Base
   end
 
   def encode_token(payload)
-    JWT.encode(payload, ENV.fetch('JWT_SIGN_SECRET'))
+    JWT.encode(payload, ENV.fetch('JWT_SIGN_SECRET') { 'defaultsecret' })
   end
 
   def decoded_token
@@ -46,7 +46,7 @@ class BaseController < ActionController::Base
 
       begin
         # TODO: Remove ENV.fetch: replace with more elegant fetch of secret.
-        JWT.decode(token, ENV.fetch('JWT_SIGN_SECRET'), true, algorithm: 'HS256')
+        JWT.decode(token, ENV.fetch('JWT_SIGN_SECRET') { 'defaultsecret' }, true, algorithm: 'HS256')
       rescue JWT::DecodeError
         logger.warn("Decode Error: Could not decode token.")
         nil
@@ -76,7 +76,7 @@ class BaseController < ActionController::Base
 
   # TODO: Render using a default json serializer which reacts to raised Errors and 
   # maybe add this to its own lib/ include which appends these methods if the 
-  # controller defines something like `uses_default_response_structure
+  # controller defines something like `uses_default_response_structure`
   # 
   # --- Very simple consistent response format. Works for now.
   def add_error(code = 500, message = "Error.")
