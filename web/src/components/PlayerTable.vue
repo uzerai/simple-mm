@@ -26,14 +26,16 @@ export default {
     };
   },
   async created() {
-    const request = await fetch("http://localhost:8010/players", {
+    const request = await fetch(`${window.api_host}/players`, {
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${this.$store.state.auth}`
       },
     });
 
     if (request.ok) {
-      this.players = await request.json();
+      const data = await request.json();
+      this.players = data.results
     }
   },
 };

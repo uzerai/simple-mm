@@ -11,13 +11,14 @@
         </li>
       </ul>
     </nav>
-    <div class="flex flex-shrink items-center h-full text-white hover:text-black hover:bg-green-400 px-6">
-      <div v-if="this.$store.state.token">
-      </div>
-      <router-link v-else to="/login">
+    <div v-if="!this.$store.state.auth" class="flex flex-shrink items-center h-full text-white hover:text-black hover:bg-green-400 px-6">
+      <router-link to="/login">
         Sign in
       </router-link>
     </div>
+    <button v-else class="flex flex-shrink items-center h-full text-white hover:text-black hover:bg-green-400 px-6" @click="signOut">
+      Sign out
+    </button>
   </div>
 </template>
 
@@ -27,5 +28,10 @@ export default {
   props: {
     routes: Array
   },
+  methods: {
+    signOut () {
+      this.$store.commit("clearAuth")
+    }
+  }
 };
 </script>
