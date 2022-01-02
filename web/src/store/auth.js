@@ -52,6 +52,12 @@ export default {
         }
       })
 		},
+		logout ({ commit }) {
+			commit('clearAuth')
+			window.localStorage.removeItem('authToken')
+			window.localStorage.removeItem('user_id')
+			window.localStorage.removeItem('permissions')
+		},
 		setAuth ({ commit }, { user, token, permissions }) {
 			commit('setAuth', { user, token, permissions })
 			window.localStorage.setItem('authToken', token)
@@ -64,12 +70,6 @@ export default {
 				user_id: window.localStorage.getItem('user_id'),
 				permissions: window.localStorage.getItem('permissions')
 			})
-		},
-		clearAuth ({ commit }) {
-			commit('clearAuth')
-			window.localStorage.removeItem('authToken')
-			window.localStorage.removeItem('user_id')
-			window.localStorage.removeItem('permissions')
 		}
 	}
 }

@@ -48,7 +48,10 @@ export default {
     }
   },
   methods: {
-    attemptLogin() { this.$store.dispatch('auth/login', this.$data)}
+    attemptLogin() { 
+      this.$store.dispatch('auth/login', this.$data)
+      this.$router.push("/")
+    }
   },
 };
 </script>

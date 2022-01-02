@@ -30,7 +30,8 @@ export default {
   },
   methods: {
     signOut () {
-      this.$store.dispatch('auth/clearAuth')
+      this.$store.dispatch('auth/logout')
+      this.$router.push("/")
     }
   }
 };

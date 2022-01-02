@@ -7,24 +7,24 @@ import store from "./store";
 import "./styles/app.css";
 import Main from "./Main.vue";
 
+// Vue app instantiation, binding Main as the main entrypoint component of the application.
+const app = createApp(Main);
+
+// The store is initialized from vuex in `./store/index.js`
+// Instantiate this first so that routes can read from store
+app.use(store);
+
 // Router creation and initialization.
 // update routes in the accompanying routes.js
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
-
 router.beforeEach((to, from, next) => {
-  if ((to.name !== "Home" && to.name !== "Login") && !store.getters['isAuthenticated']) next({ name: 'Login' })
+  if(!["Home", "Login"].includes(to.name) && !store.getters['auth/isAuthenticated']) next({ name: "Login" })
   else next()
 })
-
-// Vue app instantiation, binding Main as the main entrypoint component of the application.
-const app = createApp(Main);
-
-// Registering router to work on the app.
 app.use(router);
 
-// The store is initialized from vuex in `./store.js`
-app.use(store);
+
 app.mount("#app");
