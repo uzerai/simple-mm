@@ -14,6 +14,11 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  if ((to.name !== "Home" && to.name !== "Login") && !store.getters['isAuthenticated']) next({ name: 'Login' })
+  else next()
+})
+
 // Vue app instantiation, binding Main as the main entrypoint component of the application.
 const app = createApp(Main);
 

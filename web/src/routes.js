@@ -5,8 +5,8 @@ import Games from "./pages/Games"
 
 // Any route which has a displayName will be displayed in the main navigation menu header.
 export default [
-  { path: "/", component: Home, displayName: "Home" },
+  { path: "/", component: Home, name: "Home", displayName: "Home" },
   { path: "/players", component: PlayerTable, displayName: "Players" },
   { path: "/games", component: Games, displayName: "Games" },
-  { path: "/login", component: Login }
+  { path: "/login", component: Login, name: "Login" }
 ];
