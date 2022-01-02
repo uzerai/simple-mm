@@ -1,4 +1,4 @@
-class UsersController < ApplicationController
+class UsersController < BaseController
 	before_action :authorized, only: [:auto_login]
 
   def create
@@ -8,7 +8,7 @@ class UsersController < ApplicationController
       @response = { token: current_user_token }
       render_response
     else
-      add_error(:unauthenticated, "Invalid username or password.")
+      add_error(403, "Invalid username or password.")
       render_response(:unauthenticated)
     end
   end
@@ -20,7 +20,7 @@ class UsersController < ApplicationController
       @results = { token: current_user_token }
       render_response
     else
-      add_error(:unauthenticated, "Invalid username or password.")
+      add_error(403, "Invalid username or password.")
       render_response(:unauthenticated)
     end
   end

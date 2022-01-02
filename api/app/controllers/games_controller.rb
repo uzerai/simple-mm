@@ -1,4 +1,4 @@
-class GamesController < ApplicationController
+class GamesController < BaseController
 
 	def index
 		@results = Game.all.as_json
@@ -9,9 +9,10 @@ class GamesController < ApplicationController
 		@results = Game.find_by(id: params[:id])
 		
 		unless @results.present?
-			add_error(:not_found, "Game not found.")
+			add_error(404, "Game not found.")
+			render_response(:not_found)
+		else
+			render_response
 		end
-
-		render_response
 	end
 end
