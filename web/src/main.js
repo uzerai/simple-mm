@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 import routes from "./routes";
+import store from "./store";
 import "./styles/app.css";
 import Main from "./Main.vue";
 
@@ -17,4 +18,10 @@ const app = createApp(Main);
 
 // Registering router to work on the app.
 app.use(router);
+
+// The store is initialized from vuex in `./store.js`
+app.use(store);
 app.mount("#app");
+
+// Let's also store some standard variables:
+window.api_host = "http://localhost:8010"

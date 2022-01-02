@@ -6,28 +6,26 @@
     </div>
     <nav class="flex-grow mx-4">
       <ul id="nav-top" class="flex h-full gap-6">
-        <li v-for="route in routes" v-bind:key="route.displayName" class="border-b-4  border-black hover:border-yellow-400 text-white flex items-center font-thin">
-          <router-link v-bind:to="route.path">{{route.displayName}}</router-link>
+        <li v-for="route in routes" :key="route.displayName" class="border-b-4  border-black hover:border-yellow-400 text-white flex items-center font-thin">
+          <router-link :to="route.path">{{route.displayName}}</router-link>
         </li>
       </ul>
     </nav>
-    <div class="flex-shrink flex">
-      <LoginButton />
+    <div class="flex flex-shrink items-center h-full text-white hover:text-black hover:bg-green-400 px-6">
+      <div v-if="this.$store.state.token">
+      </div>
+      <router-link v-else to="/login">
+        Sign in
+      </router-link>
     </div>
   </div>
 </template>
 
 <script>
-import LoginButton from "./auth/LoginButton"
-
 export default {
   name: "MainBar",
   props: {
     routes: Array
   },
-  components: {
-    LoginButton
-  },
-  methods: {},
 };
 </script>

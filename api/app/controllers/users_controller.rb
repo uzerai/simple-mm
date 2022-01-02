@@ -9,7 +9,7 @@ class UsersController < BaseController
       render_response
     else
       add_error(403, "Invalid username or password.")
-      render_response(:unauthenticated)
+      render_response(403)
     end
   end
 
@@ -21,7 +21,7 @@ class UsersController < BaseController
       render_response
     else
       add_error(403, "Invalid username or password.")
-      render_response(:unauthenticated)
+      render_response(403)
     end
   end
 
@@ -33,7 +33,7 @@ class UsersController < BaseController
   private
 
   def user_params
-    params.permit(:email, :password)
+    params.permit(:email, :password, :remember_me)
   end
 
   def current_user_token
@@ -42,7 +42,7 @@ class UsersController < BaseController
     	players: @user.players
     		.as_json(only: [:id, :game_id]),
       valid: Time.zone.now,
-      expire: (Time.zone.now + ENV.fetch('JWT_TOKEN_EXPIRE_MINUTES'){ 720 }.to_i.minutes),
+      expire: (Time.zone.now + (params[:remember_me] ? 1.years : ENV.fetch('JWT_TOKEN_EXPIRE_MINUTES'){ 720 }.to_i.minutes)),
       permissions: []
   	})
   end
