@@ -11,7 +11,7 @@
         </li>
       </ul>
     </nav>
-    <div v-if="!this.$store.state.auth" class="flex flex-shrink items-center h-full text-white hover:text-black hover:bg-green-400 px-6">
+    <div v-if="!this.$store.getters['auth/token']" class="flex flex-shrink items-center h-full text-white hover:text-black hover:bg-green-400 px-6">
       <router-link to="/login">
         Sign in
       </router-link>
@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     signOut () {
-      this.$store.commit("clearAuth")
+      this.$store.auth.commit("clearAuth")
     }
   }
 };

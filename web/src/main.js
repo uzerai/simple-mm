@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 
+// Non-vendor includes
 import routes from "./routes";
 import store from "./store";
 import "./styles/app.css";
@@ -22,6 +23,3 @@ app.use(router);
 // The store is initialized from vuex in `./store.js`
 app.use(store);
 app.mount("#app");
-
-// Let's also store some standard variables:
-window.api_host = "http://localhost:8010"

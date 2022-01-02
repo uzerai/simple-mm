@@ -51,11 +51,11 @@ export default {
     attemptLogin() {
       console.log("Attempting login with:")
       console.dir(this.$data)
-      fetch(`${window.api_host}/login`, {
+      fetch(`${this.$store.state.api_host}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.$store.auth}`
+          "Authorization": `Bearer ${this.$store.state.auth.token}`
         },
         body: JSON.stringify(this.$data)
       })
@@ -68,7 +68,8 @@ export default {
         } else {
           console.log("Setting auth token:")
           console.dir(data.results.token)
-          this.$store.commit("setAuth", data.results.token)
+          this.$store.commit(
+            "auth/setAuth", { user: undefined, token: data.results.token, permissions: [] })
         }
       })
     }
