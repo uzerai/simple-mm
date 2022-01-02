@@ -1,1 +1,26 @@
 Thoughts on the simple-mm project, a simple matchmaking/elo rating system:
+
+- I've already readied parts of it; but I'm going ahead with using actioncable for the websocket implementation so that players can be notified when their match is ready for certain 
+games. This is probably mostly going to be for the active games where you're expecting a match to be assembled within 10-15 minutes at most rating levels (think chess, video games, etc)
+
+- One thing I really want to do is have the support for physical games, and the support for stuff like organizing your own local leagues which are persistent over longer periods of time.
+Best and coolest thing would be to integrate with calendars so that players in smaller tight-knit communities could organize a match beforehand and send out notifications to where and when the match will be played (maybe email? idk)
+
+- Definitely want support for all kinds of games, game types and matchmaking types (physical/digital/all modes)
+
+- This would also include pick-player game modes, so two players are chosen as captain when a match is made with a select pool of players withing a matchmaking range.
+
+- Would also be cool to be able to automatically pick the most balanced teams.
+
+- Can imagine details (location/time) of physical games would require some additional auth, but I think offloading that to a designated matchmaker who would fill this in on another platform (such as the afroementioned calendar).
+
+- Customizable matchmaking weights depending on the amount of players within a league? Could maybe do some statistical analysis of the league with some set interval which would adjust the maximum and minimum gains per player possible? Achieving a bell-curve balance of ratings within a league would be best only in large groups; in smaller groups, ensuring a much shorter range of ratings would be preferable. This value could maybe be visible on the league/community/whatever I'll name it.
+
+- Public and private leagues denoted by geographical area for physical games? Maybe even include it as a possible setting for online games too (think LAN)?
+
+- Mobile phone native support for push notifications via the web push api, maybe even perhaps explore technologies around web-workers where it could be fun to remind players about maybe filling in the score for a game or something?
+
+- Maybe entirely unrated matchmaking leagues and systems, especially in tournament formats.
+
+
+-- ULTIMATELY: For now lets focus on games which are much easier to bring people together over; namely digital games.
