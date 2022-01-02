@@ -16,6 +16,9 @@ import MainBar from "./components/common/MainBar";
 
 export default {
   name: "Main",
+  mounted () {
+    this.$store.dispatch('auth/loadAuth')
+  },
   props: {},
   data() {
     return {

@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     signOut () {
-      this.$store.auth.commit("clearAuth")
+      this.$store.dispatch('auth/clearAuth')
     }
   }
 };

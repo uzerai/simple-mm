@@ -9,5 +9,10 @@ export default createStore({
 	}),
 	modules: {
 		auth
+	},
+	getters: {
+		api_host (state) {
+			return state.api_host
+		}
 	}
 })

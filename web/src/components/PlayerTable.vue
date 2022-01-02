@@ -26,10 +26,10 @@ export default {
     };
   },
   async created() {
-    const request = await fetch(`${this.$store.state.api_host}/players`, {
+    const request = await fetch(`${this.$store.getters.api_host}/players`, {
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.$store.state.auth.token}`
+        "Authorization": `Bearer ${this.$store.getters['auth/token']}`
       },
     });
 

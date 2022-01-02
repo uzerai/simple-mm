@@ -48,31 +48,7 @@ export default {
     }
   },
   methods: {
-    attemptLogin() {
-      console.log("Attempting login with:")
-      console.dir(this.$data)
-      fetch(`${this.$store.state.api_host}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.$store.state.auth.token}`
-        },
-        body: JSON.stringify(this.$data)
-      })
-      .then(response => response.json())
-      .then(data => {
-        if(data.errors) {
-          console.log("There were errors:")
-          console.dir(data.errors)
-          return
-        } else {
-          console.log("Setting auth token:")
-          console.dir(data.results.token)
-          this.$store.commit(
-            "auth/setAuth", { user: undefined, token: data.results.token, permissions: [] })
-        }
-      })
-    }
+    attemptLogin() { this.$store.dispatch('auth/login', this.$data)}
   },
 };
 </script>
