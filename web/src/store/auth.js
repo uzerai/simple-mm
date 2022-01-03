@@ -51,7 +51,7 @@ export default {
             console.log("Setting auth token:");
             console.dir(data.results.token);
             dispatch("setAuth", {
-              user: undefined,
+              user: JSON.parse(atob(data.results.token.split(".")[1])),
               token: data.results.token,
               permissions: [],
             });
@@ -61,20 +61,20 @@ export default {
     logout({ commit }) {
       commit("clearAuth");
       window.localStorage.removeItem("authToken");
-      window.localStorage.removeItem("user_id");
-      window.localStorage.removeItem("permissions");
+      window.localStorage.removeItem("authUser");
+      window.localStorage.removeItem("authPermissions");
     },
     setAuth({ commit }, { user, token, permissions }) {
       commit("setAuth", { user, token, permissions });
       window.localStorage.setItem("authToken", token);
-      window.localStorage.setItem("user_id", user?.id);
-      window.localStorage.setItem("permissions", permissions.join(","));
+      window.localStorage.setItem("authUser", JSON.stringify(user));
+      window.localStorage.setItem("authPermissions", permissions.join(","));
     },
     loadAuth({ commit }) {
       commit("setAuth", {
         token: window.localStorage.getItem("authToken"),
-        user_id: window.localStorage.getItem("user_id"),
-        permissions: window.localStorage.getItem("permissions"),
+        user: JSON.parse(window.localStorage.getItem("authUser")),
+        permissions: window.localStorage.getItem("authPermissions")?.split(","),
       });
     },
   },
