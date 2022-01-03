@@ -21,10 +21,13 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  if(!["Home", "Login"].includes(to.name) && !store.getters['auth/isAuthenticated']) next({ name: "Login" })
-  else next()
-})
+  if (
+    !["Home", "Login"].includes(to.name) &&
+    !store.getters["auth/isAuthenticated"]
+  )
+    next({ name: "Login" });
+  else next();
+});
 app.use(router);
-
 
 app.mount("#app");
