@@ -1,11 +1,10 @@
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
-
+import Main from "./Main.vue";
 // Non-vendor includes
 import routes from "./routes";
 import store from "./store";
 import "./styles/app.css";
-import Main from "./Main.vue";
 
 // Vue app instantiation, binding Main as the main entrypoint component of the application.
 const app = createApp(Main);
@@ -21,12 +20,13 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  if (
-    !["Home", "Login"].includes(to.name) &&
-    !store.getters["auth/isAuthenticated"]
-  )
-    next({ name: "Login" });
+  if (!to.meta.public && !store.getters["auth/isAuthenticated"])
+    next({ name: "Login", query: { redirect: to.fullPath } });
   else next();
+});
+
+router.afterEach((to) => {
+  document.title = to.meta.title ? to.meta.title : "";
 });
 app.use(router);
 

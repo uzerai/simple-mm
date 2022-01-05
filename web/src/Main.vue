@@ -2,32 +2,36 @@
   Super simple main component for handling routing throughout the application.
 -->
 <template>
-  <div id="main" class="">
-    <MainBar v-bind:routes="routes"/>
+  <div id="main">
+    <div
+      id="content-background"
+      class="fixed -z-50 w-screen h-screen bg-gray-50 dark:bg-zinc-900"
+    ></div>
+    <MainBar v-bind:routes="routes" />
     <div id="main-content">
-     <router-view></router-view>
+      <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script>
-import routes from "./routes"
+import routes from "./routes";
 import MainBar from "./components/common/MainBar";
 
 export default {
   name: "Main",
-  mounted () {
-    this.$store.dispatch('auth/loadAuth')
+  mounted() {
+    this.$store.dispatch("auth/loadAuth");
   },
   props: {},
   data() {
     return {
-      routes: routes.filter(route => route.displayName)
-    }
+      routes: routes.filter((route) => route.displayName),
+    };
   },
   methods: {},
   components: {
-    MainBar
-  }
+    MainBar,
+  },
 };
 </script>

@@ -29,13 +29,13 @@ export default {
     const request = await fetch(`${this.$store.getters.api_host}/players`, {
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.$store.getters['auth/token']}`
+        Authorization: `Bearer ${this.$store.getters["auth/token"]}`,
       },
     });
 
     if (request.ok) {
       const data = await request.json();
-      this.players = data.results
+      this.players = data.results;
     }
   },
 };
