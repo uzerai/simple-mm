@@ -37,14 +37,7 @@ class UsersController < BaseController
   end
 
   def current_user_token
-		encode_token({
-    	id: current_user.id, 
-    	players: current_user.players
-    		.as_json(only: [:id, :game_id]),
-      valid: Time.zone.now.iso8601,
-      expire: (Time.zone.now + (params[:remember_me] ? 1.years : ENV.fetch('JWT_TOKEN_EXPIRE_MINUTES'){ 720 }.to_i.minutes)).iso8601,
-      permissions: []
-  	})
+		current_user.jwt_token(params[:remember_me])
   end
 
 end
