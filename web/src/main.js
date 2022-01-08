@@ -21,10 +21,10 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  await store.dispatch("auth/loadAuth") 
+  await store.dispatch("auth/loadAuth");
 
-  if (!to.meta.public && !store.getters["auth/isAuthenticated"]){ 
-    console.log("Not authenticated. Redirecting to /login")
+  if (!to.meta.public && !store.getters["auth/isAuthenticated"]) {
+    console.log("Not authenticated. Redirecting to /login");
     next({ name: "Login", query: { redirect: to.fullPath } });
   } else next();
 });

@@ -82,13 +82,16 @@ export default {
     async attemptLogin() {
       await this.$store.dispatch("auth/login", this.$data);
 
-      if (this.$store.getters['auth/isAuthenticated'] && this.$route.query?.redirect) {
+      if (
+        this.$store.getters["auth/isAuthenticated"] &&
+        this.$route.query?.redirect
+      ) {
         console.warn("User is authenticated; redirecting ...");
         this.$router.push(this.$route.query.redirect);
       } else {
         this.$router.push("/");
       }
-    }
+    },
   },
 };
 </script>
