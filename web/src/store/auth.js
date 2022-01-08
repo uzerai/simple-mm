@@ -44,6 +44,8 @@ export default {
       return !!state.token;
     },
     authAboutToExpire(state) {
+      // For use in dispatch("loadAuth") to only load if the
+      // auth is about to expire.
       if (!state.user) return false;
 
       // Super straight-forward date comparison; return true expire is in less than 15min
@@ -116,15 +118,16 @@ export default {
       commit("rememberAuth", token);
     },
     async loadAuth({ dispatch, getters }) {
+      // When attempting to load auth, the user can either have
+      // a set token in local storage; or an active access token in
+      // store (and this token can be close to expiry)
       const remembered_token = window.localStorage.getItem("authToken");
-
-      // loadAuth() is called during route loading; so let's not actually do the
-      // auto login if we already have a token which is valid in store.
       const is_authenticated = getters["isAuthenticated"];
-
-      // TODO: Refresh of token if it's close to expiry (maybe like 1h?)
       const about_to_expire = getters["authAboutToExpire"];
 
+      // Only refetch authentication (autologin) if user has a token
+      // which is about to expire, or if they are unauthenticated
+      // but have a remembered token (ie during hotlinking)
       if (about_to_expire || (remembered_token && !is_authenticated)) {
         // This must be done in await/async for the automatic login chain to work during hotlinking.
         await dispatch("autologin");
