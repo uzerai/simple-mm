@@ -21,6 +21,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+  // dispatch('auth/loadAuth') should be idempotent for it to be used like this.
   await store.dispatch("auth/loadAuth");
 
   if (!to.meta.public && !store.getters["auth/isAuthenticated"]) {

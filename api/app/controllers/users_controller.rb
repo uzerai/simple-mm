@@ -16,7 +16,7 @@ class UsersController < BaseController
   def login
     @user = User.find_by(email: params[:email])
 
-    if @user && @user.authenticate(params[:password])
+    if @user && @user.valid_password?(params[:password])
       @results = { token: current_user_token }
       render_response
     else
