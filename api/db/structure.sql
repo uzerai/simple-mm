@@ -46,6 +46,7 @@ CREATE TABLE public.ar_internal_metadata (
 CREATE TABLE public.games (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     name character varying,
+    image_url character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );

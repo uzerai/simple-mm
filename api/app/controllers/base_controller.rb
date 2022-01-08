@@ -47,13 +47,16 @@ class BaseController < ActionController::Base
 
       begin
         # TODO: Remove ENV.fetch: replace with more elegant fetch of secret.
-        @current_user_token   = JWT.decode(token, ENV.fetch('JWT_SIGN_SECRET') { 'defaultsecret' }, true, algorithm: 'HS256').first
-
-        # Validate not-expired token
-        expire_time = Time.zone.parse @current_user_token.fetch('expire')
-        return nil unless expire_time > Time.zone.now
-
-        @current_user_token
+        @current_user_token ||= begin
+          token_hash = JWT.decode(token, ENV.fetch('JWT_SIGN_SECRET') { 'defaultsecret' }, true, algorithm: 'HS256').first
+          # Validate not-expired token
+          expire_time = Time.zone.parse token_hash.fetch('expire')
+          if expire_time > Time.zone.now
+            token_hash
+          else
+            nil
+          end
+        end
       rescue JWT::DecodeError
         logger.warn("Decode Error: Could not decode token.")
         nil
@@ -62,9 +65,10 @@ class BaseController < ActionController::Base
   end
 
   def current_user
-    if decoded_token
-      user_id = decoded_token[0]['user_id']
-      @user ||= User.find_by(id: user_id)
+    @user ||= if decoded_token
+      user_id = decoded_token['user_id']
+      @logger.warn(user_id)
+      User.find_by(id: user_id)
     else 
       nil
     end

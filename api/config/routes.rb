@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   resources :players
 
   post '/login', to: 'users#login', as: 'user-login'
+  get '/autologin', to: 'users#auto_login', as: 'user-auto-login'
 end
