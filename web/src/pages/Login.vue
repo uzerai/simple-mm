@@ -1,7 +1,7 @@
 <template>
   <div class="flex w-full justify-center lg:py-12">
     <div
-      class="lg:w-1/2 w-full rounded-sm lg:border border-gray-200 pt-8 px-8 pb-4 bg-white animate-fadeIn"
+      class="lg:w-1/2 w-full rounded-sm lg:border border-gray-200 pt-8 px-8 pb-4 bg-white motion-safe:animate-fadeIn"
     >
       <h1 class="text-3xl italic font-bold text-gray-800 mb-2">Sign-in</h1>
       <hr class="mb-2" />
@@ -79,20 +79,16 @@ export default {
     };
   },
   methods: {
-    attemptLogin() {
-      this.$store.dispatch("auth/login", this.$data).then(() => {
-        if (this.$route.query?.redirect) {
-          console.log("Pushing to query redirect");
-          this.$router.push(this.$route.query.redirect);
-        } else {
-          this.$router.push("/");
-        }
-      });
-    },
-    redirIfAuth() {
-      if (this.$store.getters["auth/isAuthenticated"])
-        this.$router.push("/profile");
-    },
+    async attemptLogin() {
+      await this.$store.dispatch("auth/login", this.$data);
+
+      if (this.$store.getters['auth/isAuthenticated'] && this.$route.query?.redirect) {
+        console.info("Pushing to query redirect");
+        this.$router.push(this.$route.query.redirect);
+      } else {
+        this.$router.push("/");
+      }
+    }
   },
 };
 </script>
