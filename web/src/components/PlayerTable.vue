@@ -6,7 +6,7 @@
           Username
         </th>
         <th className="text-left text-l tracking-wider" scope="col">Rating</th>
-      </tr>#
+      </tr>
     </thead>
     <tbody className="divide-y divide-gray-500">
       <tr v-for="player in players" :key="player.id">
@@ -29,7 +29,7 @@ export default {
     const request = await fetch(`${this.$store.getters.api_host}/players`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${this.$store.getters["auth/token"]}`
+        Authorization: `Bearer ${ this.$store.getters["auth/token"] }`
       },
     });
 

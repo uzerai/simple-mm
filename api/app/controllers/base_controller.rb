@@ -66,7 +66,7 @@ class BaseController < ActionController::Base
 
   def current_user
     @user ||= if decoded_token
-      user_id = decoded_token['user_id']
+      user_id = decoded_token['id']
       @logger.warn(user_id)
       User.find_by(id: user_id)
     else 
