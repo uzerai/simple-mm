@@ -7,7 +7,7 @@ class ApplicationController < BaseController
   # Root override to stop the stupid rails image; 
   # now just echoes server version in a JSON response.
   def root
-    @results = { version: Rails.application.version }
+    @results = { version: '0.0.1' }
     render_response
   end
 end

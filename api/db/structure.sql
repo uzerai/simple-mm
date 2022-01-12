@@ -141,14 +141,17 @@ CREATE TABLE public.schema_migrations (
 
 CREATE TABLE public.users (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    email character varying DEFAULT ''::character varying NOT NULL,
+    username character varying NOT NULL,
+    email character varying NOT NULL,
     encrypted_password character varying DEFAULT ''::character varying NOT NULL,
+    validation_dud character varying DEFAULT 'virgin-validation-dud'::character varying NOT NULL,
     reset_password_token character varying,
     reset_password_sent_at timestamp without time zone,
     remember_created_at timestamp without time zone,
     confirmation_token character varying,
     confirmed_at timestamp without time zone,
     confirmation_sent_at timestamp without time zone,
+    unconfirmed_email character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );

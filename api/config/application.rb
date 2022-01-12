@@ -25,6 +25,10 @@ module SimpleMM
     # For use with the root route for the API
     config.version = '0.0.1'
 
+    # This forces Devise not to attempt [:flash] messages.
+    # See: https://github.com/heartcombo/devise/issues/4275#issuecomment-244968778
+    config.navigational_formats = []
+
     # Setting up sidekiq
     config.active_job.queue_adapter = :sidekiq
 

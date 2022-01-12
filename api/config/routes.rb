@@ -6,9 +6,10 @@ Rails.application.routes.draw do
   get '/', to: 'application#root', as: 'version-check'
   
   resources :players
+
+  devise_for :users, only: [:confirmation, :recovery], skip_helpers: [:sessions], controllers: { confirmations: 'confirmations' }
   
-  # Using devise gem for user authentication; will maybe use pundit for user authorization later.
-  devise_for :users
   post '/login', to: 'users#login', as: 'user-login'
+  post '/signup', to: 'users#create', as: 'user-signup'
   get '/autologin', to: 'users#auto_login', as: 'user-auto-login'
 end

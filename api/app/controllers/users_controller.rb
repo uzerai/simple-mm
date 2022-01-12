@@ -1,11 +1,17 @@
 class UsersController < BaseController
+  before_action :configure_permitted_parameters, if: :devise_controller?
 	before_action :authorized, only: [:auto_login]
 
   def create
-    @user = User.create(user_params)
+    unless params[:password] == params[:password_confirm]
+      add_error(409, "Password does not match password confirm.")
+      render_response(409)
+    end
 
-    if @user.valid?
-      @response = { token: current_user_token }
+    @user = User.new(username: params[:username], email: params[:email], password: params[:password_confirm])
+    
+    if @user.save!
+      @results = { token: current_user_token }
       render_response
     else
       add_error(403, "Invalid username or password.")
@@ -30,14 +36,19 @@ class UsersController < BaseController
     render_response
   end
 
-  private
-
-  def user_params
-    params.permit(:email, :password, :remember_me)
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:create) do |user_params|
+      user_params.permit(:email, :password, :password_confirm, :remember_me, :username)
+    end
+    
+    devise_parameter_sanitizer.permit(:login) do |user_params|
+      user_params.permit(:email, :password, :remember_me)
+    end
   end
+
+  private
 
   def current_user_token
 		current_user.jwt_token(params[:remember_me])
   end
-
 end

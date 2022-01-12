@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
-class BaseController < ActionController::Base
+class BaseController < ActionController::API
   # This class contains sections of code intended to serve utility in _all_ functions of the application.
-
-  # We're skipping forgery protection as all requests will either have a JWT token which is 
-  # authenticated before_action or re-freshed on 
-  skip_forgery_protection
 
   # --- Before action section:
 
