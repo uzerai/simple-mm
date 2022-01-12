@@ -42,24 +42,35 @@
           Sign In
         </button>
 
-        <div class="flex items-center justify-between">
-          <div class="flex flex-row items-center">
-            <input
-              type="checkbox"
-              class="focus:ring-green-500 h-4 w-4 accent-green-600 border-gray-300 rounded"
-              v-model="remember_me"
-            />
-            <label
-              for="comments"
-              class="ml-2 text-sm font-normal text-gray-400"
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <div class="flex flex-row items-center">
+              <input
+                type="checkbox"
+                class="focus:ring-green-500 h-4 w-4 accent-green-600 border-gray-300 rounded"
+                v-model="remember_me"
+              />
+              <label
+                for="comments"
+                class="ml-2 text-sm font-normal text-gray-400"
+              >
+                Remember me
+              </label>
+            </div>
+            <router-link
+              class="text-sm text-blue-600 hover:underline"
+              to="/users/forgot"
             >
-              Remember me
-            </label>
-          </div>
-          <div>
-            <a class="text-sm text-blue-600 hover:underline" href="#">
               Forgot password?
-            </a>
+            </router-link>
+          </div>
+          <div class="flex flex-row justify-end items-center">
+            <router-link
+              class="text-sm text-slate-700 font-bold hover:underline"
+              to="/signup"
+            >
+              New here?
+            </router-link>
           </div>
         </div>
       </section>

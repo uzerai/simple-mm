@@ -48,10 +48,11 @@ class BaseController < ActionController::API
           # Validate not-expired token
           expire_time = Time.zone.parse token_hash.fetch('expire')
           if expire_time > Time.zone.now
-            token_hash
-          else
-            nil
+            return token_hash
           end
+
+          # Fallback to nil return (deny-first)
+          nil
         end
       rescue JWT::DecodeError
         logger.warn("Decode Error: Could not decode token.")
@@ -63,15 +64,24 @@ class BaseController < ActionController::API
   def current_user
     @user ||= if decoded_token
       user_id = decoded_token['id']
-      @logger.warn(user_id)
-      User.find_by(id: user_id)
+      user = User.find_by(id: user_id)
+
+      if user.nil? 
+        # This should ideally never happen (but did happen during testing, deleted without invalidating)
+        @logger.warn("Valid token with missing User:#{user_id}.")
+        @logger.warn("This could signify someone signing tokens with the same secret --\n or the user has been deleted and a token was still active.")
+        
+        return nil
+      end
+
+      user
     else 
       nil
     end
   end
 
   def logged_in?
-    !!decoded_token
+    !!current_user
   end
 
   def authorized
@@ -87,11 +97,23 @@ class BaseController < ActionController::API
   # 
   # --- Very simple consistent response format. Works for now.
   def add_error(code = 500, message = "Error.")
-    @errors = [] if @errors.nil?
+    @errors ||= []
     @errors.push({
       code: code,
       message: message
     })
+  end
+
+  def add_model_errors(model)
+    @errors ||= []
+    return unless model.present?
+
+    model.errors.each do |error|
+      @errors.push({
+        code: 422,
+        message: "#{error.attribute} #{error.message}"
+      })
+    end
   end
   
   def render_response(status = :ok)

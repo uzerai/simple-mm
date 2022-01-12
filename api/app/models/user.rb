@@ -31,6 +31,9 @@ class User < ApplicationRecord
 	has_many :players
 	has_many :games, through: :players
 
+	validates :username, uniqueness: true
+	validates :password, length: { minimum: 8 }, confirmation: true
+
 	def jwt_token(extended_expiry = false)
 		# TODO: Add some seed-generated secret which can be randomized to invalidate all other tokens (by just checking it after decode)
 		# idea is to be able to invalidate all other signed tokens, regardless of expiry.
