@@ -106,6 +106,28 @@ export default {
         await commit("clearAuth");
       }
     },
+    async signup(
+      { commit, rootState },
+      { username, email, password, password_confirm, remember_me }
+    ) {
+      const request = fetch(`${rootState.api_host}/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          password_confirm,
+          remember_me,
+        }),
+      });
+      const body = await request.then((resp) => resp.json());
+      if (body) {
+        await commit("setAuth", extractUserdata(body));
+      }
+    },
     logout({ commit }) {
       console.info("Logging out ...");
       commit("clearAuth");

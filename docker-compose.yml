@@ -16,6 +16,7 @@ services:
       DATABASE_URL: postgresql://violet:evergarden@db-00:5432/test_db?encoding=utf8&pool=5&timeout=5000
       JOB_WORKER_URL: redis://redis-00:6379/0
       CACHE_URL: redis://redis-00:6379/1
+      WORKER_PROCESSES: 1
     volumes:
       - ./api:/opt/app
     links:

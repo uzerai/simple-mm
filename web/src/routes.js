@@ -2,6 +2,7 @@ import PlayerTable from "./components/PlayerTable";
 import Games from "./pages/Games";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 // Any route which has a displayName will be displayed in the main navigation menu header.
 export default [
@@ -23,6 +24,15 @@ export default [
     name: "Login",
     meta: {
       title: "Login",
+      public: true,
+    },
+  },
+  {
+    path: "/signup",
+    component: Signup,
+    name: "Signup",
+    meta: {
+      title: "Sign up!",
       public: true,
     },
   },
