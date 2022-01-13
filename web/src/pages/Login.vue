@@ -97,10 +97,8 @@ export default {
         this.$store.getters["auth/isAuthenticated"] &&
         this.$route.query?.redirect
       ) {
-        console.warn("User is authenticated; redirecting ...");
+        console.info("User is authenticated; redirecting ...");
         this.$router.push(this.$route.query.redirect);
-      } else {
-        this.$router.push("/");
       }
     },
   },

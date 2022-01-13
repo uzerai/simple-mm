@@ -26,12 +26,14 @@ class UsersController < BaseController
     end
   end
 
+  # Called on the base front-end when the users' token 
+  # will expire in less than 15 minutes.
   def auto_login
     @results = { token: current_user_token }
     render_response
   end
 
-  # Custom devise configuration for permitted parameters 
+  # Custom devise configuratio overrides for permitted parameters 
   # during certain methods on this controller.
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:create) do |user_params|

@@ -57,25 +57,15 @@ export default {
     },
   },
   actions: {
-    async login(
-      { dispatch, getters, rootState },
-      { email, password, remember_me }
-    ) {
+    async login({ dispatch }, { email, password, remember_me }) {
       console.info("Login ...");
-      const request = fetch(`${rootState.api_host}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getters["token"]}`,
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          remember_me,
-        }),
-      });
+      const request = dispatch(
+        "post",
+        { path: "/login", body: { email, password, remember_me } },
+        { root: true }
+      );
 
-      const body = await request.then((resp) => resp.json());
+      const body = await request;
 
       if (body.errors) {
         console.error("auth/login | There were errors:");
@@ -86,17 +76,11 @@ export default {
         if (remember_me) dispatch("rememberAuth", body.results.token);
       }
     },
-    async autologin({ commit, getters, rootState }) {
+    async autologin({ commit, dispatch }) {
       console.info("Autologin ...");
       // Fetches this in-sync, as we want the entire sequence of auto-login to be
       // performed during the loadAuth() sequences.
-      const request = fetch(`${rootState.api_host}/autologin`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getters["token"]}`,
-        },
-      });
+      const request = dispatch("get", { path: "/autologin" }, { root: true });
 
       const body = await request.then((resp) => resp.json());
 
@@ -107,23 +91,24 @@ export default {
       }
     },
     async signup(
-      { commit, rootState },
+      { commit, dispatch },
       { username, email, password, password_confirm, remember_me }
     ) {
-      const request = fetch(`${rootState.api_host}/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const request = dispatch(
+        "post",
+        {
+          path: "/signup",
+          body: {
+            username,
+            email,
+            password,
+            password_confirm,
+            remember_me,
+          },
         },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-          password_confirm,
-          remember_me,
-        }),
-      });
-      const body = await request.then((resp) => resp.json());
+        { root: true }
+      );
+      const body = await request;
       if (body) {
         await commit("setAuth", extractUserdata(body));
       }
