@@ -82,8 +82,7 @@ export default {
       // Fetches this in-sync, as we want the entire sequence of auto-login to be
       // performed during the loadAuth() sequences.
       const request = dispatch("get", { path: "/autologin" }, { root: true });
-
-      const body = await request.then((resp) => resp.json());
+      const body = await request;
 
       if (body) {
         await commit("setAuth", extractUserdata(body));

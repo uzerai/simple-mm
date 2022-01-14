@@ -42,6 +42,9 @@ export default {
         case "success":
           classes = "bg-green-600 text-white border-green-800 border";
           break;
+        case "information":
+          classes = "bg-blue-600 text-white border-blue-800 border";
+          break;
         default:
           classes = "bg-white border-slate-200"
       }
@@ -67,8 +70,6 @@ export default {
       if(this.disappear) {
         this.$store.dispatch("unlockNotification", this.uuid);
         this.scheduleSelfDestroy();
-      } else {
-        this.$store.dispatch("removeNotification", this.uuid);
       }
     },
     scheduleSelfDestroy() {
