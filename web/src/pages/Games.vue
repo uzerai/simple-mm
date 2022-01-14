@@ -1,12 +1,12 @@
 <template>
-  <div class=""></div>
+  <div class="" />
 </template>
 
 <script>
 export default {
   name: "Games",
-  props: {},
   components: {},
+  props: {},
   methods: {},
 };
 </script>

@@ -1,17 +1,35 @@
 <template>
-  <div class="my-4 mx-6 p-4 rounded-sm z-50" :class="bg_class" >
-    <p>{{this.message}}</p>
+  <div
+    class="my-4 mx-6 p-4 rounded-sm pointer-events-auto"
+    :class="bg_class"
+    @mouseenter="enableLock"
+    @mouseleave="removeLock"
+  >
+    <p>{{ message }}</p>
   </div>
 </template>
 
 <script>
 export default {
   name: "Notification",
-  props: ['message', 'uuid', 'type', 'disappear'],
-  mounted () {
-    if(this.disappear) {
-      console.log(`Setting ${this.uuid} to disappear in ${this.disappear} ms`);
-      setTimeout(() => this.$store.dispatch('removeNotification', this.uuid), this.disappear);
+  components: {},
+  
+  props: {
+    message: {
+      type: String,
+      required: true
+    },
+    uuid: {
+      type: String,
+      required: true,
+    },
+    type: {
+      type: String,
+      default: () => {'success'}
+    },
+    disappear: {
+      type: Number,
+      default: undefined
     }
   },
   computed: {
@@ -31,7 +49,32 @@ export default {
       return classes;
     }
   },
-  methods: {},
-  components: {},
+  mounted () {
+    if(this.disappear) {
+      this.scheduleSelfDestroy();
+    }
+  },
+  methods: {
+    // This is called on mouse-enter, and serves to stop the remove notification functionality
+    // from being able to remove the notification. (Lock = true state notifs aren't allowed to be removed)
+    enableLock() {
+      if(this.disappear) {
+        this.$store.dispatch("lockNotification", this.uuid);
+      }
+    },
+    // This is called on mouse-leave of the notification.
+    removeLock() {
+      if(this.disappear) {
+        this.$store.dispatch("unlockNotification", this.uuid);
+        this.scheduleSelfDestroy();
+      } else {
+        this.$store.dispatch("removeNotification", this.uuid);
+      }
+    },
+    scheduleSelfDestroy() {
+      console.log(`Setting Notification:'${this.uuid}' to disappear in ${this.disappear} ms`);
+      setTimeout(() => this.$store.dispatch('removeNotification', this.uuid), this.disappear);
+    }
+  },
 };
 </script>

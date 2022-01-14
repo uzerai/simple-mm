@@ -17,17 +17,35 @@ export default createStore({
     addNotification(state, notification) {
       state.global_notifications.push({
         uuid: new_uuid(),
+        lock: false,
         ...notification
       });
     },
     removeNotification(state, notification_uuid) {
       console.warn("Removing notification:", notification_uuid);
-      const notification = state.global_notifications.find(notif => notif.uuid === notification_uuid);
+      const notification = state.global_notifications.find(notif => notif.uuid === notification_uuid && notif.lock !== true);
 
       if(notification) {
         state.global_notifications.splice(state.global_notifications.indexOf(notification), 1);
       }
+    },
+    lockNotification(state, notification_uuid) {
+      console.info("Locking notification:", notification_uuid);
+      const notification = state.global_notifications.find(notif => notif.uuid === notification_uuid)
 
+      if(notification) {
+        // Set the lock of notification to true
+        state.global_notifications[state.global_notifications.indexOf(notification)].lock = true;
+      }
+    },
+    unlockNotification(state, notification_uuid) {
+      console.info("Unlocking notification:", notification_uuid);
+      const notification = state.global_notifications.find(notif => notif.uuid === notification_uuid)
+
+      if(notification) {
+        // Set the lock of notification to false
+        state.global_notifications[state.global_notifications.indexOf(notification)].lock = false;
+      }
     }
   },
   getters: {
@@ -83,6 +101,7 @@ export default createStore({
     showError({ commit }, error) {
       // Prepend an instance ID so we can close the error.
       error['type'] = 'error';
+      error['disappear'] = 5000;
       commit("addNotification", error);
     },
     showSuccess({ commit }, message) {
@@ -94,6 +113,12 @@ export default createStore({
     },
     removeNotification({ commit }, notification_uuid) {
       commit("removeNotification", notification_uuid);
+    },
+    lockNotification({ commit }, notification_uuid) {
+      commit("lockNotification", notification_uuid);
+    },
+    unlockNotification({ commit }, notification_uuid) {
+      commit("unlockNotification", notification_uuid);
     }
   },
 });

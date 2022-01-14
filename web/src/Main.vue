@@ -5,9 +5,16 @@
   <div id="main">
     <div
       id="content-background"
-      class="fixed -z-50 w-screen h-screen bg-gray-50 dark:bg-zinc-900"
-    >
-      <transition-group class="absolute bottom-0 right-0" name="notifications" tag="div">
+      class="fixed -z-10 w-screen h-screen bg-gray-50 dark:bg-zinc-900"
+    />
+    <MainBar :routes="routes" />
+    <div id="main-content relative">
+      <router-view />
+      <transition-group
+        class="absolute w-full lg:w-fit lg:top-auto sm:flex flex-col justify-center lg:inline-block lg:bottom-0 lg:right-0 overflow-hidden pointer-events-none"
+        name="notifications"
+        tag="div"
+      >
         <Notification
           v-for="notif in notifications"
           :key="notif.uuid"
@@ -17,10 +24,6 @@
           :disappear="notif.disappear"
         />
       </transition-group>
-    </div>
-    <MainBar v-bind:routes="routes" />
-    <div id="main-content">
-      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -32,6 +35,10 @@ import Notification from "./components/common/Notification";
 
 export default {
   name: "Main",
+  components: {
+    MainBar,
+    Notification
+  },
   props: {},
   data() {
     return {
@@ -40,27 +47,28 @@ export default {
     };
   },
   methods: {},
-  components: {
-    MainBar,
-    Notification
-  },
 };
 </script>
 
 <style scoped>
-.notifications-item {
-  display: inline-block;
-  margin-right: 10px;
-}
+  .notifications-enter-active,
+  .notifications-leave-active {
+    transition: all 0.4s ease;
+  }
 
-.notifications-enter-active,
-.notifications-leave-active {
-  transition: all 0.4s ease;
-}
-.notifications-enter-from,
-.notifications-leave-to {
-  opacity: 0;
-  transform: translateY(30px);
-}
-
+  @media(max-width: 1023px) {  
+    .notifications-enter-from,
+    .notifications-leave-to {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .notifications-enter-from,
+    .notifications-leave-to {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+  }
 </style>

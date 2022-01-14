@@ -4,7 +4,10 @@
       id="absolute-centered"
       class="w-full h-full flex items-center justify-center"
     >
-      <div id="pointer-events-reenabled" class="pointer-events-auto">
+      <div
+        id="pointer-events-reenabled"
+        class="pointer-events-auto"
+      >
         <h1 class="text-2xl text-gray-700 dark:text-slate-200 italic font-bold">
           Home
         </h1>
@@ -16,8 +19,8 @@
 <script>
 export default {
   name: "Home",
-  props: {},
   components: {},
+  props: {},
   methods: {},
 };
 </script>
