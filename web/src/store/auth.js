@@ -61,7 +61,7 @@ export default {
       console.info("Login ...");
       const request = dispatch(
         "post",
-        { path: "/login", body: { email, password, remember_me } },
+        { path: "/login", body: { email, password, remember_me }},
         { root: true }
       );
 
@@ -72,6 +72,7 @@ export default {
         console.dir(body.errors);
       } else {
         dispatch("setAuth", extractUserdata(body));
+        dispatch("showSuccess", "Signed in successfully.", { root: true })
 
         if (remember_me) dispatch("rememberAuth", body.results.token);
       }
@@ -104,13 +105,15 @@ export default {
             password,
             password_confirm,
             remember_me,
-          },
+          }
         },
         { root: true }
       );
       const body = await request;
       if (body) {
         await commit("setAuth", extractUserdata(body));
+
+        dispatch("showSuccess", "Welcome to Simple-MM!", { root: true })
       }
     },
     logout({ commit }) {

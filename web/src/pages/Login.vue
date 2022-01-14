@@ -94,11 +94,13 @@ export default {
       await this.$store.dispatch("auth/login", this.$data);
 
       if (
-        this.$store.getters["auth/isAuthenticated"] &&
-        this.$route.query?.redirect
+        this.$route.query?.redirect &&
+        this.$store.getters["auth/isAuthenticated"]
       ) {
         console.info("User is authenticated; redirecting ...");
         this.$router.push(this.$route.query.redirect);
+      } else if(this.$store.getters["auth/isAuthenticated"]) {
+        this.$router.push("/")
       }
     },
   },
