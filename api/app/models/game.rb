@@ -11,4 +11,8 @@
 class Game < ApplicationRecord
 	has_many :game_types
 	has_many :players
+
+	def player_count
+		players.count
+	end
 end
