@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class GamesController < BaseController
 
 	def index
-		@results = Game.all.as_json
+		@results = Game.all.as_json(methods: :player_count)
 		render_response
 	end
 

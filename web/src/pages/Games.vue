@@ -1,5 +1,10 @@
 <template>
-  <GameGrid />
+  <div class="flex flex-col my-5">
+    <h1 class="text-6xl font-bold text-white ml-6">
+      Games
+    </h1>
+    <GameGrid />
+  </div>
 </template>
 
 <script>

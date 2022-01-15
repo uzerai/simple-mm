@@ -1,10 +1,25 @@
-class CreateGames < ActiveRecord::Migration[6.1]
+# frozen_string_literal: true
+
+class CreateGames < ActiveRecord::Migration[7.0]
   def change
-    create_table :games, id: :uuid, default: 'gen_random_uuid()' do |t|
-      t.string :name
-      t.string :image_url
+    create_table :games do |t|
+      t.string :name, null: false
+      t.string :slug, null: false
+
+      # Physical games come way later, but we'll need
+      # an indicator anyhow; might as well be on the game.
+      t.boolean :physical, default: false
+
+      t.string :image_url, default: "/assets/default_game.jpg"
 
       t.timestamps
     end
+
+    create_table :games_tags, id: false do |t|
+      t.belongs_to :game
+      t.belongs_to :tag
+    end
+
+    add_index :games, :slug, unique: true
   end
 end

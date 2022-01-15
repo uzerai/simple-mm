@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ConfirmationsController < Devise::ConfirmationsController
   # Class exists almost entirely to customize devise functionality.
 

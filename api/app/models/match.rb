@@ -1,32 +1,34 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: matches
 #
 #  id            :uuid             not null, primary key
-#  ended_at      :date
 #  started_at    :date
+#  ended_at      :date
 #  state         :string
+#  match_type_id :uuid             not null
+#  league_id     :integer          not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  match_type_id :uuid             not null
 #
 # Indexes
 #
+#  index_matches_on_league_id      (league_id)
 #  index_matches_on_match_type_id  (match_type_id)
 #
+
 class Match < ApplicationRecord
   include AASM
-
-  TEAMS_PER_MATCH = 2
 
   logger = Rails.logger
   
   has_many :match_teams, dependent: :destroy
   has_many :match_players, through: :match_teams
   has_many :players, through: :match_players
+
   belongs_to :match_type, required: true
+  belongs_to :league, required: true
 
   aasm column: :state do
     # queued - for when the match has been created and is available to be found and the match contains no match teams
@@ -68,7 +70,7 @@ class Match < ApplicationRecord
   def create_match_teams!
     match_teams = []
 
-    Match::TEAMS_PER_MATCH.times { 
+    match_type.team_count.times { 
       team = MatchTeam.create(match: self, avg_rating: 0)
       match_teams.push(team)
     }

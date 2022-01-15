@@ -48,7 +48,7 @@ export default {
       // auth is about to expire.
       if (!state.user) return false;
 
-      // Super straight-forward date comparison; return true expire is in less than 15min
+      // Super straight-forward date comparison; return true if expire in less than 15min
       const expire = Date.parse(state.user.expire);
       const now = Date.now();
       const diff_in_minutes = (expire - now) / (1000 * 60);

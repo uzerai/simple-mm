@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateMatchPlayers < ActiveRecord::Migration[6.1]
+class CreateMatchPlayers < ActiveRecord::Migration[7.0]
   def change
     create_table :match_players, id: :uuid, default: 'gen_random_uuid()' do |t|
       t.integer :start_rating

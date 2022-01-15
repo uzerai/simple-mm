@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -8,7 +10,6 @@
 #  confirmed_at           :datetime
 #  email                  :string           not null
 #  encrypted_password     :string           default(""), not null
-#  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
 #  unconfirmed_email      :string

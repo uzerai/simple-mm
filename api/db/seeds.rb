@@ -6,45 +6,56 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-game = Game.create(name: "GAMENAME")
-MatchType.create(name: "1v1 - SOLO", team_size: 1, team_count: 2, game: game)
-match_type = MatchType.create(name: "5v5 - TEAM", team_size: 5, team_count: 2, game: game)
-MatchType.create(name: "1v1v1 - FFA", team_size: 1, team_count: 3, game: game)
+game = Game.create!(name: "GAMENAME")
 
-10.times do |id|
+match_type_1v1 = MatchType.create!(name: "1v1 - SOLO", team_size: 1, team_count: 2, game: game)
+match_type_5v5 = MatchType.create!(name: "5v5 - TEAM", team_size: 5, team_count: 2, game: game)
+match_type_1v1v1 = MatchType.create!(name: "1v1v1 - FFA", team_size: 1, team_count: 3, game: game)
+
+league_unrated = League.create!(name: "PUBLIC LEAGUE", game: game, public: true, rated: false, official: true)
+league_rated = League.create!(name: "RATED PUBLIC LEAGUE", game: game, match_type: match_type_5v5, public: true, official: true)
+
+20.times do |id|
   username = "user_#{id + 1}"
-  user = User.create(username: username, email: "#{username}@email.com", password: "password", confirmed_at: Time.now)
-  Player.create(username: "Player_#{id + 1}", rating: rand(1000..2000), user: user, game: game)
+  user = User.create!(username: username, email: "#{username}@email.com", password: "password", confirmed_at: Time.now)
+  user_player_unrated = Player.create!(username: "Player_#{id + 1} UNRATED", rating: rand(1000..2000), user: user, game: game, league: league_unrated)
+  user_player_rated = Player.create!(username: "Player_#{id + 1} RATED", rating: rand(1000..2000), user: user, game: game, league: league_rated)
 end
 
-20.times do |_number|
-  game_match = Match.create(started_at: Time.zone.now, ended_at: Time.zone.now + 1.hour, state: Match::STATE_COMPLETED, match_type: match_type)
-  team_a = MatchTeam.create(avg_rating: 0, outcome: nil, match: game_match)
-  team_b = MatchTeam.create(avg_rating: 0, outcome: nil, match: game_match)
+100.times do |number|
+  # Half the games rated, half the game not.
+  league = (number > 49) ? league_unrated : league_rated
 
-  players = Player.all.shuffle
+  match_type =  league.match_type || match_type_1v1v1
+  game_match = Match.create!(started_at: Time.zone.now, ended_at: Time.zone.now + 1.hour, state: Match::STATE_COMPLETED, match_type: match_type, league: league)
 
-  players.each do |player|
-    match_player = MatchPlayer.create(player: player, start_rating: player.rating)
+  # Create match teams without any players
+  match_teams = game_match.create_match_teams!
 
-    if team_a.match_players.count <= 4
-      match_player.update(match_team: team_a)
-    else
-      match_player.update(match_team: team_b)
+  # For each match team
+  match_teams.each do |match_team|
+    # Insert team_size amount of players
+    game_match.match_type.team_size.times do 
+      # Pick a random player who isn't in the game already
+      player = game_match.league.players
+        .where.not(id: game_match.reload.players.pluck(:id))
+        .order(Arel.sql('RANDOM()'))
+        .first
+
+      match_player = MatchPlayer.create!(player: player, start_rating: player.rating, match_team: match_team)
     end
+
+    # This should really be done every time before save.
+    match_team.calculate_rating!
   end
-  
-  team_a.calculate_rating!
-  team_b.calculate_rating!
 
   # Simulate match win/loss
-  teams = [team_a, team_b].shuffle
-  winner = teams.first
+  winner = match_teams.shuffle.first
   winner.update(outcome: "W")
-  loser = teams.last
-  loser.update(outcome: "L")
+  losers = match_teams - [winner]
+  MatchTeam.where(id: losers).update_all(outcome: "L")
 
-  teams.each do |team|
+  match_teams.each do |team|
     team.match_players.each(&:calculate_end_rating)
   end
 end

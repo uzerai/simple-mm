@@ -16,13 +16,6 @@ SET row_security = off;
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 
 
---
--- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
-
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -44,12 +37,109 @@ CREATE TABLE public.ar_internal_metadata (
 --
 
 CREATE TABLE public.games (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    name character varying,
-    image_url character varying,
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    slug character varying NOT NULL,
+    physical boolean DEFAULT false,
+    image_url character varying DEFAULT '/assets/default_game.jpg'::character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+
+
+--
+-- Name: games_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.games_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: games_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.games_id_seq OWNED BY public.games.id;
+
+
+--
+-- Name: games_tags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.games_tags (
+    game_id bigint,
+    tag_id bigint
+);
+
+
+--
+-- Name: leagues; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.leagues (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    slug character varying NOT NULL,
+    rated boolean DEFAULT true,
+    public boolean DEFAULT false,
+    game_id bigint NOT NULL,
+    match_type_id uuid,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: leagues_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.leagues_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: leagues_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.leagues_id_seq OWNED BY public.leagues.id;
+
+
+--
+-- Name: leagues_tags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.leagues_tags (
+    id bigint NOT NULL,
+    league_id bigint,
+    tag_id bigint
+);
+
+
+--
+-- Name: leagues_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.leagues_tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: leagues_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.leagues_tags_id_seq OWNED BY public.leagues_tags.id;
 
 
 --
@@ -88,9 +178,10 @@ CREATE TABLE public.match_teams (
 CREATE TABLE public.match_types (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     name character varying NOT NULL,
+    slug character varying NOT NULL,
     team_size integer NOT NULL,
     team_count integer NOT NULL,
-    game_id uuid NOT NULL,
+    game_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -106,6 +197,7 @@ CREATE TABLE public.matches (
     ended_at date,
     state character varying,
     match_type_id uuid NOT NULL,
+    league_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -117,10 +209,11 @@ CREATE TABLE public.matches (
 
 CREATE TABLE public.players (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    username character varying,
+    username character varying NOT NULL,
     rating integer,
     user_id uuid NOT NULL,
-    game_id uuid NOT NULL,
+    game_id bigint NOT NULL,
+    league_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -136,6 +229,37 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: tags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.tags (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -147,7 +271,6 @@ CREATE TABLE public.users (
     validation_dud character varying DEFAULT 'virgin-validation-dud'::character varying NOT NULL,
     reset_password_token character varying,
     reset_password_sent_at timestamp without time zone,
-    remember_created_at timestamp without time zone,
     confirmation_token character varying,
     confirmed_at timestamp without time zone,
     confirmation_sent_at timestamp without time zone,
@@ -155,6 +278,34 @@ CREATE TABLE public.users (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+
+
+--
+-- Name: games id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.games ALTER COLUMN id SET DEFAULT nextval('public.games_id_seq'::regclass);
+
+
+--
+-- Name: leagues id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leagues ALTER COLUMN id SET DEFAULT nextval('public.leagues_id_seq'::regclass);
+
+
+--
+-- Name: leagues_tags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leagues_tags ALTER COLUMN id SET DEFAULT nextval('public.leagues_tags_id_seq'::regclass);
+
+
+--
+-- Name: tags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tags ALTER COLUMN id SET DEFAULT nextval('public.tags_id_seq'::regclass);
 
 
 --
@@ -171,6 +322,22 @@ ALTER TABLE ONLY public.ar_internal_metadata
 
 ALTER TABLE ONLY public.games
     ADD CONSTRAINT games_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: leagues leagues_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leagues
+    ADD CONSTRAINT leagues_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: leagues_tags leagues_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leagues_tags
+    ADD CONSTRAINT leagues_tags_pkey PRIMARY KEY (id);
 
 
 --
@@ -222,11 +389,75 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
+-- Name: tags tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tags
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_games_on_slug; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_games_on_slug ON public.games USING btree (slug);
+
+
+--
+-- Name: index_games_tags_on_game_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_games_tags_on_game_id ON public.games_tags USING btree (game_id);
+
+
+--
+-- Name: index_games_tags_on_tag_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_games_tags_on_tag_id ON public.games_tags USING btree (tag_id);
+
+
+--
+-- Name: index_leagues_on_game_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_leagues_on_game_id ON public.leagues USING btree (game_id);
+
+
+--
+-- Name: index_leagues_on_match_type_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_leagues_on_match_type_id ON public.leagues USING btree (match_type_id);
+
+
+--
+-- Name: index_leagues_on_slug; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_leagues_on_slug ON public.leagues USING btree (slug);
+
+
+--
+-- Name: index_leagues_tags_on_league_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_leagues_tags_on_league_id ON public.leagues_tags USING btree (league_id);
+
+
+--
+-- Name: index_leagues_tags_on_tag_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_leagues_tags_on_tag_id ON public.leagues_tags USING btree (tag_id);
 
 
 --
@@ -258,6 +489,13 @@ CREATE INDEX index_match_types_on_game_id ON public.match_types USING btree (gam
 
 
 --
+-- Name: index_matches_on_league_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_matches_on_league_id ON public.matches USING btree (league_id);
+
+
+--
 -- Name: index_matches_on_match_type_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -269,6 +507,13 @@ CREATE INDEX index_matches_on_match_type_id ON public.matches USING btree (match
 --
 
 CREATE INDEX index_players_on_game_id ON public.players USING btree (game_id);
+
+
+--
+-- Name: index_players_on_league_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_players_on_league_id ON public.players USING btree (league_id);
 
 
 --
@@ -303,9 +548,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210807081946'),
 ('20210807081947'),
 ('20210807081948'),
+('20210807081949'),
 ('20210807140822'),
 ('20210807140823'),
 ('20210807140824'),
-('20210807142311');
+('20210807142311'),
+('20220115114727');
 
 

@@ -21,8 +21,9 @@ api/storage/*
 #  -- create this file with matching ruby version to .tool-versions if you wish to use rbenv
 .ruby-version
 
-
+# For any back-end assets which might be in use when testing
 api/public/assets
+web/src/assets/*Zone.Identifier
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key

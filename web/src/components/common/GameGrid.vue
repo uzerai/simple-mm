@@ -5,8 +5,20 @@
       :key="game"
       class="bg-white"
     >
-      <p>{{ game.name }}</p>
-      <p>{{ game.id }}</p>
+      <div class="relative m-1">
+        <img
+          src="../../assets/default_game.jpg"
+          class="object-scale-down"
+        >
+        <div class="absolute bottom-0 flex flex-col items-center w-full background-image pb-2">
+          <p class="text-white text-xl font-semibold">
+            {{ game.name }}
+          </p>
+          <p class="text-white">
+            {{ game.player_count }} players
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -17,6 +29,7 @@ export default {
   props: {},
   data() {
     return {
+      all_games: [],
       games: []
     }
   },
@@ -24,8 +37,14 @@ export default {
     const request = this.$store.dispatch("get", { path: "/games" })
     const body = await request;
 
-    this.games = body.results;
+    this.all_games, this.games = body.results;
   },
   methods: {},
 };
 </script>
+
+<style scoped>
+.background-image {
+  background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+}
+</style>
