@@ -5,7 +5,10 @@
       :key="game"
       class="bg-white"
     >
-      <div class="relative m-1">
+      <div
+        class="relative m-1"
+        @click="$router.push(`/games/${game.slug}/leagues`)"
+      >
         <img
           src="../../assets/default_game.jpg"
           class="object-scale-down"

@@ -1,6 +1,7 @@
 import PlayerTable from "./components/PlayerTable";
 import Games from "./pages/Games";
 import Home from "./pages/Home";
+import Leagues from "./pages/Leagues";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
@@ -18,6 +19,7 @@ export default [
   },
   { path: "/players", component: PlayerTable, displayName: "Players" },
   { path: "/games", component: Games, displayName: "Games" },
+  { path: "/games/:slug/leagues", component: Leagues, props: true },
   {
     path: "/login",
     component: Login,

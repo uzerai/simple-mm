@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module HasSlug 
   extend ActiveSupport::Concern
   include ActiveModel::Callbacks
