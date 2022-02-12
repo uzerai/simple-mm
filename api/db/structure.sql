@@ -86,6 +86,7 @@ CREATE TABLE public.leagues (
     slug character varying NOT NULL,
     rated boolean DEFAULT true,
     public boolean DEFAULT false,
+    official boolean DEFAULT false,
     game_id bigint NOT NULL,
     match_type_id uuid,
     created_at timestamp(6) without time zone NOT NULL,
@@ -440,10 +441,10 @@ CREATE INDEX index_leagues_on_match_type_id ON public.leagues USING btree (match
 
 
 --
--- Name: index_leagues_on_slug; Type: INDEX; Schema: public; Owner: -
+-- Name: index_leagues_on_slug_and_game_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_leagues_on_slug ON public.leagues USING btree (slug);
+CREATE UNIQUE INDEX index_leagues_on_slug_and_game_id ON public.leagues USING btree (slug, game_id);
 
 
 --

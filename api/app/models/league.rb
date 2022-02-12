@@ -8,6 +8,7 @@
 #  slug          :string           not null
 #  rated         :boolean          default("true")
 #  public        :boolean          default("false")
+#  official      :boolean          default("false")
 #  game_id       :integer          not null
 #  match_type_id :uuid
 #  created_at    :datetime         not null
@@ -15,13 +16,17 @@
 #
 # Indexes
 #
-#  index_leagues_on_game_id        (game_id)
-#  index_leagues_on_match_type_id  (match_type_id)
-#  index_leagues_on_slug           (slug) UNIQUE
+#  index_leagues_on_game_id           (game_id)
+#  index_leagues_on_match_type_id     (match_type_id)
+#  index_leagues_on_slug_and_game_id  (slug,game_id) UNIQUE
 #
 
 class League < ApplicationRecord
-  include HasSlug
+
+  # Switching to a custom sluggable
+  before_validation :set_slug
+
+  validates :slug, uniqueness: { scope: :game_id }, presence: true
 
   has_many :players
   has_many :matches
@@ -36,6 +41,10 @@ class League < ApplicationRecord
   end
 
   private
+
+  def set_slug
+    self.slug = self.send(:sluggable).parameterize
+  end
 
   def sluggable
 		name

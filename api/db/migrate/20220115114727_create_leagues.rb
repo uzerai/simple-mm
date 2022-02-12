@@ -16,7 +16,7 @@ class CreateLeagues < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_index :leagues, :slug, unique: true
+    add_index :leagues, [:slug, :game_id], unique: true
 
     create_table :leagues_tags do |t|
       t.belongs_to :league
