@@ -31,6 +31,10 @@ class League < ApplicationRecord
 
   validates :name, :game,  presence: true
 
+  def player_count
+    players.select(:user_id).map(&:user_id).uniq.count
+  end
+
   private
 
   def sluggable

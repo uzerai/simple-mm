@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   
   resources :players
   get "/games", to: 'games#index', as: 'all-games'
-  get "/games/:game_slug/leagues", to: 'games#game_leagues', as: 'game-leagues'
+  get "/games/:game_slug/leagues", to: 'leagues#game_leagues', as: 'game-leagues'
 
   devise_for :users, only: [:confirmation, :recovery], skip_helpers: [:sessions], controllers: { confirmations: 'confirmations' }
   
