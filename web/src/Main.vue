@@ -1,6 +1,4 @@
-<!-- 
-  Super simple main component for handling routing throughout the application.
--->
+<!-- Super simple main component for handling routing throughout the application. -->
 <template>
   <div id="main">
     <div
@@ -9,7 +7,17 @@
     />
     <MainBar :routes="routes" />
     <div id="main-content relative">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition
+          name="fade"
+          mode="out-in"
+          appear
+        >
+          <component :is="Component" />
+        </transition>
+      </router-view>
+
+      <!-- This transition group makes the notifications absolute too. -->
       <transition-group
         class="absolute w-full lg:w-fit lg:top-auto sm:flex flex-col justify-center lg:inline-block lg:bottom-0 lg:right-0 overflow-hidden pointer-events-none"
         name="notifications"
@@ -50,7 +58,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
   .notifications-enter-active,
   .notifications-leave-active {
     transition: all 0.4s ease;
@@ -70,5 +78,17 @@ export default {
       opacity: 0;
       transform: translateY(30px);
     }
+  }
+  
+  .fade-enter-active {
+    transition: all .2s ease;
+  }
+
+  .fade-leave-active {
+    transition: all .180s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
   }
 </style>

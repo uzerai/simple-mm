@@ -1,25 +1,27 @@
 <template>
-  <div class="grid w-full grid-cols-3 lg:grid-cols-6 p-6 gap-6">
-    <div
-      v-for="game in games"
-      :key="game"
-      class="bg-white"
-    >
-      <div
-        class="relative m-1"
-        @click="$router.push(`/games/${game.slug}/leagues`)"
-      >
-        <img
-          src="../../assets/default_game.jpg"
-          class="object-scale-down"
+  <div class="flex my-5">
+    <div class="w-full  bg-slate-300 shadow-inner shadow-stone-900">
+      <div class="grid w-8/12 lg:grid-cols-6 my-6 mx-auto gap-6">
+        <div
+          v-for="game in games"
+          :key="game"
+          class="bg-stone-100 shadow-md shadow-stone-900 cursor-pointer"
+          @click="$router.push(`/games/${game.slug}/leagues`)"
         >
-        <div class="absolute bottom-0 flex flex-col items-center w-full background-image pb-2">
-          <p class="text-white text-xl font-semibold">
-            {{ game.name }}
-          </p>
-          <p class="text-white">
-            {{ game.player_count }} players
-          </p>
+          <div class="relative m-2">
+            <img
+              src="../../assets/default_game.jpg"
+              class="object-scale-down"
+            >
+            <div class="absolute bottom-0 flex flex-col items-center w-full background-image pb-2">
+              <p class="text-white text-xl font-semibold">
+                {{ game.name }}
+              </p>
+              <p class="text-white">
+                {{ game.player_count }} players
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
