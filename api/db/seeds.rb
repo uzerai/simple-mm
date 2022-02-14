@@ -86,7 +86,7 @@ electronic_games.each do |game_array|
     user_player_rated = Player.create!(username: "Player_#{index + 1} RATED", rating: rand(1000..2000), user: user, game: game, league: league_rated)
   end
 
-  2.times do |number|
+  50.times do |number|
     # Half the games rated, half the game not.
     league = (number > 49) ? league_unrated : league_rated
   
@@ -115,9 +115,9 @@ electronic_games.each do |game_array|
   
     # Simulate match win/loss
     winner = match_teams.shuffle.first
-    winner.update(outcome: "W")
+    winner.update(outcome: :win)
     losers = match_teams - [winner]
-    MatchTeam.where(id: losers).update_all(outcome: "L")
+    MatchTeam.where(id: losers).update_all(outcome: :loss)
   
     match_teams.each do |team|
       team.match_players.each(&:calculate_end_rating)

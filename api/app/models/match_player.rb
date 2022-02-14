@@ -24,12 +24,22 @@ class MatchPlayer < ApplicationRecord
   has_one :match, through: :match_team
 
   def calculate_end_rating
-    enemy_team = match.match_teams.where.not(id: match_team.id).first
-    delta_rating = (((enemy_team.avg_rating - start_rating).abs / match_team.avg_rating.to_f) * 50).floor
-    if match_team.outcome == "W"
+    enemy_teams = match.match_teams.where.not(id: match_team.id)
+
+    # If you had no enemy teams, gain no elo.
+    return start_rating unless enemy_teams.count > 0 ;
+
+    enemy_teams_rating_avg = enemy_teams.pluck(:avg_rating).map(&:to_f).sum / enemy_teams.count
+
+    delta_rating = (((enemy_teams_rating_avg - start_rating).abs / match_team.avg_rating.to_f) * 50).floor
+
+    case match_team.outcome
+    when :win
       end_rating = start_rating + delta_rating
-    else
+    when :loss
       end_rating = start_rating - delta_rating
+    else
+      return start_rating;
     end
 
     update!(end_rating: end_rating)
