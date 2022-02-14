@@ -164,7 +164,7 @@ CREATE TABLE public.match_players (
 
 CREATE TABLE public.match_teams (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    outcome character varying,
+    outcome integer,
     avg_rating integer NOT NULL,
     match_id uuid,
     created_at timestamp(6) without time zone NOT NULL,

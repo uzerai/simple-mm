@@ -3,7 +3,7 @@
 class CreateMatchTeams < ActiveRecord::Migration[7.0]
   def change
     create_table :match_teams, id: :uuid, default: 'gen_random_uuid()' do |t|
-      t.string :outcome, null: true
+      t.integer :outcome, null: true
       t.integer :avg_rating, null: false
 
       t.references :match, type: :uuid
