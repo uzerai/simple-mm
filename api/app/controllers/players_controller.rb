@@ -2,7 +2,7 @@
 
 class PlayersController < BaseController
   def index
-    @results = Player.all.as_json(include: :matches)
+    @results = Player.all.order(rating: :desc).as_json
     render_response
   end
 
