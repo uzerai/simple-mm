@@ -3,7 +3,7 @@
   <div id="main">
     <div
       id="content-background"
-      class="fixed -z-10 w-screen h-screen bg-gray-50 dark:bg-zinc-900"
+      class="fixed -z-10 w-screen h-screen bg-zinc-50 dark:bg-darkt-800"
     />
     <MainBar :routes="routes" />
     <div id="main-content relative">
@@ -40,6 +40,7 @@
 import routes from "./routes";
 import MainBar from "./components/common/MainBar";
 import Notification from "./components/common/Notification";
+import { mapGetters } from "vuex";
 
 export default {
   name: "Main",
@@ -50,9 +51,13 @@ export default {
   props: {},
   data() {
     return {
-      notifications: this.$store.getters["notifications"],
       routes: routes.filter((route) => route.displayName),
     };
+  },
+  computed: {
+    ...mapGetters([
+      "notifications"
+    ])
   },
   methods: {},
 };

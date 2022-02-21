@@ -22,8 +22,7 @@ export default {
       state.user = user;
       state.token = token;
       state.permissions = permissions;
-    },
-    rememberAuth(state, token) {
+      // Set in local storage so that we can persist it through refresh.
       console.info("Remembering auth ...");
       window.localStorage.setItem("authToken", token);
     },
@@ -32,21 +31,28 @@ export default {
       state.user = undefined;
       state.token = undefined;
       state.permissions = [];
+      window.localStorage.removeItem("authToken");
     },
   },
   getters: {
     token(state) {
-      // current auth token can be either state or remembered authToken
-      if (!state.token) return localStorage.getItem("authToken");
+      // current auth token can be either state or authToken
+      if (!state.token) { 
+        return localStorage.getItem("authToken");
+      }
       return state.token;
     },
-    isAuthenticated(state) {
-      return !!state.token;
+    isAuthenticated(state, getters) {
+      if(!getters.user){
+        console.warn("User is not authenticated ...");
+      }
+
+      return !!getters.user;
     },
-    authAboutToExpire(state) {
+    authAboutToExpire(state, getters) {
       // For use in dispatch("loadAuth") to only load if the
       // auth is about to expire.
-      if (!state.user) return false;
+      if (!getters.user) return false;
 
       // Super straight-forward date comparison; return true if expire in less than 15min
       const expire = Date.parse(state.user.expire);
@@ -55,13 +61,16 @@ export default {
 
       return diff_in_minutes < 15;
     },
+    user(state) {
+      return state.user;
+    }
   },
   actions: {
     async login({ dispatch }, { email, password, remember_me }) {
       console.info("Login ...");
       const request = dispatch(
         "post",
-        { path: "/login", body: { email, password, remember_me }},
+        { path: "/login", body: { email, password, remember_me }, notifyOnError: true },
         { root: true }
       );
 
@@ -72,9 +81,8 @@ export default {
         console.dir(body.errors);
       } else {
         dispatch("setAuth", extractUserdata(body));
+        // Show a success notification to tell the user they are logged in.
         dispatch("showSuccess", "Signed in successfully.", { root: true })
-
-        if (remember_me) dispatch("rememberAuth", body.results.token);
       }
     },
     async autologin({ commit, dispatch }) {
@@ -84,7 +92,7 @@ export default {
       const request = dispatch("get", { path: "/autologin" }, { root: true });
       const body = await request;
 
-      if (body) {
+      if (body.results?.token) {
         await commit("setAuth", extractUserdata(body));
       } else {
         await commit("clearAuth");
@@ -111,26 +119,22 @@ export default {
       const body = await request;
       if (body) {
         await commit("setAuth", extractUserdata(body));
-
+        // Show a notification to confirm they signed up and are now signed in.
         dispatch("showSuccess", "Welcome to Simple-MM!", { root: true })
       }
     },
     logout({ commit }) {
       console.info("Logging out ...");
       commit("clearAuth");
-      window.localStorage.removeItem("authToken");
     },
     setAuth({ commit }, { user, token, permissions }) {
       commit("setAuth", { user, token, permissions });
-    },
-    rememberAuth({ commit }, token) {
-      commit("rememberAuth", token);
     },
     async loadAuth({ dispatch, getters }) {
       // When attempting to load auth, the user can either have
       // a set token in local storage; or an active access token in
       // store (and this token can be close to expiry)
-      const remembered_token = window.localStorage.getItem("authToken");
+      const remembered_token = getters['token'];
       const is_authenticated = getters["isAuthenticated"];
       const about_to_expire = getters["authAboutToExpire"];
 

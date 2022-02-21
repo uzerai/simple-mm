@@ -2,7 +2,7 @@
 
 class UsersController < BaseController
   before_action :configure_permitted_parameters, if: :devise_controller? # For devise config override
-	before_action :authorized, only: [:auto_login]
+	before_action :ensure_authorized, only: [:auto_login]
 
   def create
    @user = User.new(username: params[:username], email: params[:email], password: params[:password], password_confirmation: params[:password_confirm])

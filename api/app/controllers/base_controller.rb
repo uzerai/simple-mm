@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 class BaseController < ActionController::API
+  include Auth
+
   # This class contains sections of code intended to serve utility in _all_ functions of the application.
 
   # --- Before action section:
 
   # Ensures content type received is of supported types.
   before_action :ensure_content_type
-  before_action :authorized
+  before_action :ensure_authorized
 
   # The basic logger in al™l controllers
   attr_accessor :logger, :user, :current_user_token, :errors, :results
@@ -25,69 +27,6 @@ class BaseController < ActionController::API
     unless request.headers['Content-Type'] == 'application/json'
       add_error(415, "Content-Type 'application/json' required.")
       render_response
-    end
-  end
-
-  def auth_header
-    request.headers['Authorization']
-  end
-
-  def encode_token(payload)
-    JWT.encode(payload, ENV.fetch('JWT_SIGN_SECRET') { 'defaultsecret' })
-  end
-
-  def decoded_token
-    if auth_header
-      # The header should have format 'Bearer <JWT>'
-      token = auth_header.split(' ')[1]
-
-      begin
-        # TODO: Remove ENV.fetch: replace with more elegant fetch of secret.
-        @current_user_token ||= begin
-          token_hash = JWT.decode(token, ENV.fetch('JWT_SIGN_SECRET') { 'defaultsecret' }, true, algorithm: 'HS256').first
-          # Validate not-expired token
-          expire_time = Time.zone.parse token_hash.fetch('expire')
-          if expire_time > Time.zone.now
-            return token_hash
-          end
-
-          # Fallback to nil return (deny-first)
-          nil
-        end
-      rescue JWT::DecodeError
-        logger.warn("Decode Error: Could not decode token.")
-        nil
-      end
-    end
-  end
-
-  def current_user
-    @user ||= if decoded_token
-      user_id = decoded_token['id']
-      user = User.find_by(id: user_id)
-
-      if user.nil? 
-        # This should ideally never happen (but did happen during testing, deleted without invalidating)
-        @logger.warn("Valid token with missing User:#{user_id}.")
-        @logger.warn("This could signify someone signing tokens with the same secret --\n or the user has been deleted and a token was still active.")
-        
-        return nil
-      end
-
-      user
-    else 
-      nil
-    end
-  end
-
-  def logged_in?
-    !!current_user
-  end
-
-  def authorized
-    unless logged_in?
-      add_error(401, 'Please log in.')
-      render_response(:unauthorized)
     end
   end
 
