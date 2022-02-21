@@ -1,5 +1,5 @@
 class MatchmakingChannel < ApplicationCable::Channel
   def subscribed
-    stream_for player
+    stream_for user
   end
 end

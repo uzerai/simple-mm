@@ -1,19 +1,21 @@
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
-    identified_by :player
+    include Auth
+
+    identified_by :user
  
     def connect
-      self.player = find_verified_player
+      unless logged_in?
+        reject_unauthorized_connection
+      end
+
+      self.user = current_user
     end
  
     private
 
-    def find_verified_player
-      if player = Player.find_by(id: cookies['player_id'])
-        player
-      else
-        reject_unauthorized_connection
-      end
+    def auth_param
+      request.params[:token]
     end
   end
 end

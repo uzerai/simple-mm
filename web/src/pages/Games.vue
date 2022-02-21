@@ -1,11 +1,7 @@
 <template>
   <div class="flex flex-col my-5">
-    <h2 class="w-8/12 text-6xl font-bold text-white mx-auto stroke">
+    <h2 class="w-8/12 text-6xl font-bold text-white mx-auto stroke my-4">
       Games
-    </h2>
-    <GameGrid />
-    <h2 class="w-8/12 text-6xl font-bold text-white mx-auto">
-      Recently played
     </h2>
     <GameGrid />
   </div>

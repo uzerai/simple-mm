@@ -1,3 +1,4 @@
 #!/bin/bash
 
-psql -h localhost -p 5432 -U violet -d test_db
+docker exec -t -i simple-mm_simple-mm_1 bin/rails db
+# psql -h localhost -p 5432 -U violet -d test_db

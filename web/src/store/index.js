@@ -1,6 +1,7 @@
 import { v4 as new_uuid } from 'uuid';
 import { createStore } from "vuex";
 import auth from "./auth";
+import websockets from './websockets';
 
 // Global store for all globally-required information.
 export default createStore({
@@ -10,6 +11,7 @@ export default createStore({
   }),
   modules: {
     auth,
+    websockets,
   },
   mutations: {
     // The default method for adding a notification to be 
@@ -57,7 +59,7 @@ export default createStore({
     },
   },
   actions: {
-    async post({ state, dispatch, getters }, { path, body }) {
+    async post({ state, dispatch, getters }, { path, body, notifyOnError }) {
       return fetch(`${state.api_host}${path}`, {
         method: "POST",
         headers: {
@@ -70,14 +72,14 @@ export default createStore({
         .then((data) => {
           const { errors } = data;
 
-          if (errors) {
+          if (errors && notifyOnError) {
             errors.forEach((error) => dispatch("showError", error));
           }
 
           return data;
         });
     },
-    async get({ state, dispatch, getters }, { path, query }) {
+    async get({ state, dispatch, getters }, { path, query, notifyOnError }) {
       const queryString = query ? `?${new URLSearchParams(query)}` : "";
 
       return fetch(`${state.api_host}${path}${queryString}`, {
@@ -91,7 +93,7 @@ export default createStore({
         .then((data) => {
           const { errors } = data;
 
-          if (errors) {
+          if (errors && notifyOnError) {
             errors.forEach((error) => dispatch("showError", error));
           }
 
