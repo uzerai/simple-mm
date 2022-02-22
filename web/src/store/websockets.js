@@ -1,31 +1,38 @@
 
 import { createConsumer } from "@rails/actioncable";
+import { readEvent } from "../events/events_channel_handler";
 
 export default {
   namespaced: true,
   state() {
     return {
       consumer: undefined,
-      channels: []
+      subscriptions: {}
     }
   },
   mutations: {
     setConsumer(state, { consumer }) {
       state.consumer = consumer;
     },
-    createSubscription(state, { channel, room }) {
-      if(!state.channels.includes(channel)) {
-        console.info(`Creating ws subscription to ${channel} ...`);
-        state.consumer?.subscriptions.create({
+    createSubscription(state, { channel, room, onReceived }) {
+      // Ensure we don't resubscribe.
+      if(!Object.keys(state.subscriptions).includes(channel)) {
+        console.info(`Creating websocket subscription to ${channel} ...`);
+        const subscription = state.consumer?.subscriptions.create({
           channel,
           room
         }, {
           received(data) {
-            console.warn("Incoming websocket data:");
-            console.dir(data);
+            console.log(`Incoming websocket data from: ${channel}`);
+            
+            if(onReceived) {
+              onReceived(data);
+            }
           }
         });
-        state.channels.push(channel);
+
+        // Don't allow re-subscribing to a single channel multiple times.
+        state.subscriptions[channel] = subscription
       }
     }
   },
@@ -33,26 +40,42 @@ export default {
     consumer(state) {
       // Return already existing consumer.
       return state.consumer;
+    },
+    subscriptions(state) {
+      return state.subscriptions;
     }
   },
   actions: {
-    async load({ commit, dispatch, rootGetters }){
-      console.log("Loading websockets consumer ...");
-      if (rootGetters['auth/isAuthenticated']){
-        // Create a new consumer when the auth/token is present but no consumer is in store.
+    // Main functionality called during `main.js` which initializes a consumer and some standard
+    // channels which are useful the entire application
+    async loadWebsockets({ commit, dispatch, getters, rootGetters }){
+      // Create a new consumer when the auth/token is present but no consumer is in store.
+      if (rootGetters['auth/isAuthenticated'] && !getters['consumer']){
+        console.log("Loading websockets consumer ...");
+
         commit("setConsumer", { consumer: createConsumer(`${rootGetters['api_host']}/cable?token=${rootGetters['auth/token']}`) })
-        console.info("Connected consumer ...");
-      } else {
-        // Cannot create a new consumer, don't even attempt.
-        console.warn(`Could not connect consumer ...`);
+        
+        // Initializes the main notifications channel for the application; allows 
+        // server to broadcast notifications to each user.
+        dispatch("createSubscription", { channel: "EventsChannel", onReceived: (data) => {
+          // Imported from src/events/event_channel_handler.js
+          readEvent({ commit, dispatch, getters, rootGetters }, data);
+        }})
       }
-      
-      console.log("Loading websocket Notifications subscription.");
-      dispatch("createSubscription", { channel: "NotificationsChannel", room: rootGetters['auth/token'] })
     },
-    createSubscription({ commit, getters }, { channel, room }) {
-      if(getters['consumer']) 
-        commit("createSubscription", { channel, room });
+    async disconnect({getters}) {
+      if(getters['consumer']) {
+        console.info("Disconnecting websockets consumer ...");
+        getters['consumer'].disconnect();
+      }
+    },
+    createSubscription({ commit, getters }, { channel, room, onReceived }) {
+      if(getters['consumer']) {
+        commit("createSubscription", { channel, room, onReceived });
+      } else {
+        // Should ideally never happen, but in the scenario it does ...
+        console.warn("Failed to create subscription, :consumer missing ...");
+      }
     }
   }
 };

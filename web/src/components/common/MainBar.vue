@@ -57,7 +57,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isAuthenticated: 'auth/isAuthenticated'
+      isAuthenticated: 'auth/isAuthenticated',
+      user: 'auth/user'
     })
   },
   methods: {

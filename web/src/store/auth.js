@@ -22,8 +22,8 @@ export default {
       state.user = user;
       state.token = token;
       state.permissions = permissions;
+
       // Set in local storage so that we can persist it through refresh.
-      console.info("Remembering auth ...");
       window.localStorage.setItem("authToken", token);
     },
     clearAuth(state) {
@@ -40,6 +40,7 @@ export default {
       if (!state.token) { 
         return localStorage.getItem("authToken");
       }
+
       return state.token;
     },
     isAuthenticated(state, getters) {
@@ -49,9 +50,9 @@ export default {
 
       return !!getters.user;
     },
+    // For use in dispatch("loadAuth") to only load if the
+    // auth is about to expire.
     authAboutToExpire(state, getters) {
-      // For use in dispatch("loadAuth") to only load if the
-      // auth is about to expire.
       if (!getters.user) return false;
 
       // Super straight-forward date comparison; return true if expire in less than 15min
@@ -87,6 +88,7 @@ export default {
     },
     async autologin({ commit, dispatch }) {
       console.info("Autologin ...");
+      
       // Fetches this in-sync, as we want the entire sequence of auto-login to be
       // performed during the loadAuth() sequences.
       const request = dispatch("get", { path: "/autologin" }, { root: true });
@@ -95,7 +97,8 @@ export default {
       if (body.results?.token) {
         await commit("setAuth", extractUserdata(body));
       } else {
-        await commit("clearAuth");
+        // Immediately log out if autologin fails.
+        await dispatch('logout')
       }
     },
     async signup(
@@ -123,9 +126,12 @@ export default {
         dispatch("showSuccess", "Welcome to Simple-MM!", { root: true })
       }
     },
-    logout({ commit }) {
+    logout({ commit, dispatch }) {
       console.info("Logging out ...");
       commit("clearAuth");
+
+      // Remove websockets connection when logging out.
+      dispatch("websockets/disconnect", null, { root: true });
     },
     setAuth({ commit }, { user, token, permissions }) {
       commit("setAuth", { user, token, permissions });
