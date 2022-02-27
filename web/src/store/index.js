@@ -73,7 +73,7 @@ export default createStore({
           const { errors } = data;
 
           if (errors && notifyOnError) {
-            errors.forEach((error) => dispatch("showError", error));
+            errors.forEach((error) => dispatch("showError", error.message));
           }
 
           return data;
@@ -94,23 +94,25 @@ export default createStore({
           const { errors } = data;
 
           if (errors && notifyOnError) {
-            errors.forEach((error) => dispatch("showError", error));
+            errors.forEach((error) => dispatch("showError", error.message));
           }
 
           return data;
         });
     },
-    showError({ commit }, error) {
+    showError({ commit }, message) {
       // Prepend an instance ID so we can close the error.
-      error["type"] = "error";
-      error["disappear"] = 5000;
-      commit("addNotification", error);
+      commit("addNotification", {
+        type: "error",
+        message,
+        disappear: 5000
+      });
     },
     showSuccess({ commit }, message) {
       commit("addNotification", {
         type: "success",
         message,
-        disappear: 1300
+        disappear: 2400
       });
     },
     removeNotification({ commit }, notification_uuid) {

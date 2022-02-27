@@ -51,25 +51,10 @@
 export default {
   name: "MatchList",
   props: {
-    game_slug: {
-      type: String,
-      required: true,
-    },
-    league_slug: {
-      type: String,
+    matches: {
+      type: Array,
       required: true
     }
-  },
-  data() {
-    return {
-      matches: []
-    };
-  },
-  async created() {
-    const request = this.$store.dispatch("get", { path: `/games/${this.game_slug}/leagues/${this.league_slug}/matches` });
-    const body = await request;
-
-    this.matches = body.results.matches;
   },
   methods: {},
 };

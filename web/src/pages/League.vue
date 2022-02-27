@@ -31,8 +31,7 @@
       </div>
       <div class="flex-grow">
         <MatchList
-          :game_slug="game.slug"
-          :league_slug="league.slug"
+          :matches="league.matches"
           class="w-full"
         />
       </div>
@@ -50,11 +49,7 @@ export default {
     MatchList,
   },
   props: {
-    game_slug: {
-      type: String,
-      required: true,
-    },
-    league_slug: {
+    league_id: {
       type: String,
       required: true
     }
@@ -66,9 +61,7 @@ export default {
     };
   },
   async created() {
-    const game_slug = this.$route.params.game_slug;
-    const league_slug = this.$route.params.league_slug;
-    const request = this.$store.dispatch("get", { path: `/games/${game_slug}/leagues/${league_slug}` });
+    const request = this.$store.dispatch("get", { path: `/leagues/${this.league_id}` });
     const body = await request;
 
     const { league } = body.results;

@@ -12,7 +12,7 @@
           v-for="league in leagues"
           :key="league.id"
           class="bg-stone-100 shadow-md shadow-stone-900 cursor-pointer"
-          @click="$router.push(`/games/${game.slug}/leagues/${league.slug}`)"
+          @click="$router.push(`/leagues/${league.id}`)"
         >
           <div class="relative m-2">
             <img

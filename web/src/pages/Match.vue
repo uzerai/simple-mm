@@ -6,7 +6,7 @@
     <h1 class="mx-4 my-6">
       <router-link
         class="text-sm  text-slate-200 font-thin hover:underline cursor-pointer"
-        :to="{ name: 'League', params: { game_slug: game.slug , league_slug: league.slug }}"
+        :to="{ name: 'League', params: { league_id: league.id }}"
       >
         {{ game.name }}
       </router-link>
@@ -65,7 +65,6 @@
 export default {
   name: "Match",
   components: {},
-  props: {},
   data() {
     return {
       match: undefined,
@@ -78,7 +77,7 @@ export default {
     const match_id = this.$route.params.match_id;
     const request = this.$store.dispatch("get", { path: `/matches/${match_id}` });
     const body = await request;
-
+    
     this.match = body.results;
     this.league = this.match.league;
     this.game = this.league.game;

@@ -22,7 +22,7 @@ export default [
   { path: "/players", component: PlayerTable },
   { path: "/games", component: Games, displayName: "Games", name: "Games" },
   { path: "/games/:slug/leagues", component: Leagues, props: true, name: "GameLeagues" },
-  { path: "/games/:game_slug/leagues/:league_slug", component: League, props: true, name: "League" },
+  { path: "/leagues/:league_id", component: League, props: true, name: "League" },
   { path: "/match/:match_id", component: Match, props: true, name: "Match" },
   {
     path: "/login",

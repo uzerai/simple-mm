@@ -30,7 +30,7 @@ class LeaguesController < BaseController
 		end
 
 		@results = {
-			league: league.as_json(include: :game)     
+			league: league.as_json(include: [:game, :matches])
 		}
 		render_response
 	end
