@@ -3,7 +3,7 @@
     v-if="match"
     class="flex flex-col w-full"
   >
-    <h1 class="mx-4 my-6">
+    <!-- <h1 class="mx-4 my-6">
       <router-link
         class="text-sm  text-slate-200 font-thin hover:underline cursor-pointer"
         :to="{ name: 'League', params: { league_id: league.id }}"
@@ -16,7 +16,7 @@
       <span class="text-xl text-white font-bold">
         {{ match.id }}
       </span>
-    </h1>
+    </h1> -->
     <div class="flex">
       <div class="flex flex-col text-white flex-grow items-center gap-4">
         <div class="mb-6 text-center">
@@ -65,6 +65,12 @@
 export default {
   name: "Match",
   components: {},
+  props: {
+    match_id: {
+      type: String,
+      required: true,
+    }
+  },
   data() {
     return {
       match: undefined,
@@ -74,14 +80,15 @@ export default {
     };
   },
   async created() {
-    const match_id = this.$route.params.match_id;
-    const request = this.$store.dispatch("get", { path: `/matches/${match_id}` });
+    const request = this.$store.dispatch("get", { path: `/matches/${this.match_id}` });
     const body = await request;
+
+    const { match, league, game, match_teams } = body.results;
     
-    this.match = body.results;
-    this.league = this.match.league;
-    this.game = this.league.game;
-    this.match_teams = this.match.match_teams;
+    this.league = league;
+    this.game = game;
+    this.match_teams = match_teams;
+    this.match = match;
   },
   methods: {},
 };
