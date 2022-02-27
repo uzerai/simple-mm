@@ -8,7 +8,7 @@ class UsersController < BaseController
    @user = User.new(username: params[:username], email: params[:email], password: params[:password], password_confirmation: params[:password_confirm])
     
     if @user.save
-      @results = { token: current_user_token }
+      @results = { token: current_user.jwt_token(params[:remember_me]) }
       render_response
     else
       add_model_errors @user
@@ -20,7 +20,7 @@ class UsersController < BaseController
     @user = User.find_by(email: params[:email])
 
     if @user && @user.valid_password?(params[:password])
-      @results = { token: current_user_token }
+      @results = { token: current_user.jwt_token(params[:remember_me]) }
       render_response
     else
       add_error 403, "Invalid username or password."
@@ -31,7 +31,7 @@ class UsersController < BaseController
   # Called on the base front-end when the users' token 
   # will expire in less than 15 minutes.
   def auto_login
-    @results = { token: current_user_token }
+    @results = { token: current_user.jwt_token(false) }
     render_response
   end
 
@@ -45,11 +45,5 @@ class UsersController < BaseController
     devise_parameter_sanitizer.permit(:login) do |user_params|
       user_params.permit(:email, :password, :remember_me)
     end
-  end
-
-  private
-
-  def current_user_token
-		current_user.jwt_token(params[:remember_me])
   end
 end
