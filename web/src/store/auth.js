@@ -98,7 +98,7 @@ export default {
         await commit("setAuth", extractUserdata(body));
       } else {
         // Immediately log out if autologin fails.
-        await dispatch('logout')
+        await dispatch("logout")
       }
     },
     async signup(
@@ -140,7 +140,7 @@ export default {
       // When attempting to load auth, the user can either have
       // a set token in local storage; or an active access token in
       // store (and this token can be close to expiry)
-      const remembered_token = getters['token'];
+      const remembered_token = getters["token"];
       const is_authenticated = getters["isAuthenticated"];
       const about_to_expire = getters["authAboutToExpire"];
 

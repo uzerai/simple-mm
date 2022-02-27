@@ -1,8 +1,10 @@
 import PlayerTable from "./components/PlayerTable";
 import Games from "./pages/Games";
 import Home from "./pages/Home";
+import League from "./pages/League";
 import Leagues from "./pages/Leagues";
 import Login from "./pages/Login";
+import Match from "./pages/Match";
 import Signup from "./pages/Signup";
 
 // Any route which has a displayName will be displayed in the main navigation menu header.
@@ -17,9 +19,11 @@ export default [
       public: true,
     },
   },
-  { path: "/players", component: PlayerTable, displayName: "Players" },
-  { path: "/games", component: Games, displayName: "Games" },
-  { path: "/games/:slug/leagues", component: Leagues, props: true },
+  { path: "/players", component: PlayerTable },
+  { path: "/games", component: Games, displayName: "Games", name: "Games" },
+  { path: "/games/:slug/leagues", component: Leagues, props: true, name: "GameLeagues" },
+  { path: "/games/:game_slug/leagues/:league_slug", component: League, props: true, name: "League" },
+  { path: "/match/:match_id", component: Match, props: true, name: "Match" },
   {
     path: "/login",
     component: Login,

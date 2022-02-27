@@ -28,7 +28,7 @@
 
     <!-- Sign in/Sign out button in top-right -->
     <router-link
-      v-if="!isAuthenticated"
+      v-if="!user"
       to="/login"
       class="flex flex-shrink items-center h-full text-white hover:text-black hover:bg-green-400 px-2 lg:px-6 text-sm lg:text-base"
     >
@@ -37,7 +37,7 @@
     <button
       v-else
       class="flex flex-shrink items-center h-full text-white hover:text-black hover:bg-green-400 px-6"
-      @click="signOut"
+      @click="logOut"
     >
       Sign out
     </button>
@@ -45,27 +45,27 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+  import { mapGetters } from "vuex";
 
-export default {
-  name: "MainBar",
-  props: {
-    routes: {
-      type: Array,
-      default: () => {[]}
+  export default {
+    name: "MainBar",
+    props: {
+      routes: {
+        type: Array,
+        default: () => {[]}
+      },
     },
-  },
-  computed: {
-    ...mapGetters({
-      isAuthenticated: 'auth/isAuthenticated',
-      user: 'auth/user'
-    })
-  },
-  methods: {
-    signOut() {
-      this.$store.dispatch("auth/logout");
-      this.$router.push("/");
+    computed: {
+      ...mapGetters({
+        isAuthenticated: "auth/isAuthenticated",
+        user: "auth/user"
+      })
     },
-  },
-};
+    methods: {
+      logOut() {
+        this.$store.dispatch("auth/logout");
+        this.$router.push("/");
+      },
+    },
+  };
 </script>

@@ -1,7 +1,7 @@
-import { v4 as new_uuid } from 'uuid';
+import { v4 as new_uuid } from "uuid";
 import { createStore } from "vuex";
 import auth from "./auth";
-import websockets from './websockets';
+import websockets from "./websockets";
 
 // Global store for all globally-required information.
 export default createStore({
@@ -102,8 +102,8 @@ export default createStore({
     },
     showError({ commit }, error) {
       // Prepend an instance ID so we can close the error.
-      error['type'] = 'error';
-      error['disappear'] = 5000;
+      error["type"] = "error";
+      error["disappear"] = 5000;
       commit("addNotification", error);
     },
     showSuccess({ commit }, message) {

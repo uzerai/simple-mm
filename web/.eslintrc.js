@@ -4,14 +4,15 @@ module.exports = {
     es2021: true,
   },
   extends: [
-    'eslint:recommended',
-    'plugin:vue/vue3-recommended',
+    "eslint:recommended",
+    "plugin:vue/vue3-recommended",
   ],
   parserOptions: {
     parser: "@babel/eslint-parser",
   },
   plugins: ["vue"],
   rules: {
-    "vue/prop-name-casing": ["warn", "snake_case"]
+    "vue/prop-name-casing": ["warn", "snake_case"],
+    "quotes": ["error", "double", { "allowTemplateLiterals": true }]
   },
 };

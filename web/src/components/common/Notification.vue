@@ -25,7 +25,7 @@ export default {
     },
     type: {
       type: String,
-      default: () => {'success'}
+      default: () => {"success"}
     },
     disappear: {
       type: Number,
@@ -74,7 +74,7 @@ export default {
     },
     scheduleSelfDestroy() {
       console.log(`Setting Notification:'${this.uuid}' to disappear in ${this.disappear} ms`);
-      setTimeout(() => this.$store.dispatch('removeNotification', this.uuid), this.disappear);
+      setTimeout(() => this.$store.dispatch("removeNotification", this.uuid), this.disappear);
     }
   },
 };

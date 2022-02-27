@@ -50,10 +50,10 @@ export default {
     // channels which are useful the entire application
     async loadWebsockets({ commit, dispatch, getters, rootGetters }){
       // Create a new consumer when the auth/token is present but no consumer is in store.
-      if (rootGetters['auth/isAuthenticated'] && !getters['consumer']){
+      if (rootGetters["auth/isAuthenticated"] && !getters["consumer"]){
         console.log("Loading websockets consumer ...");
 
-        commit("setConsumer", { consumer: createConsumer(`${rootGetters['api_host']}/cable?token=${rootGetters['auth/token']}`) })
+        commit("setConsumer", { consumer: createConsumer(`${rootGetters["api_host"]}/cable?token=${rootGetters["auth/token"]}`) })
         
         // Initializes the main notifications channel for the application; allows 
         // server to broadcast notifications to each user.
@@ -64,13 +64,13 @@ export default {
       }
     },
     async disconnect({getters}) {
-      if(getters['consumer']) {
+      if(getters["consumer"]) {
         console.info("Disconnecting websockets consumer ...");
-        getters['consumer'].disconnect();
+        getters["consumer"].disconnect();
       }
     },
     createSubscription({ commit, getters }, { channel, room, onReceived }) {
-      if(getters['consumer']) {
+      if(getters["consumer"]) {
         commit("createSubscription", { channel, room, onReceived });
       } else {
         // Should ideally never happen, but in the scenario it does ...
