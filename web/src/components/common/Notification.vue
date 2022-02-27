@@ -25,7 +25,7 @@ export default {
     },
     type: {
       type: String,
-      default: () => {"success"}
+      default: () => {"success";}
     },
     disappear: {
       type: Number,
@@ -46,7 +46,7 @@ export default {
           classes = "bg-blue-600 text-white border-blue-800 border";
           break;
         default:
-          classes = "bg-white border-slate-200"
+          classes = "bg-white border-slate-200";
       }
 
       return classes;

@@ -23,7 +23,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   // Load methods should be idempotent (cause no change on multiple retries if already attempted)
   await store.dispatch("auth/loadAuth");
-  await store.dispatch("websockets/loadWebsockets")
+  await store.dispatch("websockets/loadWebsockets");
   
   if (!to.meta.public && !store.getters["auth/isAuthenticated"]) {
     console.log("Not authenticated. Redirecting to /login");

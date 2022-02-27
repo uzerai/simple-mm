@@ -83,7 +83,7 @@ export default {
       } else {
         dispatch("setAuth", extractUserdata(body));
         // Show a success notification to tell the user they are logged in.
-        dispatch("showSuccess", "Signed in successfully.", { root: true })
+        dispatch("showSuccess", "Signed in successfully.", { root: true });
       }
     },
     async autologin({ commit, dispatch }) {
@@ -98,7 +98,8 @@ export default {
         await commit("setAuth", extractUserdata(body));
       } else {
         // Immediately log out if autologin fails.
-        await dispatch("logout")
+        dispatch("showError", "Session timeout, please log in again ...", { root: true });
+        await dispatch("logout");
       }
     },
     async signup(
@@ -123,7 +124,7 @@ export default {
       if (body) {
         await commit("setAuth", extractUserdata(body));
         // Show a notification to confirm they signed up and are now signed in.
-        dispatch("showSuccess", "Welcome to Simple-MM!", { root: true })
+        dispatch("showSuccess", "Welcome to Simple-MM!", { root: true });
       }
     },
     logout({ commit, dispatch }) {

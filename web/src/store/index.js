@@ -33,7 +33,7 @@ export default createStore({
     },
     lockNotification(state, notification_uuid) {
       console.info("Locking notification:", notification_uuid);
-      const notification = state.global_notifications.find(notif => notif.uuid === notification_uuid)
+      const notification = state.global_notifications.find(notif => notif.uuid === notification_uuid);
 
       if(notification) {
         // Set the lock of notification to true
@@ -42,7 +42,7 @@ export default createStore({
     },
     unlockNotification(state, notification_uuid) {
       console.info("Unlocking notification:", notification_uuid);
-      const notification = state.global_notifications.find(notif => notif.uuid === notification_uuid)
+      const notification = state.global_notifications.find(notif => notif.uuid === notification_uuid);
 
       if(notification) {
         // Set the lock of notification to false

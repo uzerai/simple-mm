@@ -52,7 +52,7 @@
     props: {
       routes: {
         type: Array,
-        default: () => {[]}
+        default: () => {[];}
       },
     },
     computed: {

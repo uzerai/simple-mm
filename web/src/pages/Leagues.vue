@@ -48,7 +48,7 @@ export default {
     return {
       game: null,
       leagues: []
-    }
+    };
   },
   async created() {
     const slug = this.$route.params.slug;

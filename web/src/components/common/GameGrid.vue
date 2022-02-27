@@ -38,10 +38,10 @@ export default {
     return {
       all_games: [],
       games: []
-    }
+    };
   },
   async created() {
-    const request = this.$store.dispatch("get", { path: "/games" })
+    const request = this.$store.dispatch("get", { path: "/games" });
     const body = await request;
 
     this.all_games, this.games = body.results;

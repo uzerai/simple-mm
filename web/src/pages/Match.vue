@@ -72,7 +72,7 @@ export default {
       game: undefined,
       league: undefined,
       match_teams: undefined,
-    }
+    };
   },
   async created() {
     const match_id = this.$route.params.match_id;

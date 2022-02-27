@@ -13,6 +13,7 @@ module.exports = {
   plugins: ["vue"],
   rules: {
     "vue/prop-name-casing": ["warn", "snake_case"],
-    "quotes": ["error", "double", { "allowTemplateLiterals": true }]
+    "quotes": ["error", "double", { "allowTemplateLiterals": true }],
+    "semi": ["error", "always"]
   },
 };

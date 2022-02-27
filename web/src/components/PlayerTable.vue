@@ -39,7 +39,7 @@ export default {
     };
   },
   async created() {
-    const { results, errors } = await this.$store.dispatch("get", { path: "/players" })
+    const { results, errors } = await this.$store.dispatch("get", { path: "/players" });
     if(!Array.isArray(errors)) {
       this.players = results;
     }

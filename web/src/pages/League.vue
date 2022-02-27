@@ -63,7 +63,7 @@ export default {
     return {
       game: undefined,
       league: undefined
-    }
+    };
   },
   async created() {
     const game_slug = this.$route.params.game_slug;

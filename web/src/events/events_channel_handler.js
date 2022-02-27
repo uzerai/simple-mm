@@ -9,6 +9,6 @@ const readEvent = (storeContext, event_channel_event) => {
   } else {
     dispatch("showSuccess", event_channel_event.message, { root: true });
   }
-}
+};
 
 export { readEvent };

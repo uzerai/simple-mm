@@ -8,7 +8,7 @@ export default {
     return {
       consumer: undefined,
       subscriptions: {}
-    }
+    };
   },
   mutations: {
     setConsumer(state, { consumer }) {
@@ -32,7 +32,7 @@ export default {
         });
 
         // Don't allow re-subscribing to a single channel multiple times.
-        state.subscriptions[channel] = subscription
+        state.subscriptions[channel] = subscription;
       }
     }
   },
@@ -53,14 +53,14 @@ export default {
       if (rootGetters["auth/isAuthenticated"] && !getters["consumer"]){
         console.log("Loading websockets consumer ...");
 
-        commit("setConsumer", { consumer: createConsumer(`${rootGetters["api_host"]}/cable?token=${rootGetters["auth/token"]}`) })
+        commit("setConsumer", { consumer: createConsumer(`${rootGetters["api_host"]}/cable?token=${rootGetters["auth/token"]}`) });
         
         // Initializes the main notifications channel for the application; allows 
         // server to broadcast notifications to each user.
         dispatch("createSubscription", { channel: "EventsChannel", onReceived: (data) => {
           // Imported from src/events/event_channel_handler.js
           readEvent({ commit, dispatch, getters, rootGetters }, data);
-        }})
+        }});
       }
     },
     async disconnect({getters}) {

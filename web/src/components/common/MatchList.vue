@@ -63,10 +63,10 @@ export default {
   data() {
     return {
       matches: []
-    }
+    };
   },
   async created() {
-    const request = this.$store.dispatch("get", { path: `/games/${this.game_slug}/leagues/${this.league_slug}/matches` })
+    const request = this.$store.dispatch("get", { path: `/games/${this.game_slug}/leagues/${this.league_slug}/matches` });
     const body = await request;
 
     this.matches = body.results.matches;

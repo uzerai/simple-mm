@@ -106,7 +106,7 @@ export default {
         console.info("User is authenticated; redirecting ...");
         this.$router.push(this.$route.query.redirect);
       } else if(this.$store.getters["auth/isAuthenticated"]) {
-        this.$router.push("/")
+        this.$router.push("/");
       }
     },
   },
