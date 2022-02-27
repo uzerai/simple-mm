@@ -28,6 +28,6 @@ class MatchType < ApplicationRecord
 	private
 
 	def sluggable
-		"#{game.name} #{name}"
+		"#{game.name}.#{name}"
 	end
 end
