@@ -160,7 +160,7 @@ CREATE TABLE public.matches (
     ended_at date,
     state character varying,
     match_type_id uuid NOT NULL,
-    league_id bigint NOT NULL,
+    league_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );

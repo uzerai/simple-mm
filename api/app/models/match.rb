@@ -8,7 +8,7 @@
 #  ended_at      :date
 #  state         :string
 #  match_type_id :uuid             not null
-#  league_id     :integer          not null
+#  league_id     :uuid             not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
