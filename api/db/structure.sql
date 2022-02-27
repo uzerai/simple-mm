@@ -37,7 +37,7 @@ CREATE TABLE public.ar_internal_metadata (
 --
 
 CREATE TABLE public.games (
-    id bigint NOT NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
     name character varying NOT NULL,
     slug character varying NOT NULL,
     physical boolean DEFAULT false,
@@ -45,25 +45,6 @@ CREATE TABLE public.games (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-
-
---
--- Name: games_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.games_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: games_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.games_id_seq OWNED BY public.games.id;
 
 
 --
@@ -81,36 +62,17 @@ CREATE TABLE public.games_tags (
 --
 
 CREATE TABLE public.leagues (
-    id bigint NOT NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
     name character varying NOT NULL,
-    slug character varying NOT NULL,
+    "desc" text,
     rated boolean DEFAULT true,
     public boolean DEFAULT false,
     official boolean DEFAULT false,
-    game_id bigint NOT NULL,
+    game_id uuid NOT NULL,
     match_type_id uuid,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-
-
---
--- Name: leagues_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.leagues_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: leagues_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.leagues_id_seq OWNED BY public.leagues.id;
 
 
 --
@@ -282,20 +244,6 @@ CREATE TABLE public.users (
 
 
 --
--- Name: games id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.games ALTER COLUMN id SET DEFAULT nextval('public.games_id_seq'::regclass);
-
-
---
--- Name: leagues id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.leagues ALTER COLUMN id SET DEFAULT nextval('public.leagues_id_seq'::regclass);
-
-
---
 -- Name: leagues_tags id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -438,13 +386,6 @@ CREATE INDEX index_leagues_on_game_id ON public.leagues USING btree (game_id);
 --
 
 CREATE INDEX index_leagues_on_match_type_id ON public.leagues USING btree (match_type_id);
-
-
---
--- Name: index_leagues_on_slug_and_game_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_leagues_on_slug_and_game_id ON public.leagues USING btree (slug, game_id);
 
 
 --

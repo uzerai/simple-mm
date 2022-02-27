@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: games
 #
-#  id         :integer          not null, primary key
+#  id         :uuid             not null, primary key
 #  name       :string           not null
 #  slug       :string           not null
 #  physical   :boolean          default("false")
