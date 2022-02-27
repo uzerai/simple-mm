@@ -30,6 +30,8 @@ class Match < ApplicationRecord
   belongs_to :match_type, required: true
   belongs_to :league, required: true
 
+  has_one :game, through: :league
+
   aasm column: :state do
     # queued - for when the match has been created and is available to be found and the match contains no match teams
     # preparing - for when the match has at least one player and therefore an average rating
