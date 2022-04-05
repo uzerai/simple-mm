@@ -10,7 +10,7 @@
 #  updated_at :datetime         not null
 #  game_id    :uuid             not null
 #  league_id  :uuid             not null
-#  user_id    :uuid             not null
+#  user_id    :uuid
 #
 # Indexes
 #
@@ -22,10 +22,16 @@
 class Player < ApplicationRecord
   # Since we use UUID for id, sort by created_at for correct ordering.
   self.implicit_order_column = "created_at"
+
+  rails_admin do
+    object_label_method do
+      :username
+    end
+  end
   
-  belongs_to :user
-  belongs_to :game
-  belongs_to :league
+  belongs_to :user, inverse_of: :players
+  belongs_to :game, inverse_of: :players
+  belongs_to :league, inverse_of: :players
 
   has_many :match_players
   has_many :match_teams, through: :match_players

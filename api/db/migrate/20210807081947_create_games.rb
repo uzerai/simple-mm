@@ -5,12 +5,11 @@ class CreateGames < ActiveRecord::Migration[7.0]
     create_table :games, id: :uuid, default: 'gen_random_uuid()' do |t|
       t.string :name, null: false
       t.string :slug, null: false
+      t.string :cover_image, null: true
 
       # Physical games come way later, but we'll need
       # an indicator anyhow; might as well be on the game.
       t.boolean :physical, default: false
-
-      t.string :image_url, default: "/assets/default_game.jpg"
 
       t.timestamps
     end

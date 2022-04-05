@@ -26,7 +26,10 @@ class MatchPlayer < ApplicationRecord
   
   has_one :match, through: :match_team
 
-  def calculate_end_rating
+  def calculate_end_rating!
+    # Can't calculate end rating if game hasn't ended.
+    return nil unless match.completed? 
+
     enemy_teams = match.match_teams.where.not(id: match_team.id)
 
     # If you had no enemy teams, gain no elo.
@@ -36,7 +39,7 @@ class MatchPlayer < ApplicationRecord
 
     delta_rating = (((enemy_teams_rating_avg - start_rating).abs / match_team.avg_rating.to_f) * 50).floor
 
-    case match_team.outcome
+    case match_team.outcome&.to_sym
     when :win
       end_rating = start_rating + delta_rating
     when :loss

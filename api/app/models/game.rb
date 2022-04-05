@@ -3,13 +3,14 @@
 #
 # Table name: games
 #
-#  id         :uuid             not null, primary key
-#  image_url  :string           default("/assets/default_game.jpg")
-#  name       :string           not null
-#  physical   :boolean          default(FALSE)
-#  slug       :string           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id          :uuid             not null, primary key
+#  cover_image :string
+#  image_url   :string           default("/assets/default_game.jpg")
+#  name        :string           not null
+#  physical    :boolean          default(FALSE)
+#  slug        :string           not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
 #
 # Indexes
 #
@@ -20,6 +21,8 @@ class Game < ApplicationRecord
 	include HasSlug
 	# Since we use UUID for id, sort by created_at for correct ordering.
 	self.implicit_order_column = "created_at"
+
+	mount_uploader :cover_image, CoverImageUploader
 
 	has_many :match_types
 	has_many :players

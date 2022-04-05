@@ -5,6 +5,7 @@ class CreateLeagues < ActiveRecord::Migration[7.0]
     create_table :leagues, id: :uuid, default: 'gen_random_uuid()' do |t|
       t.string :name, null: false
       t.text :desc, null: true
+      t.string :cover_image, null: true
 
       t.boolean :rated, default: true
       t.boolean :public, default: false

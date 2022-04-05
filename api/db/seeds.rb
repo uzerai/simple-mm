@@ -84,7 +84,7 @@ all_games.each do |game_array|
 
   league_unrated = League.create!(name: "PUBLIC LEAGUE UNRATED", match_type: official_match_type, game: game, public: true, official: true, rated: false)
   league_rated = League.create!(name: "PUBLIC LEAGUE", match_type: official_match_type, game: game, public: true, official: true)
-  leagues = [league_rated, league_unrated]
+  leagues = League.all
 
   User.find_each.with_index do |user, index|
     leagues.each do |league|
@@ -102,7 +102,7 @@ all_games.each do |game_array|
     
       # For each match team
       match_teams.each do |match_team|
-        # Insert team_size amount of players
+        # Insert team_size amount of playerse
         official_match_type.team_size.times do 
           # Pick a random player who isn't in the game already
           player = league.reload.players
@@ -124,8 +124,8 @@ all_games.each do |game_array|
       MatchTeam.where(id: losers).update_all(outcome: :loss)
     
       match_teams.each do |team|
-      team.match_players.each(&:calculate_end_rating)
-    end
+        team.reload.match_players.each(&:calculate_end_rating!)
+      end
     end
   end
 end

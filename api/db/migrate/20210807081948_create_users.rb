@@ -7,6 +7,9 @@ class CreateUsers < ActiveRecord::Migration[6.1]
       ## Database authenticatable
       t.string :username,           null: false
       t.string :email,              null: false
+      t.string :avatar,             null: true
+
+      # Security
       t.string :encrypted_password, null: false, default: ""
       t.string :validation_dud,     null: false, default: "virgin-validation-dud"
 

@@ -6,7 +6,7 @@ class CreatePlayers < ActiveRecord::Migration[6.1]
       t.string :username, null: false
       t.integer :rating
     
-      t.references :user, type: :uuid, null: false
+      t.references :user, type: :uuid, null: true
       t.references :game, type: :uuid, null: false
       t.references :league, type: :uuid, null: false
 

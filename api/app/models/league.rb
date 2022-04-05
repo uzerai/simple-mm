@@ -4,6 +4,7 @@
 # Table name: leagues
 #
 #  id            :uuid             not null, primary key
+#  cover_image   :string
 #  desc          :text
 #  name          :string           not null
 #  official      :boolean          default(FALSE)
@@ -23,6 +24,8 @@
 class League < ApplicationRecord
   # Since we use UUID for id, sort by created_at for correct ordering.
   self.implicit_order_column = "created_at"
+
+  mount_uploader :cover_image, CoverImageUploader
   
   has_many :players
   has_many :matches
