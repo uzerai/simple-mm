@@ -18,7 +18,7 @@
         >
           <router-link :to="{ name: 'league', params: { league_id: league.id }}" class="relative m-2">
             <img
-              src="../assets/default_game.jpg"
+              :src="this.$store.getters['api_host'] + league.cover_image.url"
               class="h-40 md:h-80 object-fill"
             >
             <div class="absolute bottom-0 flex flex-col items-center w-full background-gradient pb-2">

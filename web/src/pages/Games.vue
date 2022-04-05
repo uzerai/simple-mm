@@ -12,7 +12,7 @@
       >
         <div class="relative">
           <img
-            src="../assets/default_game.jpg"
+            :src="this.$store.getters['api_host'] + game.cover_image.url"
             class="object-fill static"
           >
           <div class="absolute -bottom-0 md:-bottom-2 text-white flex flex-col items-center w-full background-gradient pb-2 md:pb-2 md:mb-2">
