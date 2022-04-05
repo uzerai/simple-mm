@@ -26,13 +26,39 @@ router.beforeEach(async (to, from, next) => {
   await store.dispatch("websockets/loadWebsockets");
   
   if (!to.meta.public && !store.getters["auth/isAuthenticated"]) {
+    console.log("Meta public?", to.meta.public);
     console.log("Not authenticated. Redirecting to /login");
-    next({ name: "Login", query: { redirect: to.fullPath } });
+    next({ name: "login", query: { redirect: to.fullPath } });
   } else next();
 });
 
 router.afterEach((to) => {
-  document.title = to.meta.title ? to.meta.title : "";
+  // Replace : prefixed variables in the title field with the matching parameters from the same route.
+  // this allows interpolation of strings like ":slug" to be replaced with the route parameter values.
+  const title = to.meta?.title.replace(/:[a-z-_]+/, (match) => {
+    // Parameter name without the :
+    const param_name = match.replace(":", "");
+
+    // Parameters that may be in the title which should be titleized.
+    if(["slug"].includes(param_name)) {
+      return to.params[param_name]
+        ?.split("-")
+        .map((str) => {
+          // words which should not be capitalized.
+          if(["of"].includes(str)) {
+            return str;
+          }
+
+          // otherwise capitalize the first letter of the word
+          return str.charAt(0).toUpperCase() + str.slice(1);
+        }).join(" ");
+    }
+
+    // if the parameter doesn't need to be titleized
+    return to.params[param_name];
+  });
+
+  document.title =  "Simple-MM | " + title;
 });
 
 app.use(router);

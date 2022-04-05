@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full justify-center lg:py-12">
+  <div class="flex w-full justify-center py-4 md:py-12">
     <div
       class="lg:w-1/2 w-full lg:rounded-sm lg:border border-gray-200 pt-8 px-8 pb-4 bg-white motion-safe:animate-fadeIn"
     >

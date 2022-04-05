@@ -6,7 +6,7 @@
     <h1 class="mx-4 my-6">
       <router-link
         class="text-sm  text-slate-200 font-thin hover:underline cursor-pointer"
-        :to="{ name: 'GameLeagues', params: { slug: game.slug }}"
+        :to="{ name: 'game-leagues', params: { slug: game.slug }}"
       >
         {{ game.name }}
       </router-link>

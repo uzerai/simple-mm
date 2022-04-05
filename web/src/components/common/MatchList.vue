@@ -26,7 +26,7 @@
         class="hover:bg-orange-800"
       >
         <td class="py-4">
-          <router-link :to="{ name: 'Match', params: { match_id: match.id } }">
+          <router-link :to="{ name: 'match', params: { match_id: match.id } }">
             {{ match.id }}
           </router-link>
         </td>

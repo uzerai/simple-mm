@@ -1,25 +1,10 @@
 <template>
   <div
     v-if="match"
-    class="flex flex-col w-full"
   >
-    <!-- <h1 class="mx-4 my-6">
-      <router-link
-        class="text-sm  text-slate-200 font-thin hover:underline cursor-pointer"
-        :to="{ name: 'League', params: { league_id: league.id }}"
-      >
-        {{ game.name }}
-      </router-link>
-      <span class="text-sm text-slate-200 font-thin">
-        //
-      </span>
-      <span class="text-xl text-white font-bold">
-        {{ match.id }}
-      </span>
-    </h1> -->
-    <div class="flex">
-      <div class="flex flex-col text-white flex-grow items-center gap-4">
-        <div class="mb-6 text-center">
+    <div class="flex justify-center items-center">
+      <div class="text-white">
+        <div class="">
           <h4>
             Team A [{{ match_teams[0].outcome }}]
           </h4>
@@ -36,11 +21,11 @@
           <p>{{ player.player.username }} [<span>{{ player.start_rating }}</span>]</p>
         </div>
       </div>
-      <div class="w-1/16 text-2xl font-bold text-white">
+      <div class="text-white mx-20">
         VS
       </div>
-      <div class="flex flex-col text-white flex-grow items-center gap-4">
-        <div class="mb-6 text-center">
+      <div class="text-white">
+        <div class="">
           <h4>
             Team A [{{ match_teams[1].outcome }}]
           </h4>

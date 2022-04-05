@@ -4,12 +4,12 @@
     class="flex w-full h-16 bg-darkt-900 border-b border-black"
   >
     <!-- Logo, left -->
-    <div class="text-gray-100 flex items-center ml-4 text-xl italic font-bold select-none gap-1 lg:gap-4">
+    <div class="text-gray-100 flex items-center ml-2 md:ml-4 text-sm md:text-xl italic font-bold select-none gap-3 md:gap-4">
       <p>SIMPLE-MM</p>
       <div class="h-1/2 border-r border-white" />
     </div>
 
-    <nav class="flex-grow mx-4 text-sm lg:text-base">
+    <nav class="flex-grow mx-4 text-sm md:text-base">
       <ul
         id="nav-top"
         class="flex h-full gap-6"
@@ -30,13 +30,13 @@
     <router-link
       v-if="!user"
       to="/login"
-      class="flex flex-shrink items-center h-full text-white hover:text-black hover:bg-green-400 px-2 lg:px-6 text-sm lg:text-base"
+      class="flex flex-shrink items-center h-full text-xs md:text-base text-white hover:text-black hover:bg-green-400 px-6"
     >
       Sign in
     </router-link>
     <button
       v-else
-      class="flex flex-shrink items-center h-full text-white hover:text-black hover:bg-green-400 px-6"
+      class="flex flex-shrink items-center h-full text-xs md:text-base text-white hover:text-black hover:bg-green-400 px-6"
       @click="logOut"
     >
       Sign out
