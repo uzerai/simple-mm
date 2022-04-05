@@ -51,6 +51,12 @@ Rails.application.configure do
   # number of complex assets.
   config.assets.debug = true
 
+  # Needed this block to enable precompilation of assets using the development
+  # environment, so I could provide `rails_admin` with the necessary css.
+  logger           = ActiveSupport::Logger.new(STDOUT)
+  logger.formatter = config.log_formatter
+  config.logger = ActiveSupport::TaggedLogging.new(logger)
+
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
