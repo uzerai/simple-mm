@@ -23,6 +23,7 @@ api/storage/*
 
 # For any back-end assets which might be in use when testing
 api/public/assets
+api/public/uploads
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
