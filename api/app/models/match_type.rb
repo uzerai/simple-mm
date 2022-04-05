@@ -6,11 +6,11 @@
 #  id         :uuid             not null, primary key
 #  name       :string           not null
 #  slug       :string           not null
-#  team_size  :integer          not null
 #  team_count :integer          not null
-#  game_id    :integer          not null
+#  team_size  :integer          not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  game_id    :bigint           not null
 #
 # Indexes
 #
@@ -19,6 +19,8 @@
 
 class MatchType < ApplicationRecord
 	include HasSlug
+	# Since we use UUID for id, sort by created_at for correct ordering.
+	self.implicit_order_column = "created_at"
 
 	belongs_to :game, required: true
 

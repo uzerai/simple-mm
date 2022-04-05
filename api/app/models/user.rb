@@ -24,6 +24,9 @@
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #
 class User < ApplicationRecord
+	# Since we use UUID for id, sort by created_at for correct ordering.
+	self.implicit_order_column = "created_at"
+
   # Include default devise modules. Others available are:
   # :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,

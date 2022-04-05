@@ -4,15 +4,15 @@
 # Table name: leagues
 #
 #  id            :uuid             not null, primary key
-#  name          :string           not null
 #  desc          :text
-#  rated         :boolean          default("true")
-#  public        :boolean          default("false")
-#  official      :boolean          default("false")
-#  game_id       :uuid             not null
-#  match_type_id :uuid
+#  name          :string           not null
+#  official      :boolean          default(FALSE)
+#  public        :boolean          default(FALSE)
+#  rated         :boolean          default(TRUE)
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  game_id       :uuid             not null
+#  match_type_id :uuid
 #
 # Indexes
 #
@@ -21,6 +21,9 @@
 #
 
 class League < ApplicationRecord
+  # Since we use UUID for id, sort by created_at for correct ordering.
+  self.implicit_order_column = "created_at"
+  
   has_many :players
   has_many :matches
 

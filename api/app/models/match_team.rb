@@ -16,6 +16,9 @@
 #
 
 class MatchTeam < ApplicationRecord
+  # Since we use UUID for id, sort by created_at for correct ordering.
+  self.implicit_order_column = "created_at"
+  
   belongs_to :match
 
   has_many :match_players, dependent: :destroy

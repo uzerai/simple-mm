@@ -18,6 +18,9 @@
 #  index_match_players_on_player_id      (player_id)
 #
 class MatchPlayer < ApplicationRecord
+  # Since we use UUID for id, sort by created_at for correct ordering.
+  self.implicit_order_column = "created_at"
+  
   belongs_to :match_team
   belongs_to :player
   

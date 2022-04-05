@@ -20,6 +20,8 @@
 
 class Match < ApplicationRecord
   include AASM
+  # Since we use UUID for id, sort by created_at for correct ordering.
+  self.implicit_order_column = "created_at"
 
   logger = Rails.logger
   

@@ -4,10 +4,10 @@
 # Table name: games
 #
 #  id         :uuid             not null, primary key
-#  name       :string           not null
-#  slug       :string           not null
-#  physical   :boolean          default("false")
 #  image_url  :string           default("/assets/default_game.jpg")
+#  name       :string           not null
+#  physical   :boolean          default(FALSE)
+#  slug       :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
@@ -18,8 +18,10 @@
 
 class Game < ApplicationRecord
 	include HasSlug
+	# Since we use UUID for id, sort by created_at for correct ordering.
+	self.implicit_order_column = "created_at"
 
-	has_many :game_types
+	has_many :match_types
 	has_many :players
 	has_many :leagues
 	

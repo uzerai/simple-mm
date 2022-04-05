@@ -175,8 +175,8 @@ CREATE TABLE public.players (
     username character varying NOT NULL,
     rating integer,
     user_id uuid NOT NULL,
-    game_id bigint NOT NULL,
-    league_id bigint NOT NULL,
+    game_id uuid NOT NULL,
+    league_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );

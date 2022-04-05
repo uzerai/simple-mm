@@ -4,13 +4,13 @@
 # Table name: players
 #
 #  id         :uuid             not null, primary key
-#  username   :string           not null
 #  rating     :integer
-#  user_id    :uuid             not null
-#  game_id    :integer          not null
-#  league_id  :integer          not null
+#  username   :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  game_id    :uuid             not null
+#  league_id  :uuid             not null
+#  user_id    :uuid             not null
 #
 # Indexes
 #
@@ -20,6 +20,9 @@
 #
 
 class Player < ApplicationRecord
+  # Since we use UUID for id, sort by created_at for correct ordering.
+  self.implicit_order_column = "created_at"
+  
   belongs_to :user
   belongs_to :game
   belongs_to :league
