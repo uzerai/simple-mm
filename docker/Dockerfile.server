@@ -13,7 +13,7 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
 # RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg -o /root/yarn-pubkey.gpg && apt-key add /root/yarn-pubkey.gpg
 # RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
 RUN apt-get update
-RUN apt-get -y install postgresql-14
+RUN apt-get -y install postgresql-14 imagemagick libmagick++-dev
 
 ENV INSTALL_PATH /opt/app
 RUN mkdir -p $INSTALL_PATH
