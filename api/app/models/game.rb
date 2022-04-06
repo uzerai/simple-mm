@@ -5,7 +5,6 @@
 #
 #  id          :uuid             not null, primary key
 #  cover_image :string
-#  image_url   :string           default("/assets/default_game.jpg")
 #  name        :string           not null
 #  physical    :boolean          default(FALSE)
 #  slug        :string           not null
@@ -23,6 +22,12 @@ class Game < ApplicationRecord
 	self.implicit_order_column = "created_at"
 
 	mount_uploader :cover_image, CoverImageUploader
+
+	rails_admin do
+		list do
+			exclude_fields :cover_image
+		end
+	end
 
 	has_many :match_types
 	has_many :players

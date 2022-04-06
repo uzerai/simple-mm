@@ -20,12 +20,18 @@
 #  index_leagues_on_game_id        (game_id)
 #  index_leagues_on_match_type_id  (match_type_id)
 #
-
+ 
 class League < ApplicationRecord
   # Since we use UUID for id, sort by created_at for correct ordering.
   self.implicit_order_column = "created_at"
 
   mount_uploader :cover_image, CoverImageUploader
+
+  rails_admin do
+    list do
+      exclude_fields :cover_image
+    end
+  end
   
   has_many :players
   has_many :matches

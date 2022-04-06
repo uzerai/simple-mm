@@ -42,7 +42,6 @@ CREATE TABLE public.games (
     slug character varying NOT NULL,
     cover_image character varying,
     physical boolean DEFAULT false,
-    image_url character varying DEFAULT '/assets/default_game.jpg'::character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
