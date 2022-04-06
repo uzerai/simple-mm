@@ -1,32 +1,32 @@
 <template>
   <div
     v-if="league"
-    class="flex flex-col"
+    class="flex flex-col mx-10 md:mx-20 "
   >
-    <h1 class="mx-4 my-6">
+    <div class="mx-4 my-6">
       <router-link
-        class="text-sm  text-slate-200 font-thin hover:underline cursor-pointer"
+        class="ml-2 text-sm text-slate-200 font-thin hover:underline"
         :to="{ name: 'game-leagues', params: { slug: game.slug }}"
       >
         {{ game.name }}
       </router-link>
-      <span class="text-sm text-slate-200 font-thin">
-        //
-      </span>
-      <span class="text-xl text-white font-bold">
-        {{ league.name }}
-      </span>
-    </h1>
-    <div class="flex flex-row w-full gap-4 px-2">
-      <div class="flex flex-shrink flex-col w-1/6">
+      <div class="text-4xl">
+        <span class="text-slate-200 font-thin mx-2">
+          //
+        </span>
+        <h1 class="text-white font-bold inline">
+          {{ league.name }}
+        </h1>
+      </div>
+    </div>
+    <div class="flex flex-row w-full gap-4">
+      <div class="flex flex-col w-1/4">
         <img
-          src="../assets/default_game.jpg"
-          class="object-scale-down"
+          :src="this.$store.getters['api_host'] + league.cover_image.url"
+          class="w-full aspect-[11/16] border border-black self-center"
         >
-        <div class="bg-darkt-50">
-          <p>
-            {{ league.name }}
-          </p>
+        <div class="w-full text-white">
+          <p>{{ league.desc }}</p>
         </div>
       </div>
       <div class="flex-grow">

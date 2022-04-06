@@ -10,19 +10,19 @@
       <strong><span class="pr-2 md:pr-8">≫</span></strong>Official leagues
     </h2>
     <div class="w-full">
-      <div class="flex w-8/12 my-6 mx-auto gap-6 overflow-x-scroll">
+      <div class="flex my-2 md:my-6 py-2 mx-auto gap-4 md:gap-6 overflow-x-scroll scroll-smooth no-scrollbar">
         <div
           v-for="league in leagues"
           :key="league.id"
-          class="flex bg-stone-300 shadow-md shadow-stone-900 flex-shrink-0"
+          class="flex bg-stone-300 shadow-md shadow-stone-900 flex-shrink-0 hover:bg-cyan-900 transition ease-in-out duration-200 first:ml-16 lg:first:ml-60 last:mr-20"
         >
-          <router-link :to="{ name: 'league', params: { league_id: league.id }}" class="relative m-2">
+          <router-link :to="{ name: 'league', params: { league_id: league.id }}" class="relative m-1 md:m-2">
             <img
               :src="this.$store.getters['api_host'] + league.cover_image.url"
-              class="h-40 md:h-80 object-fill"
+              class="h-28 md:h-80 object-fill aspect-[11/16] border border-black"
             >
-            <div class="absolute bottom-0 flex flex-col items-center w-full background-gradient pb-2">
-              <p class="text-white  text-xs md:text-xl font-semibold text-center">
+            <div class="absolute bottom-0 flex flex-col items-center w-full background-gradient pb-2 text-center px-1">
+              <p class="text-white text-xs md:text-xl font-semibold">
                 {{ league.name }}
               </p>
               <p class="hidden md:show text-stone-200">
@@ -37,19 +37,19 @@
       <strong><span class="pr-2 md:pr-8">≫</span></strong>Public leagues
     </h2>
     <div class="w-full">
-      <div class="flex w-8/12 my-6 mx-auto gap-6 overflow-x-scroll">
+      <div class="flex my-2 md:my-6 py-2 mx-auto gap-4 md:gap-6 overflow-x-scroll scroll-smooth no-scrollbar">
         <div
           v-for="league in leagues"
           :key="league.id"
-          class="flex bg-stone-300 shadow-md shadow-stone-900 flex-shrink-0"
+          class="flex bg-stone-300 shadow-md shadow-stone-900 flex-shrink-0 hover:bg-cyan-900 transition ease-in-out duration-200 first:ml-16 lg:first:ml-60 last:mr-20"
         >
-          <router-link :to="{ name: 'league', params: { league_id: league.id }}" class="relative m-2 cursor-pointer">
+          <router-link :to="{ name: 'league', params: { league_id: league.id }}" class="relative m-1 md:m-2">
             <img
-              src="../assets/default_game.jpg"
-              class="h-40 md:h-80 object-fill"
+              :src="this.$store.getters['api_host'] + league.cover_image.url"
+              class="h-28 md:h-80 object-fill aspect-[11/16] border border-black"
             >
-            <div class="absolute bottom-0 flex flex-col items-center w-full background-gradient pb-2">
-              <p class="text-stone-200 text-xs md:text-xl font-semibold text-center">
+            <div class="absolute bottom-0 flex flex-col items-center w-full background-gradient pb-2 text-center px-1">
+              <p class="text-white text-xs md:text-xl font-semibold">
                 {{ league.name }}
               </p>
               <p class="hidden md:show text-stone-200">
@@ -92,6 +92,11 @@ export default {
 };
 </script>
 <style>
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+
   .league-description + .league-hover:hover {
     opacity: 1;
     display: unset;
