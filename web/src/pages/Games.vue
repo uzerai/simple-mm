@@ -4,10 +4,19 @@
       <h2 class="text-md md:text-6xl font-bold">
         Games
       </h2>
-      <select v-model="gametype" class="rounded-sm text-darkt-100 bg-darkt-800 border-none accent:cyan-900 radius-sm ml-12">
-        <option value="digital">DIGITAL</option>
-        <option value="physical">PHYSICAL</option>
-        <option value="all">ALL</option>
+      <select
+        v-model="gametype"
+        class="rounded-sm text-darkt-100 bg-darkt-800 border-none accent:cyan-900 radius-sm ml-12"
+      >
+        <option value="digital">
+          DIGITAL
+        </option>
+        <option value="physical">
+          PHYSICAL
+        </option>
+        <option value="all">
+          ALL
+        </option>
       </select>
     </div>
     <div class="w-8/12 mx-auto py-6 grid gap-6 grid-cols-2 md:grid-cols-5">
@@ -16,9 +25,12 @@
         :key="game"
         class="bg-stone-300 hover:bg-cyan-900 transition ease-in-out duration-200 shadow-md shadow-stone-900"
       >
-        <router-link class="relative m-1 md:m-2 block" :to="{ name: 'game-leagues', params: { slug: game.slug }}">
+        <router-link
+          class="relative m-1 md:m-2 block"
+          :to="{ name: 'game-leagues', params: { slug: game.slug }}"
+        >
           <img
-            :src="this.$store.getters['api_host'] + game.cover_image.cover.url"
+            :src="$store.getters['api_host'] + game.cover_image.cover.url"
             class="h-40 md:h-80 object-fill aspect-[11/16] border border-black"
           >
           <div class="absolute -bottom-0 md:-bottom-2 text-white flex flex-col items-center w-full background-gradient pb-2 md:pb-2 md:mb-2">

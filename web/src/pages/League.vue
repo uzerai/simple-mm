@@ -17,42 +17,53 @@
         <h1 class="text-4xl text-white font-bold inline">
           {{ league.name }}
         </h1>
-        <button v-if="leaguePlayer" @click="queueForLeague" class="ml-6 px-6 py-2 text-md transition-colors duration-300 rounded rounded border border-emerald-600 shadow-md text-emerald-100 bg-emerald-700 hover:bg-emerald-600 shadow-emerald-600/30">
+        <button
+          v-if="leaguePlayer"
+          class="ml-6 px-6 py-2 text-md transition-colors duration-300 rounded rounded border border-emerald-600 shadow-md text-emerald-100 bg-emerald-700 hover:bg-emerald-600 shadow-emerald-600/30"
+          @click="queueForLeague"
+        >
           Play
         </button>
-        <button v-else class="ml-6 px-6 py-2 text-md transition-colors duration-300 rounded rounded border border-blue-600 shadow-md text-blue-100 bg-blue-700 hover:bg-blue-600 shadow-blue-600/30">
+        <button
+          v-else
+          class="ml-6 px-6 py-2 text-md transition-colors duration-300 rounded rounded border border-blue-600 shadow-md text-blue-100 bg-blue-700 hover:bg-blue-600 shadow-blue-600/30"
+        >
           Join
         </button>
       </div>
     </div>
     <div class="flex flex-row w-full gap-4">
       <img
-        :src="this.$store.getters['api_host'] + league.cover_image.url"
+        :src="$store.getters['api_host'] + league.cover_image.url"
         class="w-1/4 aspect-[11/16] border border-black self-center"
       >
       <div class="flex-grow w-full">
         <div class="grid grid-flow-col grid-cols-2 h-full gap-4">
           <div class="border-slate-700 border bg-darkt-700 row-span-2">
-            <section id="description" class="m-6">
-              <p class="text-slate-200">{{ league.desc }}</p>
+            <section
+              id="description"
+              class="m-6"
+            >
+              <p class="text-slate-200">
+                {{ league.desc }}
+              </p>
             </section>
           </div>
           <div class="row-span-2 grid grid-flow-col grid-cols-2 grid-rows-2 gap-4">
-            <div class="border-slate-700 border bg-darkt-700 ">
-            </div>
-            <div class="border-slate-700 border bg-darkt-700 ">
-            </div>
-            <div class="border-slate-700 border bg-darkt-700 ">
-            </div>
-            <div class="border-slate-700 border bg-darkt-700 ">
-            </div>
+            <div class="border-slate-700 border bg-darkt-700 " />
+            <div class="border-slate-700 border bg-darkt-700 " />
+            <div class="border-slate-700 border bg-darkt-700 " />
+            <div class="border-slate-700 border bg-darkt-700 " />
           </div>
         </div>
       </div>
     </div>
     <div class="flex w-full gap-2 mt-6">
       <div class="w-full bg-darkt-700">
-        <match-list :matches="league.matches" class="w-full"/>
+        <match-list
+          :matches="league.matches"
+          class="w-full"
+        />
       </div>
       <div class="border-slate-700 border bg-darkt-700 ml-4 w-1/5">
         <p class="mx-auto pb-1.5 text-darkt-700 text-5xl whitespace-nowrap text-center font-['Kanit'] bg-orange-700 italic leading-8">

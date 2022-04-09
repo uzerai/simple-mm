@@ -6,7 +6,10 @@
     <h1 class="text-md md:text-6xl font-bold text-stone-100 w-8/12 mx-auto mb-2 md:mb-5">
       {{ game?.name }}
     </h1>
-    <h2 class="sm:text-sm md:text-2xl font-thin text-stone-200 w-8/12 mx-auto my-2" id="official-leagues">
+    <h2
+      id="official-leagues"
+      class="sm:text-sm md:text-2xl font-thin text-stone-200 w-8/12 mx-auto my-2"
+    >
       <strong><span class="pr-2 md:pr-8">≫</span></strong>Official leagues
     </h2>
     <div class="w-full">
@@ -16,9 +19,12 @@
           :key="league.id"
           class="flex bg-stone-300 shadow-md shadow-stone-900 flex-shrink-0 hover:bg-cyan-900 transition ease-in-out duration-200 first:ml-16 lg:first:ml-60 last:mr-20"
         >
-          <router-link :to="{ name: 'league', params: { league_id: league.id }}" class="relative m-1 md:m-2">
+          <router-link
+            :to="{ name: 'league', params: { league_id: league.id }}"
+            class="relative m-1 md:m-2"
+          >
             <img
-              :src="this.$store.getters['api_host'] + league.cover_image.url"
+              :src="$store.getters['api_host'] + league.cover_image.url"
               class="h-28 md:h-80 object-fill aspect-[11/16] border border-black"
             >
             <div class="absolute bottom-0 flex flex-col items-center w-full background-gradient pb-2 text-center px-1">
@@ -33,7 +39,10 @@
         </div>
       </div>
     </div>
-    <h2 class="sm:text-sm md:text-2xl font-thin text-stone-200 w-8/12 mx-auto mt-2 mb-2 md:mt-4 md:mb-5" id="official-leagues">
+    <h2
+      id="official-leagues"
+      class="sm:text-sm md:text-2xl font-thin text-stone-200 w-8/12 mx-auto mt-2 mb-2 md:mt-4 md:mb-5"
+    >
       <strong><span class="pr-2 md:pr-8">≫</span></strong>Public leagues
     </h2>
     <div class="w-full">
@@ -43,9 +52,12 @@
           :key="league.id"
           class="flex bg-stone-300 shadow-md shadow-stone-900 flex-shrink-0 hover:bg-cyan-900 transition ease-in-out duration-200 first:ml-16 lg:first:ml-60 last:mr-20"
         >
-          <router-link :to="{ name: 'league', params: { league_id: league.id }}" class="relative m-1 md:m-2">
+          <router-link
+            :to="{ name: 'league', params: { league_id: league.id }}"
+            class="relative m-1 md:m-2"
+          >
             <img
-              :src="this.$store.getters['api_host'] + league.cover_image.url"
+              :src="$store.getters['api_host'] + league.cover_image.url"
               class="h-28 md:h-80 object-fill aspect-[11/16] border border-black"
             >
             <div class="absolute bottom-0 flex flex-col items-center w-full background-gradient pb-2 text-center px-1">
