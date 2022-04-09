@@ -42,6 +42,10 @@ class League < ApplicationRecord
   validates :name, :game,  presence: true
 
   def player_count
-    players.select(:user_id).map(&:user_id).uniq.count
+    players.select(:user_id).uniq.count
+  end
+
+  def top_5
+    players.order(rating: :desc).limit(5).as_json(include: :user)
   end
 end

@@ -53,7 +53,7 @@ class User < ApplicationRecord
 
     @signed_token ||= JWT.encode({
         id: id, 
-        players: players.as_json(only: [:id, :game_id]),
+        players: players.as_json(only: [:id, :league_id]),
         valid: Time.zone.now.iso8601,
         avatar: avatar.url,
         expire: (Time.zone.now + (extended_expiry ? 1.years : ENV.fetch('JWT_TOKEN_EXPIRE_MINUTES'){ 720 }.to_i.minutes)).iso8601,

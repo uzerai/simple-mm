@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class LeaguesController < BaseController
+
+	# Essentially makes the routes in only:[] public
+	skip_before_action :ensure_authorized, only: [:game_leagues]
+
 	# Leagues which are for a game of a given :slug param.
 	# Includes both the game and its leagues in the json (along with each leagues' player count).
   def game_leagues
@@ -30,7 +34,7 @@ class LeaguesController < BaseController
 		end
 
 		@results = {
-			league: league.as_json(include: [:game, :matches])
+			league: league.as_json(include: [:game, :matches], methods: [:top_5, :player_count])
 		}
 		render_response
 	end

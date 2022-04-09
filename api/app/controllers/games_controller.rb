@@ -2,6 +2,9 @@
 
 class GamesController < BaseController
 
+	# Essentially makes the routes in only:[] public
+	skip_before_action :ensure_authorized, only: [:index]
+
 	def index
 		@results = Game.all.as_json(methods: :player_count)
 		render_response

@@ -12,6 +12,9 @@ Rails.application.routes.draw do
   get "/leagues/:id", to: "leagues#show", as: 'game-league'
   get "/matches/:id", to: "matches#show", as: "match"
 
+  # Matchmaking related endpoints
+  post "/matchmaking/queue", to: "matchmaking#queue", as: "join-queue"
+
   devise_for :users, only: [:confirmation, :recovery], skip_helpers: [:sessions], controllers: { confirmations: 'confirmations' }
   
   post '/login', to: 'users#login', as: 'user-login'

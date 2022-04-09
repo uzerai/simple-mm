@@ -25,6 +25,7 @@ class MatchPlayer < ApplicationRecord
   belongs_to :player
   
   has_one :match, through: :match_team
+  has_one :user, through: :player
 
   def calculate_end_rating!
     # Can't calculate end rating if game hasn't ended.

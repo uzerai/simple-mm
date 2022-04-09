@@ -11,7 +11,7 @@ class Matchmaking::OrganizeMatchWorker
     player = Player.find(player_id)
     match_type = MatchType.find(match_type_id)
 
-    if (layer.nil? || match_type.nil?)
+    if (player.nil? || match_type.nil?)
       console.warn("Matchmaking::OrganizeMatchWorker#perform | Invalid Player or MatchType")
       return
     end
