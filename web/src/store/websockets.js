@@ -15,7 +15,7 @@ export default {
       state.consumer = consumer;
     },
     createSubscription(state, { channel, room, onReceived }) {
-      // Ensure we don't resubscribe.
+      // Ensure we don't resubscribe to something we're already subscribing to.
       if(!Object.keys(state.subscriptions).includes(channel)) {
         console.info(`Creating websocket subscription to ${channel} ...`);
         const subscription = state.consumer?.subscriptions.create({

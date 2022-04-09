@@ -22,10 +22,11 @@ export default [
   { path: "/players", component: PlayerTable },
   { path: "/games", component: Games, displayName: "Games", name: "games", 
     meta: {
-      title: "Games"
+      title: "Games",
+      public: true
     } 
   },
-  { path: "/games/:slug/leagues", component: Leagues, props: true, name: "game-leagues", meta: { title: "Leagues | :slug" } },
+  { path: "/games/:slug/leagues", component: Leagues, props: true, name: "game-leagues", meta: { title: "Leagues | :slug", public: true } },
   { path: "/leagues/:league_id", component: League, props: true, name: "league", meta: { title: "Leagues | :league_id"} },
   { path: "/match/:match_id", component: Match, props: true, name: "match" },
   {

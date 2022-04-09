@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col my-5">
+  <div class="flex flex-col mt-12 mb-5">
     <div class="w-8/12 mx-auto text-stone-100 flex items-baseline mb-2 md:mb-5">
       <h2 class="text-md md:text-6xl font-bold">
         Games

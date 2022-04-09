@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="game"
-    class="flex flex-col my-5"
+    class="flex flex-col mt-12 mb-5"
   >
     <h1 class="text-md md:text-6xl font-bold text-stone-100 w-8/12 mx-auto mb-2 md:mb-5">
       {{ game?.name }}
@@ -95,7 +95,6 @@ export default {
   .no-scrollbar {
     scrollbar-width: none;
   }
-
 
   .league-description + .league-hover:hover {
     opacity: 1;
