@@ -40,14 +40,23 @@
       <div class="flex-grow w-full">
         <div class="grid grid-flow-col grid-cols-2 h-full gap-4">
           <div class="border-slate-700 border bg-darkt-700 row-span-2">
-            <section
-              id="description"
-              class="m-6"
+            <div
+              id="description" 
+              class="m-6 text-slate-300 overflow-y-scroll max-h-96"
             >
-              <p class="text-slate-200">
-                {{ league.desc }}
-              </p>
-            </section>
+              <markdown :markdown="league.desc"/>
+            </div>
+            <div class="flex justify-between border-t divide-slate-700 border-slate-700 divide-x">
+              <div class="w-full h-12 text-center text-indigo-100 flex items-center justify-center cursor-pointer hover:underline">
+                Link 1
+              </div>
+              <div class="w-full h-12 text-center text-indigo-100 flex items-center justify-center cursor-pointer hover:underline">
+                Link 2
+              </div>
+              <div class="w-full h-12 text-center text-indigo-100 flex items-center justify-center cursor-pointer hover:underline">
+                Link 3
+              </div>
+            </div>
           </div>
           <div class="row-span-2 grid grid-flow-col grid-cols-2 grid-rows-2 gap-4">
             <div class="border-slate-700 border bg-darkt-700 " />
@@ -78,12 +87,14 @@
 <script>
 import MatchList from "../components/common/MatchList";
 import PlayersList from "../components/common/PlayersList";
+import Markdown from "../components/common/Markdown";
 
 export default {
   name: "League",
   components: {
     MatchList,
-    PlayersList
+    PlayersList,
+    Markdown,
   },
   props: {
     league_id: {
