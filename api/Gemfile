@@ -36,7 +36,7 @@ gem 'rack-cors'
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # I'm going to enforce the default style for more consistent file organization
-gem 'rubocop', '~> 0.79.0'
+gem 'rubocop'
 
 # We're running postgres for all environments, since everything is dockerized.
 gem 'pg', '>= 1.2.2'
@@ -53,6 +53,8 @@ group :development, :test do
   gem 'pry', '~> 0.12.2'
   gem 'pry-nav'
   gem 'annotate'
+  # For the rubocop-lsp vscode extension
+  gem 'rubocop-lsp'
 
   # Explicitly testing libraries
   gem 'rspec-rails'
