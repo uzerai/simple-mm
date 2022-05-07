@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: matches
@@ -21,8 +22,8 @@
 class Match < ApplicationRecord
   include AASM
   # Since we use UUID for id, sort by created_at for correct ordering.
-  self.implicit_order_column = "created_at"
-  
+  self.implicit_order_column = 'created_at'
+
   has_many :match_teams, dependent: :destroy
   has_many :match_players, through: :match_teams
   has_many :players, through: :match_players
@@ -61,28 +62,28 @@ class Match < ApplicationRecord
     event :live do
       transitions from: :readying, to: :live
       after do
-        self.update(started_at: Time.now)
+        update(started_at: Time.now)
       end
     end
 
     event :complete do
       transitions from: :live, to: :completed
       after do
-        self.update(ended_at: Time.now)
+        update(ended_at: Time.now)
       end
     end
 
     event :cancel do
-      transitions from: [:readying, :live], to: :cancelled
+      transitions from: %i[readying live], to: :cancelled
       after do
-        self.update(ended_at: Time.now)
+        update(ended_at: Time.now)
       end
     end
 
     event :abort, before: :log_game_aborted do
       transitions to: :aborted
       after do
-        self.update(ended_at: Time.now)
+        update(ended_at: Time.now)
       end
     end
   end
@@ -97,7 +98,7 @@ class Match < ApplicationRecord
 
   # Broadcasts the upcoming state of the match to the matchmaking channel.
   def broadcast_status
-    logger.info "Match#broadcast_status | Broadcasting updated status of match: #{self.id} | #{aasm.from_state} -> #{aasm.to_state}"
+    logger.info "Match#broadcast_status | Broadcasting updated status of match: #{id} | #{aasm.from_state} -> #{aasm.to_state}"
 
     # For all players in the match, broadcast to the user which owns the player.
     players.each do |player|
@@ -105,36 +106,36 @@ class Match < ApplicationRecord
     end
   end
 
-  # Creates the match teams for a match, according to the 
+  # Creates the match teams for a match, according to the
   # gametype of the match itself.
   def create_match_teams!
     match_teams = []
 
-    match_type.team_count.times { 
+    match_type.team_count.times do
       team = MatchTeam.create(match: self, avg_rating: 0)
       match_teams.push(team)
-    }
+    end
 
-    logger.info("Match#create_match_teams | Created match teams: [#{match_teams.map(&:id).join(", ")}]")
+    logger.info("Match#create_match_teams | Created match teams: [#{match_teams.map(&:id).join(', ')}]")
 
-    return match_teams
+    match_teams
   end
 
   # Returns the average rating of the match.
   def rating
     ratings = match_players.pluck(:start_rating)
-    
-    return ratings.reduce(:+).to_f / ratings.size
+
+    ratings.reduce(:+).to_f / ratings.size
   end
 
   # Starts a Matchmaking::OrganizeMatchWorker to create the match.
   def spawn_matchmaking_worker!
-    Matchmaking::OrganizeMatchWorker.perform_async self.id
+    Matchmaking::OrganizeMatchWorker.perform_async id
   end
 
   private
 
-  # Optional paramater to be provided at create time, and if set to 
+  # Optional paramater to be provided at create time, and if set to
   # true, will invoke the spawn_matchmaking_worker method above.
   def spawn_matchmaking_worker?
     !!@spawn_matchmaking_worker

@@ -8,7 +8,7 @@ class CreateMatchPlayers < ActiveRecord::Migration[7.0]
 
       t.references :match_team, type: :uuid
       t.references :player, type: :uuid
-      
+
       t.timestamps
     end
   end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: players
@@ -21,14 +22,14 @@
 
 class Player < ApplicationRecord
   # Since we use UUID for id, sort by created_at for correct ordering.
-  self.implicit_order_column = "created_at"
+  self.implicit_order_column = 'created_at'
 
   rails_admin do
     object_label_method do
       :username
     end
   end
-  
+
   belongs_to :user, inverse_of: :players
   belongs_to :game, inverse_of: :players
   belongs_to :league, inverse_of: :players

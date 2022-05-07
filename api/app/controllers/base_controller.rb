@@ -11,36 +11,38 @@ class BaseController < ActionController::API
   before_action :ensure_content_type
   before_action :ensure_authorized
 
-  # The basic logger in al™l controllers
+  # The basic logger in all controllers
   attr_accessor :logger, :user, :current_user_token, :errors, :results
 
   def initialize
     @logger = Rails.logger
+
+    super
   end
-    
+
   # --- Private functionality shared for all controllers ---
   private
 
-  # Validation function which is used for the 'before_action' hook 
+  # Validation function which is used for the 'before_action' hook
   # to ensure the received request content-type header is of the correct type(s)
   def ensure_content_type
-    unless request.headers['Content-Type'] == 'application/json'
-      add_error(415, "Content-Type 'application/json' required.")
-      render_response
-    end
+    return unless request.headers['Content-Type'] == 'application/json'
+
+    add_error(415, "Content-Type 'application/json' required.")
+    render_response
   end
 
-  # TODO: Render using a default json serializer which reacts to raised Errors and 
-  # maybe add this to its own lib/ include which appends these methods if the 
+  # TODO: Render using a default json serializer which reacts to raised Errors and
+  # maybe add this to its own lib/ include which appends these methods if the
   # controller defines something like `uses_default_response_structure`
-  # 
+  #
   # --- Very simple consistent response format. Works for now.
-  def add_error(code = 500, message = "Error.")
+  def add_error(code = 500, message = 'Error.')
     @errors ||= []
     @errors.push({
-      code: code,
-      message: message
-    })
+                   code:,
+                   message:
+                 })
   end
 
   def add_model_errors(model)
@@ -49,17 +51,16 @@ class BaseController < ActionController::API
 
     model.errors.each do |error|
       @errors.push({
-        code: 422,
-        message: "#{error.attribute} #{error.message}"
-      })
+                     code: 422,
+                     message: "#{error.attribute} #{error.message}"
+                   })
     end
   end
-  
+
   def render_response(status = :ok)
     render json: {
       results: @results,
       errors: @errors
-    }, status: status
+    }, status:
   end
 end
-  

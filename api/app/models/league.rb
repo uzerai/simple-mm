@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: leagues
@@ -20,10 +21,10 @@
 #  index_leagues_on_game_id        (game_id)
 #  index_leagues_on_match_type_id  (match_type_id)
 #
- 
+
 class League < ApplicationRecord
   # Since we use UUID for id, sort by created_at for correct ordering.
-  self.implicit_order_column = "created_at"
+  self.implicit_order_column = 'created_at'
 
   mount_uploader :cover_image, CoverImageUploader
 
@@ -32,7 +33,7 @@ class League < ApplicationRecord
       exclude_fields :cover_image
     end
   end
-  
+
   has_many :players
   has_many :matches
 
@@ -42,12 +43,12 @@ class League < ApplicationRecord
   validates :name, :game,  presence: true
 
   # Fetches the public or already-in leagues for a given user.
-  scope :visible_for_user, ->(user) do 
+  scope :visible_for_user, lambda { |user|
     # Handling for anynomous users.
-    return League.where(public: true) unless user.present? 
-    
+    return League.where(public: true) unless user.present?
+
     League.where(public: true).or(where(id: merge(user.leagues).select(:id)))
-  end
+  }
 
   def player_count
     players.select(:user_id).uniq.count

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 ruby '3.1.2'
@@ -7,8 +9,8 @@ gem 'rails', '~> 7.0.0'
 
 # Rails admin for simple admin interface
 gem 'rails_admin', '~>3.0'
+gem 'sassc-rails'
 gem 'sprockets-rails', '>= 3.4.2'
-gem "sassc-rails"
 
 # Carrierwave to handle image uploads
 gem 'carrierwave', '~> 2.0'
@@ -33,7 +35,7 @@ gem 'jwt'
 gem 'rack-cors'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 # I'm going to enforce the default style for more consistent file organization
 gem 'rubocop'
@@ -42,30 +44,30 @@ gem 'rubocop'
 gem 'pg', '>= 1.2.2'
 
 # We're also _always_ using unicorn & sidekiq with a redis instance (as it's dockerized)
-gem 'unicorn', '~> 6.0.0'
 gem 'sidekiq', '>= 6.0.4'
+gem 'unicorn', '~> 6.0.0'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
 group :development, :test do
   # Pry is better than byebug :)
+  gem 'annotate'
   gem 'pry', '~> 0.12.2'
   gem 'pry-nav'
-  gem 'annotate'
   # For the rubocop-lsp vscode extension
   gem 'rubocop-lsp'
 
   # Explicitly testing libraries
-  gem 'rspec-rails'
   gem 'factory_bot'
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'rspec-rails'
 end
 
 group :development do
   # For barebones development
-  gem "puma", "~> 5.5"
+  gem 'puma', '~> 5.5'
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
@@ -83,6 +85,6 @@ group :test do
   gem 'chromedriver-helper'
 end
 
-# Using only certain parts of devise, specifically their entire 
+# Using only certain parts of devise, specifically their entire
 # forgotten password flow & user authentication, might expand to using permissions.
-gem "devise"
+gem 'devise'

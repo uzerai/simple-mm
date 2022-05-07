@@ -12,11 +12,11 @@ class CreateLeagues < ActiveRecord::Migration[7.0]
       t.boolean :official, default: false
 
       t.references :game, type: :uuid, null: false
-      t.references :match_type, type: :uuid, null: :true
+      t.references :match_type, type: :uuid, null: true
 
       t.timestamps
     end
-    
+
     create_table :leagues_tags do |t|
       t.belongs_to :league
       t.belongs_to :tag

@@ -9,9 +9,14 @@ module HasSlug
 
     validates :slug, uniqueness: true, presence: true
   end
-  
+
   def set_slug
-    self.slug = self.send(:sluggable).parameterize
+    unless send(sluggable).present?
+      errors.add(sluggable, "can't be blank")
+      raise ActiveRecord::RecordInvalid
+    end
+
+    self.slug = send(sluggable).parameterize
   end
 
   def sluggable

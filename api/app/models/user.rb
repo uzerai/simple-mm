@@ -25,8 +25,8 @@
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #
 class User < ApplicationRecord
-	# Since we use UUID for id, sort by created_at for correct ordering.
-  self.implicit_order_column = "created_at"
+  # Since we use UUID for id, sort by created_at for correct ordering.
+  self.implicit_order_column = 'created_at'
 
   mount_uploader :avatar, AvatarUploader
 
@@ -35,11 +35,11 @@ class User < ApplicationRecord
       :username
     end
   end
-  
+
   # Include default devise modules. Others available are:
   # :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-          :recoverable, :validatable, :confirmable
+         :recoverable, :validatable, :confirmable
 
   has_many :players
   has_many :games, through: :players
@@ -48,17 +48,23 @@ class User < ApplicationRecord
   validates :username, uniqueness: true, presence: true
   validates :password, length: { minimum: 8 }, confirmation: true
 
-  def jwt_token(extended_expiry = false)
+  def jwt_token(extended_expiry: false)
     # TODO: Add some seed-generated secret which can be randomized to invalidate all other tokens (by just checking it after decode)
     # idea is to be able to invalidate all other signed tokens, regardless of expiry.
 
-    @signed_token ||= JWT.encode({
-        id: id, 
-        players: players.as_json(only: [:id, :league_id]),
-        valid: Time.zone.now.iso8601,
-        avatar: avatar.url,
-        expire: (Time.zone.now + (extended_expiry ? 1.years : ENV.fetch('JWT_TOKEN_EXPIRE_MINUTES'){ 720 }.to_i.minutes)).iso8601,
-        permissions: []
-      }, ENV.fetch('JWT_SIGN_SECRET') { 'defaultsecret' })
+    @jwt_token ||= JWT.encode({
+                                id:,
+                                players: players.as_json(only: %i[id league_id]),
+                                valid: Time.zone.now.iso8601,
+                                avatar: avatar.url,
+                                expire: (Time.zone.now + (if extended_expiry
+                                                            1.years
+                                                          else
+                                                            ENV.fetch(
+                                                              'JWT_TOKEN_EXPIRE_MINUTES', 720
+                                                            ).to_i.minutes
+                                                          end)).iso8601,
+                                permissions: []
+                              }, ENV.fetch('JWT_SIGN_SECRET', 'defaultsecret'))
   end
 end

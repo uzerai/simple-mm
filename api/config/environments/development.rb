@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -24,7 +26,8 @@ Rails.application.configure do
   else
     config.action_controller.perform_caching = false
 
-    config.cache_store = :redis_cache_store, { url: ENV.fetch('CACHE_URL'){ "redis://127.0.0.1:6379/1" }, namespace: 'srv::cache' }
+    config.cache_store = :redis_cache_store,
+                         { url: ENV.fetch('CACHE_URL', 'redis://127.0.0.1:6379/1'), namespace: 'srv::cache' }
   end
 
   # Store uploaded files on the local file system (see config/storage.yml for options)
@@ -34,8 +37,8 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
 
-   # Devise setup for actionmailer
-   config.action_mailer.default_url_options = { host: 'localhost', port: 8010 }
+  # Devise setup for actionmailer
+  config.action_mailer.default_url_options = { host: 'localhost', port: 8010 }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -53,13 +56,12 @@ Rails.application.configure do
 
   # Needed this block to enable precompilation of assets using the development
   # environment, so I could provide `rails_admin` with the necessary css.
-  logger           = ActiveSupport::Logger.new(STDOUT)
+  logger           = ActiveSupport::Logger.new($stdout)
   logger.formatter = config.log_formatter
   config.logger = ActiveSupport::TaggedLogging.new(logger)
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true
-
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true

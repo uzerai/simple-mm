@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'boot'
 
 require 'rails/all'
@@ -13,11 +15,11 @@ module SimpleMM
 
     # Custom logger to STDOUT. For docker purposes.
     config.log_level = :debug
-    config.log_tags = [:subdomain, :uuid]
-    config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
-    
+    config.log_tags = %i[subdomain uuid]
+    config.logger = ActiveSupport::TaggedLogging.new(Logger.new($stdout))
+
     # Settings in config/environments/* take precedence over those specified here.
-    
+
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.

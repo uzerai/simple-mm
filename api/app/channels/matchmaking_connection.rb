@@ -3,14 +3,10 @@
 class MatchmakingConnection < ApplicationCable::Connection
   def connect
     # Force requirement of room param
-    unless logged_in? || !params[:room]
-      reject_unauthorized_connection
-    end
+    reject_unauthorized_connection unless logged_in? || !params[:room]
 
     # Ensure the user is part of the league before allowing connection.
-    unless current_user.leagues.pluck(:id).contains(params[:room])
-      reject_unauthorized_connection
-    end
+    reject_unauthorized_connection unless current_user.leagues.pluck(:id).contains(params[:room])
 
     self.user = current_user
   end

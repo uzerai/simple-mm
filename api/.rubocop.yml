@@ -1,3 +1,8 @@
+AllCops:
+  Exclude:
+    - bin/*
+
+
 Layout/LineLength:
   Max: 120
   Exclude:
@@ -7,3 +12,29 @@ Layout/LineLength:
     - lib/tasks/**/*
   IgnoredPatterns:
     - '\s*#\s.*'
+
+Metrics/BlockLength:
+  Max: 50
+  Exclude:
+    - db/**/*
+    - spec/**/*
+
+Metrics/MethodLength:
+  Max: 50
+  Exclude:
+    - db/**/*
+    - spec/**/*
+
+Layout/LineLength:
+  Max: 160
+  Exclude:
+    - db/**/*
+    - lib/tasks/*
+
+Lint/SuppressedException:
+  Exclude:
+    - config/*
+
+Style/Documentation:
+  Exclude:
+    - ./**/*

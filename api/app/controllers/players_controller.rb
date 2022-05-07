@@ -9,11 +9,11 @@ class PlayersController < BaseController
   def show
     @results = Player.find(params[:id]).as_json(include: :matches)
 
-    unless @results.present?
-      add_error(404, "Player not found.")
-      render_response(:not_found)
-    else
+    if @results.present?
       render_response
+    else
+      add_error(404, 'Player not found.')
+      render_response(:not_found)
     end
   end
 end

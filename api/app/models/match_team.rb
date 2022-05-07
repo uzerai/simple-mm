@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: match_teams
@@ -17,19 +18,19 @@
 
 class MatchTeam < ApplicationRecord
   # Since we use UUID for id, sort by created_at for correct ordering.
-  self.implicit_order_column = "created_at"
-  
+  self.implicit_order_column = 'created_at'
+
   belongs_to :match
 
   has_one :match_type, through: :match
   has_many :match_players, dependent: :destroy
   has_many :players, through: :match_players
 
-  enum :outcome, [:draw, :win, :loss]
+  enum :outcome, %i[draw win loss]
 
   def calculate_rating!
     ratings = match_players.pluck(:start_rating)
-    
+
     update!(avg_rating: (ratings.reduce(:+).to_f / ratings.size)) if ratings.any?
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :match do
     association :match_type
@@ -13,9 +15,9 @@ FactoryBot.define do
       after :create do |match|
         match.create_match_teams!
         match.match_teams.each do |match_team|
-          create_list :match_player, match.match_type.team_size, match_team: match_team
+          create_list :match_player, match.match_type.team_size, match_team:
         end
-      end 
+      end
     end
   end
 end

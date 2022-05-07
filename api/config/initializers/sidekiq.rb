@@ -1,4 +1,6 @@
-sidekiq_config = { url: ENV.fetch('JOB_WORKER_URL'){ "redis://localhost:6379/0" } }
+# frozen_string_literal: true
+
+sidekiq_config = { url: ENV.fetch('JOB_WORKER_URL', 'redis://localhost:6379/0') }
 
 Sidekiq.configure_server do |config|
   config.redis = sidekiq_config

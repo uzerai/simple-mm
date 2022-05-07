@@ -7,7 +7,7 @@ class ConfirmationsController < Devise::ConfirmationsController
 
   # Overriden to avoid an error where devise would assume the sessions-helper
   # was generated (but this project don't generate it, as it doesn't use sessions)
-  def after_confirmation_path_for(resource_name, resource)
-    ENV.fetch('CONFIRMATION_REDIRECT'){ "/" }
+  def after_confirmation_path_for(_resource_name, _resource)
+    ENV.fetch('CONFIRMATION_REDIRECT', '/')
   end
 end

@@ -1,42 +1,43 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  describe '#validations' do
+  describe '#valid?' do
     context 'when the user is valid' do
-      let(:user) { FactoryBot.build(:user) }
-  
+      let(:user) { build :user }
+
       # I know this may introduce false negatives, in the context of validations
       # but I'd rather make sure saving valid users throws _no_ errors.
       it 'does not raise error on save' do
-        expect{ user.save! }.not_to raise_error
+        expect { user.save! }.not_to raise_error
       end
     end
-  
+
     context 'when the user is invalid' do
-      let(:user) { FactoryBot.build(:user, :invalid) }
-  
+      let(:user) { build :user, username: nil, email: nil }
+
       it 'raises RecordInvalid error on save' do
-        expect{ user.save! }.to raise_error ActiveRecord::RecordInvalid
+        expect { user.save! }.to raise_error ActiveRecord::RecordInvalid
         expect(user.errors).to contain_exactly \
           "Email can't be blank", "Username can't be blank"
       end
     end
 
     context 'when there already exists a user with the provided email' do
-      let(:existing_user) { FactoryBot.create(:user) }
-      let(:user) { FactoryBot.build(:user, email: existing_user.email) }
+      let(:existing_user) { create :user }
+      let(:user) { build :user, email: existing_user.email }
 
       it 'raises a RecordInvalid error on save' do
-        expect{ user.save! }.to raise_error ActiveRecord::RecordInvalid
-        expect(user.errors).to contain_exactly "Email has already been taken"
+        expect { user.save! }.to raise_error ActiveRecord::RecordInvalid
+        expect(user.errors).to contain_exactly 'Email has already been taken'
       end
     end
   end
 
   describe '#jwt_token' do
-    let(:user) { FactoryBot.create(:user) }
-    let(:decoded_token) { JWT.decode(subject, ENV.fetch('JWT_SIGN_SECRET') { 'defaultsecret' }, true, algorithm: 'HS256').first }
-
+    let(:user) { create :user }
+    let(:decoded_token) { JWT.decode(subject, ENV.fetch('JWT_SIGN_SECRET', 'defaultsecret'), true, algorithm: 'HS256').first }
 
     context 'without extended expiry' do
       subject { user.jwt_token }
@@ -45,7 +46,12 @@ RSpec.describe User, type: :model do
         expect(subject).not_to be_nil
         expect { decoded_token }.not_to raise_error
         # The token should expire within the day
-        expect(decoded_token.fetch('expire')).to include(Time.now.day.to_s, Time.now.month.to_s, Time.now.year.to_s)
+        expected_expire_date = Time.now + ENV.fetch('JWT_TOKEN_EXPIRE_MINUTES', 720).to_i.minutes
+        expect(decoded_token.fetch('expire')).to include(
+          expected_expire_date.day.to_s,
+          expected_expire_date.month.to_s,
+          expected_expire_date.year.to_s
+        )
       end
     end
 
@@ -56,7 +62,12 @@ RSpec.describe User, type: :model do
         expect(subject).not_to be_nil
         expect { decoded_token }.not_to raise_error
         # Extended expiry makes the expire-time +1year, so check if expire contains next year, same day.
-        expect(decoded_token.fetch('expire')).to include(Time.now.day.to_s, Time.now.month.to_s, (Time.now.year + 1).to_s)
+        expected_expire_date = Time.now + 1.year
+        expect(decoded_token.fetch('expire')).to include(
+          expected_expire_date.day.to_s,
+          expected_expire_date.month.to_s,
+          expected_expire_date.year.to_s
+        )
       end
     end
   end

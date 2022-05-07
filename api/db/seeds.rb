@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
 #
@@ -11,7 +13,7 @@ number_of_users = 2
 matches_per_league = 0
 physical_games = []
 electronic_games = [
-   ["Chess", ["2|1"]],
+  ['Chess', ['2|1']]
   # ["League of Legends", ["2|5"] ],
   # ["Counter Strike: Global Offensive", ["2|16", "2|5"] ],
   # ["Dota 2", ["2|5"] ],
@@ -38,7 +40,7 @@ electronic_games = [
 
 number_of_users.times do |id|
   username = "user_#{id + 1}"
-  user = User.create!(username: username, email: "#{username}@email.com", password: "password", confirmed_at: Time.now)
+  user = User.create!(username:, email: "#{username}@email.com", password: 'password', confirmed_at: Time.now)
 end
 
 # unused for now, no physical games
@@ -50,41 +52,40 @@ all_games.each do |game_array|
 
   # Create match types from formatted string
   match_types.each do |match_type_string|
-    team_count = match_type_string.split("|").first.to_i
-    team_size = match_type_string.split("|").last.to_i
+    team_count = match_type_string.split('|').first.to_i
+    team_size = match_type_string.split('|').last.to_i
 
-    match_type_name = begin 
-      result = ""
+    match_type_name = begin
+      result = ''
 
-      unless team_count > 2
-        result << "#{team_size}"
-        (team_count - 1).times { result << "v#{team_size}" } 
-      else
+      if team_count > 2
         result << "#{team_size}-man"
-      end
-
-      result << " - "
-      
-
-      if team_size == 1
-        result << "SOLO"
-      elsif team_size > 1
-        result << "TEAM"
       else
-        result << "FFA"
+        result << team_size.to_s
+        (team_count - 1).times { result << "v#{team_size}" }
       end
-      
+
+      result << ' - '
+
+      result << if team_size == 1
+                  'SOLO'
+                elsif team_size > 1
+                  'TEAM'
+                else
+                  'FFA'
+                end
+
       result
     end
 
-    MatchType.create!(name: match_type_name, team_size: team_size, team_count: team_count, game: game)
+    MatchType.create!(name: match_type_name, team_size:, team_count:, game:)
   end
 
   # Randomly decide on an official match type.
-  official_match_type = MatchType.where(game: game).first
+  official_match_type = MatchType.where(game:).first
 
-  league_unrated = League.create!(name: "PUBLIC LEAGUE UNRATED", match_type: official_match_type, game: game, public: true, official: true, rated: false)
-  league_rated = League.create!(name: "PUBLIC LEAGUE", match_type: official_match_type, game: game, public: true, official: true)
+  league_unrated = League.create!(name: 'PUBLIC LEAGUE UNRATED', match_type: official_match_type, game:, public: true, official: true, rated: false)
+  league_rated = League.create!(name: 'PUBLIC LEAGUE', match_type: official_match_type, game:, public: true, official: true)
   leagues = League.all
 
   # User.find_each.with_index do |user, index|
@@ -97,23 +98,23 @@ all_games.each do |game_array|
   leagues.each do |league|
     # matches_per_league.times do |number|
     #   game_match = Match.create!(started_at: Time.zone.now, ended_at: Time.zone.now + 1.hour, state: Match::STATE_COMPLETED, match_type: league.match_type, league: league)
-    
+
     #   # Create match teams without any players
     #   match_teams = game_match.create_match_teams!
-    
+
     #   # For each match team
     #   match_teams.each do |match_team|
     #     # Insert team_size amount of playerse
-    #     official_match_type.team_size.times do 
+    #     official_match_type.team_size.times do
     #       # Pick a random player who isn't in the game already
     #       player = league.reload.players
     #         .where.not(id: game_match.reload.players.pluck(:id))
     #         .order(Arel.sql('RANDOM()'))
     #         .first
-    
+
     #       match_player = MatchPlayer.create!(player: player, start_rating: player.rating, match_team: match_team)
     #     end
-    
+
     #     # This should really be done every time before save.
     #     match_team.reload.calculate_rating!
     #   end
@@ -123,13 +124,10 @@ all_games.each do |game_array|
     #   winner.update(outcome: :win)
     #   losers = match_teams - [winner]
     #   MatchTeam.where(id: losers).update_all(outcome: :loss)
-    
+
     #   match_teams.each do |team|
     #     team.reload.match_players.each(&:calculate_end_rating!)
     #   end
     # end
   end
 end
-
-
-

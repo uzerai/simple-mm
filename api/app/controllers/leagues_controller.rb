@@ -1,68 +1,67 @@
 # frozen_string_literal: true
 
 class LeaguesController < BaseController
+  # Essentially makes the routes in only:[] public
+  skip_before_action :ensure_authorized, only: [:game_leagues]
 
-	# Essentially makes the routes in only:[] public
-	skip_before_action :ensure_authorized, only: [:game_leagues]
-
-	# Leagues which are for a game of a given :slug param.
-	# Includes both the game and its leagues in the json (along with each leagues' player count).
+  # Leagues which are for a game of a given :slug param.
+  # Includes both the game and its leagues in the json (along with each leagues' player count).
   def game_leagues
-		game = Game.find_by(slug: params[:game_slug])
+    game = Game.find_by(slug: params[:game_slug])
 
-		unless game.present?
-			add_error(404, "Game not found.")
-			render_response(:not_found)
-			return
-		end
+    unless game.present?
+      add_error(404, 'Game not found.')
+      render_response(:not_found)
+      return
+    end
 
-		@results = {
+    @results = {
       game: game.as_json,
       leagues: League.visible_for_user(current_user)
-      	.where(game: game)
-      	.as_json(methods: :player_count),
-    	user_leagues: current_user&.leagues.as_json(methods: :player_count) || []
+                     .where(game:)
+                     .as_json(methods: :player_count),
+      user_leagues: current_user&.leagues&.as_json(methods: :player_count) || []
     }
-    
-		render_response
-	end
 
-	def show
-		league = League.joins(:game)
-			.find_by(id: params[:id])
+    render_response
+  end
 
-		unless league.present?
-			add_error(404, "League not found")
-			render_response(:not_found)
-			return
-		end
+  def show
+    league = League.joins(:game)
+                   .find_by(id: params[:id])
 
-		@results = {
-			league: league.as_json(include: [:game, :matches], methods: [:top_5, :player_count])
-		}
-		render_response
-	end
+    unless league.present?
+      add_error(404, 'League not found')
+      render_response(:not_found)
+      return
+    end
 
-	def join
-		league = League.joins(:game).find_by(id: params[:id])
+    @results = {
+      league: league.as_json(include: %i[game matches], methods: %i[top_5 player_count])
+    }
+    render_response
+  end
 
-		unless league.present?
-			add_error(404, "League not found")
-			render_response(:not_found)
-			return
-		end
+  def join
+    league = League.joins(:game).find_by(id: params[:id])
 
-		invitation = nil
-		status = :accepted
+    unless league.present?
+      add_error(404, 'League not found')
+      render_response(:not_found)
+    end
 
-		logger.info "LeaguesController#join | User:#{current_user.id} joining League:#{league.id}"
-		# For now, simply use the username of the user as thee player name
-		Player.create!(username: current_user.username, rating: league.starting_rating, league: league, game: league.game, user: current_user )
+    invitation = nil
+    status = :accepted
 
-		@results = {
-			invitation: invitation,
-			status: status
-		}
-		render_response
-	end
+    logger.info "LeaguesController#join | User:#{current_user.id} joining League:#{league.id}"
+    # For now, simply use the username of the user as thee player name
+    Player.create!(username: current_user.username, rating: league.starting_rating, league:, game: league.game,
+                   user: current_user)
+
+    @results = {
+      invitation:,
+      status:
+    }
+    render_response
+  end
 end

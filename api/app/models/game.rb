@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: games
@@ -17,34 +18,36 @@
 #
 
 class Game < ApplicationRecord
-	include HasSlug
-	# Since we use UUID for id, sort by created_at for correct ordering.
-	self.implicit_order_column = "created_at"
+  include HasSlug
+  # Since we use UUID for id, sort by created_at for correct ordering.
+  self.implicit_order_column = 'created_at'
 
-	mount_uploader :cover_image, CoverImageUploader
+  mount_uploader :cover_image, CoverImageUploader
 
-	# Removes the cover image from the table listings in rails admin.
-	rails_admin do
-		list do
-			exclude_fields :cover_image
-		end
-	end
+  # Removes the cover image from the table listings in rails admin.
+  rails_admin do
+    list do
+      exclude_fields :cover_image
+    end
+  end
 
-	has_many :match_types
-	has_many :players
-	has_many :leagues
-	
-	has_and_belongs_to_many :tags
+  has_many :match_types
+  has_many :players
+  has_many :leagues
 
-	# Although called player_count, this actually counts unique users which have participated in at
-	# least one league of the game.
-	def player_count
-		players.select(:user_id).map(&:user_id).uniq.count
-	end
+  has_and_belongs_to_many :tags
 
-	private
+  validates :name, presence: true
 
-	def sluggable
-		name
-	end
+  # Although called player_count, this actually counts unique users which have participated in at
+  # least one league of the game.
+  def player_count
+    players.select(:user_id).map(&:user_id).uniq.count
+  end
+
+  private
+
+  def sluggable
+    :name
+  end
 end

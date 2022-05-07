@@ -8,7 +8,7 @@ class CreateMatchTypes < ActiveRecord::Migration[7.0]
 
       t.integer :team_size, null: false
       t.integer :team_count, null: false
-      
+
       t.references :game, type: :uuid, null: false
 
       t.timestamps

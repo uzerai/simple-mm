@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 class LeagueImageUploader < CarrierWave::Uploader::Base
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick
@@ -19,7 +18,7 @@ class LeagueImageUploader < CarrierWave::Uploader::Base
   # Provide a default URL as a default if there hasn't been a file uploaded:
   # def default_url(*args)
   #   # For Rails 3.1+ asset pipeline compatibility:
-  #   ActionController::Base.helpers.asset_path("images/league_image_uploader/" + [version_name, "default.png"].compact.join('_'))  
+  #   ActionController::Base.helpers.asset_path("images/league_image_uploader/" + [version_name, "default.png"].compact.join('_'))
   # end
 
   # Process files as they are uploaded:
@@ -41,7 +40,7 @@ class LeagueImageUploader < CarrierWave::Uploader::Base
   # Add an allowlist of extensions which are allowed to be uploaded.
   # For images you might use something like this:
   def extension_allowlist
-    %w(jpg jpeg gif png)
+    %w[jpg jpeg gif png]
   end
 
   # Override the filename of the uploaded files:

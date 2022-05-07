@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: match_types
@@ -18,18 +19,24 @@
 #
 
 class MatchType < ApplicationRecord
-	include HasSlug
-	# Since we use UUID for id, sort by created_at for correct ordering.
-	self.implicit_order_column = "created_at"
+  include HasSlug
+  # Since we use UUID for id, sort by created_at for correct ordering.
+  self.implicit_order_column = 'created_at'
 
-	belongs_to :game, required: true
+  belongs_to :game, required: true
 
-	validates :name, :team_size, :team_count, :game,  presence: true
-	validates :team_size, :team_count, numericality: { only_integer: true }
+  validates :name, :team_size, :team_count, :game, presence: true
+  validates :team_size, :team_count, numericality: { only_integer: true }
 
-	private
+  private
 
-	def sluggable
-		"#{game.name}.#{name}"
-	end
+  # a little bit of an ugly work-around for combining a slug from 2 fields.
+  # TODO: clean up to support multi-field slug
+  def sluggable
+    :slug_string
+  end
+
+  def slug_string
+    "#{game.name}.#{name}"
+  end
 end

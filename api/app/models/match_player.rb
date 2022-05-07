@@ -19,22 +19,22 @@
 #
 class MatchPlayer < ApplicationRecord
   # Since we use UUID for id, sort by created_at for correct ordering.
-  self.implicit_order_column = "created_at"
-  
+  self.implicit_order_column = 'created_at'
+
   belongs_to :match_team
   belongs_to :player
-  
+
   has_one :match, through: :match_team
   has_one :user, through: :player
 
   def calculate_end_rating!
     # Can't calculate end rating if game hasn't ended.
-    return nil unless match.completed? 
+    return nil unless match.completed?
 
     enemy_teams = match.match_teams.where.not(id: match_team.id)
 
     # If a match_player had no enemy teams, gain no elo.
-    return start_rating unless enemy_teams.count > 0 ;
+    return start_rating unless enemy_teams.count.positive?
 
     enemy_teams_rating_avg = enemy_teams.pluck(:avg_rating).map(&:to_f).sum / enemy_teams.count
 
@@ -46,12 +46,12 @@ class MatchPlayer < ApplicationRecord
     when :loss
       end_rating = start_rating - delta_rating
     else
-      return start_rating;
+      return start_rating
     end
 
-    update!(end_rating: end_rating)
+    update!(end_rating:)
     player.update(rating: end_rating)
 
-    return end_rating
+    end_rating
   end
 end

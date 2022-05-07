@@ -10,8 +10,8 @@ class CreateUsers < ActiveRecord::Migration[6.1]
       t.string :avatar,             null: true
 
       # Security
-      t.string :encrypted_password, null: false, default: ""
-      t.string :validation_dud,     null: false, default: "virgin-validation-dud"
+      t.string :encrypted_password, null: false, default: ''
+      t.string :validation_dud,     null: false, default: 'virgin-validation-dud'
 
       ## Recoverable
       t.string   :reset_password_token

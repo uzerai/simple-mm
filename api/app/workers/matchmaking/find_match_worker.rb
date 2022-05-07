@@ -1,47 +1,50 @@
-class Matchmaking::FindMatchWorker
-  include Sidekiq::Worker
-  sidekiq_options queue: 'matchmaking', retry: false
+# frozen_string_literal: true
 
-  logger = Rails.logger
+module Matchmaking
+  class FindMatchWorker
+    include Sidekiq::Worker
+    sidekiq_options queue: 'matchmaking', retry: false
 
-  attr_accessor :target_match, :player, :league
+    @logger = Rails.logger
 
-  def perform(league_id, player_id)
-    @league = League.find(league_id)
-    @player = Player.find(player_id)
+    attr_accessor :target_match, :player, :league, :logger
 
-    # Add the player to queue
-    MatchmakingQueue.add_to_queue(league, player)
+    def perform(league_id, player_id)
+      @league = League.find(league_id)
+      @player = Player.find(player_id)
 
-    # TODO:
-    # Check if there are any matches in a given elo range
-    # If there are, check for the existence of matchmaking workers for those matches
-    # queue up matchmaking workers if there are none
-    # otherwise, create a new match in the correct elo range
-    unless existing_matches.any?
-      logger.info "FindMatchWorker#perform | No matches exist for league, creating one."
+      # Add the player to queue
+      MatchmakingQueue.add_to_queue(league, player)
+
+      # TODO: Check if there are any matches in a given elo range
+      # If there are, check for the existence of matchmaking workers for those matches
+      # queue up matchmaking workers if there are none
+      # otherwise, create a new match in the correct elo range
+      return if existing_matches.any?
+
+      logger.info 'FindMatchWorker#perform | No matches exist for league, creating one.'
       create_new_match
-    end 
-  end
+    end
 
-  private
+    private
 
-  # Checks for existing matches for the league; if there are any.
-  def existing_matches
-    @existing_matches ||= Match.where(league: league, state: [Match::STATE_QUEUED])
-  end
+    # Checks for existing matches for the league; if there are any.
+    def existing_matches
+      @existing_matches ||= Match.where(league:, state: [Match::STATE_QUEUED])
+    end
 
-  # Checks for a current match where the player is already in.
-  def current_match
-    @current_match ||= Match.where(league: league, state: [Match::STATE_PREPARING, Match::STATE_QUEUED])
-      .joins(match_teams: :match_players )
-      .merge(MatchPlayer.where(player: player))
-  end
+    # Checks for a current match where the player is already in.
+    def current_match
+      @current_match ||= Match.where(league:, state: [Match::STATE_PREPARING, Match::STATE_QUEUED])
+                              .joins(match_teams: :match_players)
+                              .merge(MatchPlayer.where(player:))
+    end
 
-  def create_new_match
-    @target_match = Match.create!(match_type: league.match_type, league: league, spawn_matchmaking_worker: true)
-    logger.info("OrganizeMatchWorker#create_new_match | Created match #{target_match.id}")
+    def create_new_match
+      @target_match = Match.create!(match_type: league.match_type, league:, spawn_matchmaking_worker: true)
+      logger.info("OrganizeMatchWorker#create_new_match | Created match #{target_match.id}")
 
-    match_teams = target_match.create_match_teams!
+      match_teams = target_match.create_match_teams!
+    end
   end
 end
