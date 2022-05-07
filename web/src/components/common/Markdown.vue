@@ -1,5 +1,10 @@
 <template>
-  <div class="markdown-area mr-4" v-html="markdownHTML"  />
+  <!-- eslint-disable vue/no-v-html -->
+  <div
+    class="markdown-area mr-4"
+    v-html="markdownHTML"
+  />
+  <!-- eslint-enable vue/no-v-html -->
 </template>
 
 <script>

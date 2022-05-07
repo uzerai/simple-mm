@@ -36,7 +36,7 @@
     </router-link>
     <div
       v-else
-      class="flex flex-shrink items-center text-xs md:text-base text-white mx-6 gap-4"
+      class="flex flex-shrink items-center text-xs md:text-base text-white mx-6 gap-4 mr-6" 
     >
       <img 
         :src="$store.getters['api_host'] + user.avatar" 
@@ -44,7 +44,7 @@
       >
       <!-- having this be the element which has the hover-show effect means the menu will stay open
           when the mouse is between the profile image and the menu. -->
-      <div class="origin-top-right top-0 right-0.5 absolute profile-menu pt-16 group text-sm">
+      <div class="origin-top-right top-0 right-0.5 absolute profile-menu pt-16 group text-sm z-50">
         <div class="bg-darkt-900 group-hover:border-b group-hover:border-l border-darkt-600 rounded-bl-lg flex flex-col hover:focus pl-5 pr-6">
           <button
             class="hover:text-blue-sapphire text-neutral-400 fill-neutral-400 hover:fill-blue-sapphire p-2 my-2"
@@ -101,11 +101,16 @@
   <transition name="queuebar">
     <div
       v-if="show_queue_bar"
-      class="absolute flex w-full h-10 bg-emerald-600 border-b border-t border-emerald-300 items-center shimmer"
+      class="absolute flex w-full h-10 bg-emerald-600 border-b border-t border-emerald-300 items-center shimmer z-20"
     >
       <div class="flex-grow" />
-      <span class="text-emerald-100 mr-24 text-sm">{{ matchmaking_message }}</span>
-      <span class="h-4 w-4" />
+      <span class="text-emerald-100 mr-24 text-sm italic">{{ matchmaking_message }}</span>
+      <button
+        class="text-emerald-100 hover:text-darkt-800 mr-6 cursor-pointer"
+        @click="$store.dispatch('matchmaking/stopActiveQueue')"
+      >
+        &times;
+      </button>
     </div>
   </transition>
 </template>
@@ -138,7 +143,7 @@
           case 0:
             return "";
           case 1:
-            return "In queue ...";
+            return "Matchmaking ...";
           case 2:
             return "Found match ";
           case 3: 

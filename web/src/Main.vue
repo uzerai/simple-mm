@@ -17,6 +17,11 @@
         </transition>
       </router-view>
 
+      <div class="text-darkt-100 text-center my-4">
+        <p> Simple-MM matchmaking systems </p>
+        <p> 2020 &copy;</p>
+      </div>
+
       <!-- This transition group makes the notifications absolute too. -->
       <transition-group
         class="absolute w-full lg:w-fit lg:top-auto sm:flex flex-col justify-center lg:inline-block lg:bottom-0 lg:right-0 overflow-hidden pointer-events-none"

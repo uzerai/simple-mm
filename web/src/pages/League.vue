@@ -18,15 +18,30 @@
           {{ league.name }}
         </h1>
         <button
-          v-if="leaguePlayer"
-          class="ml-6 px-6 py-2 text-md transition-colors duration-300 rounded rounded border border-emerald-600 shadow-md text-emerald-100 bg-emerald-700 hover:bg-emerald-600 shadow-emerald-600/30"
+          v-if="leaguePlayer && !isInQueue"
+          class="ml-6 px-6 py-2 text-md transition-colors duration-300 rounded border border-emerald-600 shadow-md text-emerald-100 bg-emerald-700 hover:bg-emerald-600 shadow-emerald-600/30"
           @click="queueForLeague"
         >
           Play
         </button>
         <button
+          v-else-if="leaguePlayer && isInQueueForLeague"
+          class="ml-6 px-6 py-2 text-md transition-colors duration-300 rounded border border-rose-600 shadow-md text-rose-100 bg-rose-700 hover:bg-rose-900 hover:border-rose-800 hover:text-rose-300 shadow-rose-600/30"
+          @click="unqueueFromLeague"
+        >
+          Cancel
+        </button>
+        <button
+          v-else-if="leaguePlayer && isInQueue"
+          class="ml-6 px-6 py-2 text-md transition-colors duration-300 rounded border border-neutral-600 shadow-md text-neutral-100 bg-neutral-700 cursor-not-allowed"
+          disabled
+        >
+          In other queue ...
+        </button>
+        <button
           v-else
-          class="ml-6 px-6 py-2 text-md transition-colors duration-300 rounded rounded border border-blue-600 shadow-md text-blue-100 bg-blue-700 hover:bg-blue-600 shadow-blue-600/30"
+          class="ml-6 px-6 py-2 text-md transition-colors duration-300 rounded border border-blue-600 shadow-md text-blue-100 bg-blue-700 hover:bg-blue-600 shadow-blue-600/30"
+          @click="joinLeague"
         >
           Join
         </button>
@@ -39,30 +54,28 @@
       >
       <div class="flex-grow w-full">
         <div class="grid grid-flow-col grid-cols-2 h-full gap-4">
-          <div class="border-slate-700 border bg-darkt-700 row-span-2">
+          <div class="flex flex-col border-slate-700 border bg-darkt-700 row-span-2">
             <div
               id="description" 
-              class="m-6 text-slate-300 overflow-y-scroll max-h-96"
+              class="m-6 text-slate-300 overflow-y-scroll max-h-96 flex-grow"
             >
-              <markdown :markdown="league.desc"/>
+              <markdown :markdown="league.desc" />
             </div>
-            <div class="flex justify-between border-t divide-slate-700 border-slate-700 divide-x">
-              <div class="w-full h-12 text-center text-indigo-100 flex items-center justify-center cursor-pointer hover:underline">
+            <div class="flex justify-between border-t divide-slate-700 border-slate-700 divide-x bg-darkt-800">
+              <div class="w-full h-12 text-center text-slate-600 flex items-center justify-center cursor-pointer hover:underline hover:text-blue-300">
                 Link 1
               </div>
-              <div class="w-full h-12 text-center text-indigo-100 flex items-center justify-center cursor-pointer hover:underline">
+              <div class="w-full h-12 text-center text-slate-600 flex items-center justify-center cursor-pointer hover:underline hover:text-blue-300">
                 Link 2
               </div>
-              <div class="w-full h-12 text-center text-indigo-100 flex items-center justify-center cursor-pointer hover:underline">
-                Link 3
+              <div class="w-full h-12 text-center text-slate-600 flex items-center justify-center cursor-pointer hover:underline hover:text-blue-300">
+                Socials
               </div>
             </div>
           </div>
-          <div class="row-span-2 grid grid-flow-col grid-cols-2 grid-rows-2 gap-4">
-            <div class="border-slate-700 border bg-darkt-700 " />
-            <div class="border-slate-700 border bg-darkt-700 " />
-            <div class="border-slate-700 border bg-darkt-700 " />
-            <div class="border-slate-700 border bg-darkt-700 " />
+          <div class="row-span-2 grid grid-flow-col grid-cols-1 grid-rows-2 gap-4">
+            <div class="border-slate-700 border bg-darkt-700" />
+            <div class="border-slate-700 border bg-darkt-700" />
           </div>
         </div>
       </div>
@@ -75,9 +88,9 @@
         />
       </div>
       <div class="border-slate-700 border bg-darkt-700 ml-4 w-1/5">
-        <p class="mx-auto pb-1.5 text-darkt-700 text-5xl whitespace-nowrap text-center font-['Kanit'] bg-orange-700 italic leading-8">
-          // TOP
-        </p>
+        <h3 class="mx-auto text-darkt-700 text-4xl whitespace-nowrap text-center font-bold bg-orange-700 italic">
+          Top players
+        </h3>
         <players-list :players="league.top_5" />
       </div>
     </div>
@@ -109,8 +122,17 @@ export default {
     };
   },
   computed: {
+    isInQueueForLeague() {
+      const inQd4League = this.$store.getters["matchmaking/status"] > 0 && this.$store.getters["matchmaking/queuedLeague"] == this.league_id;
+      console.info("User id queued for league:" + inQd4League);
+      return inQd4League;
+    },
+    isInQueue() {
+      return this.$store.getters["matchmaking/status"] > 0;
+    },
     leaguePlayer() {
-      const hasPlayer = this.$store.getters["auth/user"]?.players.map(player => player.league_id).includes(this.league_id);
+      const hasPlayer = this.$store.getters["auth/user"]?.players.map(player => player.league_id)
+        .includes(this.league_id);
       console.info("User has player in league: " + hasPlayer);
       return hasPlayer;
     }
@@ -124,8 +146,19 @@ export default {
     this.game = league.game;
   },
   methods: {
+    async joinLeague() {
+      // eslint-disable-next-line
+      const request = await this.$store.dispatch("post", { path: `/leagues/${this.league_id}/join` });
+      
+      this.$store.dispatch("auth/autologin");
+    },
+    async unqueueFromLeague() {
+      const league_id = this.$store.getters["matchmaking/queuedLeague"];
+      this.$store.dispatch("matchmaking/stopQueue", { league_id });
+    },
     async queueForLeague() {
-      if (this.$store.getters["matchmaking/status"] === 0) {        
+      // Only allow users which are not currently in queue, to queue.
+      if (this.$store.getters["matchmaking/status"] === 0) {
         this.$store.dispatch("matchmaking/startQueue", {
           player: this.$store.getters["auth/user"]?.players.find(player => player.league_id == this.league_id),
           league: this.league

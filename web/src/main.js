@@ -23,7 +23,14 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   // Load methods should be idempotent (cause no change on multiple retries if already attempted)
   await store.dispatch("auth/loadAuth");
+
+  // Loads any websockets the current user was a part of on previous disconnect.
   await store.dispatch("websockets/loadWebsockets");
+  
+  // Loads the queues which the player might've been in when leaving the website
+  // does not reconcile past events if the player was gone, but should instigate the player to
+  // rejoin the game if they lost connection during ready check.
+  await store.dispatch("websockets/loadQueues");
   
   if (!to.meta.public && !store.getters["auth/isAuthenticated"]) {
     console.log("Meta public?", to.meta.public);

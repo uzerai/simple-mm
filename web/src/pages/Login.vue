@@ -38,6 +38,7 @@
             type="password"
             placeholder="hunter2"
             class="w-full p-4 text-sm bg-white focus:outline-none border border-gray-200 rounded text-gray-600"
+            @keyup.enter="attemptLogin"
           >
         </div>
 

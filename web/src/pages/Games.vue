@@ -19,7 +19,7 @@
         </option>
       </select>
     </div>
-    <div class="w-8/12 mx-auto py-6 grid gap-6 grid-cols-2 md:grid-cols-5">
+    <div class="w-8/12 mx-auto py-6 grid gap-6 grid-cols-auto justify-start">
       <div
         v-for="game in filtered_games"
         :key="game"
