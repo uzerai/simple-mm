@@ -33,7 +33,7 @@ class MatchPlayer < ApplicationRecord
 
     enemy_teams = match.match_teams.where.not(id: match_team.id)
 
-    # If you had no enemy teams, gain no elo.
+    # If a match_player had no enemy teams, gain no elo.
     return start_rating unless enemy_teams.count > 0 ;
 
     enemy_teams_rating_avg = enemy_teams.pluck(:avg_rating).map(&:to_f).sum / enemy_teams.count

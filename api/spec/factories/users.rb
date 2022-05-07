@@ -4,8 +4,9 @@ FactoryBot.define do
     username { Faker::Internet.username }
     password { Faker::Internet.password }
     
-    avatar { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'support', 'fixtures', 'assets', 'user_avatar.jpg'), 'image/png') }
+    avatar { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'support', 'fixtures', 'assets', 'user_avatar.jpg'), 'image/jpg') }
 
+    # Skips the confirmation step of the devise creation stages.
     before(:create) { |user| user.skip_confirmation! }
 
     trait :invalid do

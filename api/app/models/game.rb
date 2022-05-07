@@ -23,6 +23,7 @@ class Game < ApplicationRecord
 
 	mount_uploader :cover_image, CoverImageUploader
 
+	# Removes the cover image from the table listings in rails admin.
 	rails_admin do
 		list do
 			exclude_fields :cover_image

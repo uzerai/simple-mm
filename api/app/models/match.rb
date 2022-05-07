@@ -32,7 +32,10 @@ class Match < ApplicationRecord
 
   has_one :game, through: :league
 
-  after_create :spawn_matchmaking_worker
+  after_create :spawn_matchmaking_worker!, if: :spawn_matchmaking_worker?
+
+  # Such that we can conditionally create workers
+  attr_writer :spawn_matchmaking_worker
 
   aasm column: :state do
     # queued - for when the match has been created and is available to be found and the match contains no match teams
@@ -48,32 +51,45 @@ class Match < ApplicationRecord
     after_all_transitions :broadcast_status
 
     event :prepare do
-      transitions from: :queued, to: :preparing
+      transitions from: :queued, to: :preparing, guard: :full_teams?
     end
 
     event :ready do
-      transitions from: :preparing, to: :readying
+      transitions from: :preparing, to: :readying, guard: :full_teams?
     end
 
     event :live do
       transitions from: :readying, to: :live
+      after do
+        self.update(started_at: Time.now)
+      end
     end
 
     event :complete do
       transitions from: :live, to: :completed
+      after do
+        self.update(ended_at: Time.now)
+      end
     end
 
     event :cancel do
       transitions from: [:readying, :live], to: :cancelled
+      after do
+        self.update(ended_at: Time.now)
+      end
     end
 
     event :abort, before: :log_game_aborted do
       transitions to: :aborted
+      after do
+        self.update(ended_at: Time.now)
+      end
     end
   end
 
   # Returns a boolean representation of whether each team for the match is full.
   def full_teams?
+    # Initially true, and is turned false by any team _not_ being full.
     match_teams.reduce(true) do |bool, team|
       bool && team.full?
     end
@@ -112,7 +128,15 @@ class Match < ApplicationRecord
   end
 
   # Starts a Matchmaking::OrganizeMatchWorker to create the match.
-  def spawn_matchmaking_worker
+  def spawn_matchmaking_worker!
     Matchmaking::OrganizeMatchWorker.perform_async self.id
+  end
+
+  private
+
+  # Optional paramater to be provided at create time, and if set to 
+  # true, will invoke the spawn_matchmaking_worker method above.
+  def spawn_matchmaking_worker?
+    !!@spawn_matchmaking_worker
   end
 end
