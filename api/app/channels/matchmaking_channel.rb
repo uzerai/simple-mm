@@ -2,9 +2,6 @@
 
 class MatchmakingChannel < ApplicationCable::Channel
   def subscribed
-    # TODO: Room name is equal to match_id -- change to better?
-    match = Match.find(params[:room])
-
-    stream_for match
+    stream_for user
   end
 end

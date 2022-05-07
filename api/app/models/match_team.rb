@@ -21,6 +21,7 @@ class MatchTeam < ApplicationRecord
   
   belongs_to :match
 
+  has_one :match_type, through: :match
   has_many :match_players, dependent: :destroy
   has_many :players, through: :match_players
 
@@ -30,5 +31,9 @@ class MatchTeam < ApplicationRecord
     ratings = match_players.pluck(:start_rating)
     
     update!(avg_rating: (ratings.reduce(:+).to_f / ratings.size)) if ratings.any?
+  end
+
+  def full?
+    match_players.count == match_type.team_size
   end
 end

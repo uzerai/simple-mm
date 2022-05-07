@@ -133,6 +133,7 @@ export default {
 
       // Remove websockets connection when logging out.
       dispatch("websockets/disconnect", null, { root: true });
+      dispatch("matchmaking/stopActiveQueue", null, { root: true });
     },
     setAuth({ commit }, { user, token, permissions }) {
       commit("setAuth", { user, token, permissions });

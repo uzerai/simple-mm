@@ -7,11 +7,12 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 # --------------------------------------------------------------- Config section
-number_of_users = 10
-matches_per_league = 1
+number_of_users = 2
+matches_per_league = 0
 physical_games = []
 electronic_games = [
-  ["League of Legends", ["2|5"] ],
+   ["Chess", ["2|1"]],
+  # ["League of Legends", ["2|5"] ],
   # ["Counter Strike: Global Offensive", ["2|16", "2|5"] ],
   # ["Dota 2", ["2|5"] ],
   # ["Player Unknown's Battlegrounds", ["64|1"] ],
@@ -86,47 +87,47 @@ all_games.each do |game_array|
   league_rated = League.create!(name: "PUBLIC LEAGUE", match_type: official_match_type, game: game, public: true, official: true)
   leagues = League.all
 
-  User.find_each.with_index do |user, index|
-    leagues.each do |league|
-      user_player_unrated = Player.create!(username: "Player_#{index + 1} UNRATED", rating: rand(1000..2000), user: user, game: game, league: league_unrated)
-      user_player_rated = Player.create!(username: "Player_#{index + 1} RATED", rating: rand(1000..2000), user: user, game: game, league: league_rated)
-    end
-  end
+  # User.find_each.with_index do |user, index|
+  #   leagues.each do |league|
+  #     user_player_unrated = Player.create!(username: "Player_#{index + 1}", rating: rand(1000..2000), user: user, game: game, league: league_unrated)
+  #     user_player_rated = Player.create!(username: "Player_#{index + 1}", rating: rand(1000..2000), user: user, game: game, league: league_rated)
+  #   end
+  # end
 
   leagues.each do |league|
-    matches_per_league.times do |number|
-      game_match = Match.create!(started_at: Time.zone.now, ended_at: Time.zone.now + 1.hour, state: Match::STATE_COMPLETED, match_type: league.match_type, league: league)
+    # matches_per_league.times do |number|
+    #   game_match = Match.create!(started_at: Time.zone.now, ended_at: Time.zone.now + 1.hour, state: Match::STATE_COMPLETED, match_type: league.match_type, league: league)
     
-      # Create match teams without any players
-      match_teams = game_match.create_match_teams!
+    #   # Create match teams without any players
+    #   match_teams = game_match.create_match_teams!
     
-      # For each match team
-      match_teams.each do |match_team|
-        # Insert team_size amount of playerse
-        official_match_type.team_size.times do 
-          # Pick a random player who isn't in the game already
-          player = league.reload.players
-            .where.not(id: game_match.reload.players.pluck(:id))
-            .order(Arel.sql('RANDOM()'))
-            .first
+    #   # For each match team
+    #   match_teams.each do |match_team|
+    #     # Insert team_size amount of playerse
+    #     official_match_type.team_size.times do 
+    #       # Pick a random player who isn't in the game already
+    #       player = league.reload.players
+    #         .where.not(id: game_match.reload.players.pluck(:id))
+    #         .order(Arel.sql('RANDOM()'))
+    #         .first
     
-          match_player = MatchPlayer.create!(player: player, start_rating: player.rating, match_team: match_team)
-        end
+    #       match_player = MatchPlayer.create!(player: player, start_rating: player.rating, match_team: match_team)
+    #     end
     
-        # This should really be done every time before save.
-        match_team.reload.calculate_rating!
-      end
+    #     # This should really be done every time before save.
+    #     match_team.reload.calculate_rating!
+    #   end
 
-      # Simulate match win/loss
-      winner = match_teams.shuffle.first
-      winner.update(outcome: :win)
-      losers = match_teams - [winner]
-      MatchTeam.where(id: losers).update_all(outcome: :loss)
+    #   # Simulate match win/loss
+    #   winner = match_teams.shuffle.first
+    #   winner.update(outcome: :win)
+    #   losers = match_teams - [winner]
+    #   MatchTeam.where(id: losers).update_all(outcome: :loss)
     
-      match_teams.each do |team|
-        team.reload.match_players.each(&:calculate_end_rating!)
-      end
-    end
+    #   match_teams.each do |team|
+    #     team.reload.match_players.each(&:calculate_end_rating!)
+    #   end
+    # end
   end
 end
 

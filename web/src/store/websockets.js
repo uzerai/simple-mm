@@ -1,6 +1,7 @@
 
 import { createConsumer } from "@rails/actioncable";
 import { readEvent } from "../events/events_channel_handler";
+import { readEvent as readMatchmakingEvent } from "../events/matchmaking_channel_handler";
 
 export default {
   namespaced: true,
@@ -14,16 +15,23 @@ export default {
     setConsumer(state, { consumer }) {
       state.consumer = consumer;
     },
+    removeSubscription(state, { channel, room }) {
+      console.warn(`Removing websocket subscription to ${channel}:${room}`);
+      state.consumer?.subscriptions.remove(state.subscriptions[`${channel}:${room}`]);
+      
+      // Clean up subscriptions object to reflect removal.
+      delete state.subscriptions[`${channel}:${room}`];
+    },
     createSubscription(state, { channel, room, onReceived }) {
       // Ensure we don't resubscribe to something we're already subscribing to.
       if(!Object.keys(state.subscriptions).includes(channel)) {
-        console.info(`Creating websocket subscription to ${channel} ...`);
+        console.info(`Creating websocket subscription to ${channel}:${room} ...`);
         const subscription = state.consumer?.subscriptions.create({
           channel,
           room
         }, {
           received(data) {
-            console.log(`Incoming websocket data from: ${channel}`);
+            console.log(`Incoming websocket data from: ${channel}:${room}`);
             
             if(onReceived) {
               onReceived(data);
@@ -32,7 +40,7 @@ export default {
         });
 
         // Don't allow re-subscribing to a single channel multiple times.
-        state.subscriptions[channel] = subscription;
+        state.subscriptions[`${channel}:${room}`] = subscription;
       }
     }
   },
@@ -63,7 +71,24 @@ export default {
         }});
       }
     },
-    async disconnect({getters}) {
+    // Loads queues which were open since the last 
+    async loadQueues({ commit, dispatch, getters, rootGetters }){
+      const loadedQueue = window.localStorage.getItem("active_queue");
+
+      if(loadedQueue && rootGetters["auth/isAuthenticated"] && getters["consumer"]) {
+        console.log("Loading active queue ...");
+
+        dispatch("createSubscription", {
+          channel: "MatchmakingChannel", 
+          room: loadedQueue.split(":")[1],
+          onReceived: (data) => {
+            readMatchmakingEvent({ commit, dispatch, getters, rootGetters }, data);
+          }
+        });
+        commit("matchmaking/setQueueing", { queue_id: loadedQueue }, { root: true });
+      }
+    },
+    async disconnect({ getters }) {
       if(getters["consumer"]) {
         console.info("Disconnecting websockets consumer ...");
         getters["consumer"].disconnect();

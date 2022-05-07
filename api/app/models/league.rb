@@ -41,11 +41,23 @@ class League < ApplicationRecord
 
   validates :name, :game,  presence: true
 
+  # Fetches the public or already-in leagues for a given user.
+  scope :visible_for_user, ->(user) do 
+    # Handling for anynomous users.
+    return League.where(public: true) unless user.present? 
+    
+    League.where(public: true).or(where(id: merge(user.leagues).select(:id)))
+  end
+
   def player_count
     players.select(:user_id).uniq.count
   end
 
   def top_5
     players.order(rating: :desc).limit(5).as_json(include: :user)
+  end
+
+  def starting_rating
+    1500
   end
 end

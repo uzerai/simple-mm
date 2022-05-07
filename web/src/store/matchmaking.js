@@ -10,31 +10,59 @@ export default {
   namespaced: true,
   state() {
     return {
-      status: 0
+      status: parseInt(window.localStorage.getItem("queue_status")) || 0,
+      queue_id: window.localStorage.getItem("active_queue") || undefined,
     };
   },
   mutations: {
-    setStatus(state, { newStatus }) {
-      state.status = newStatus;
+    setStatus(state, { status }) {
+      state.status = status;
+      window.localStorage.setItem("queue_status", status);
+    },
+    /**
+     *  Queue id should always have a format of <current_user#player_id>:<league_id>
+     */
+    setQueueId(state, { queue_id }) {
+      state.queue_id = queue_id;
+      window.localStorage.setItem("active_queue", queue_id);
+    },
+    setIdle(state) {
+      state.queue_id = undefined;
+      state.status = STATUS["IDLE"];
+      window.localStorage.removeItem("active_queue");
+      window.localStorage.removeItem("queue_status");
+    },
+    setQueueing(state, { queue_id }) {
+      state.queue_id = queue_id;
+      state.status = STATUS["QUEUEING"];
     }
   },
   getters: {
     status(state) {
       return state.status;
+    },
+    queueId(state) {
+      return state.queue_id;
+    },
+    queuedLeague(state) {
+      return state.queue_id?.split(":")[1];
+    },
+    queuedPlayer(state) {
+      return state.queue_id?.split(":")[0];
     }
   },
   actions: {
     // Sends an initial post request to indicate to the server that the user is searching for a game.
     // requires the player of the league (which belongs to the user and the league).
     async startQueue({ dispatch }, { player }) {
-      console.info(`Starting queueing for league ... ${player?.league_id}`);
+      console.info(`Starting queueing for league ... ${player.league_id}`);
       const request = dispatch(
         "post",
         {
           path: "/matchmaking/queue",
           body: {
-            player_id: player?.id,
-            league_id: player?.league_id
+            league_id: player.league_id,
+            player_id: player.id,
           }
         },
         { root: true });
@@ -43,15 +71,32 @@ export default {
 
       if (body?.results) {
         console.log("Queue request OK -- Setting active queue ...");
-        dispatch("setActiveQueue", { queue_id: body.results.id });
+        dispatch("connectActiveQueue", { queue_id: body.results.queue });
+
+        // Set a reminder for the active queues in the case the user disconnects.
+        window.localStorage.setItem("active_queue", body.results.queue);
       }
     },
-    async setActiveQueue({ commit, dispatch }, { queue_id }) {
-      console.info("Establishing WS connection ... for queue " + queue_id);
+    // TODO: Make it possible to have multiple queues going at the same time.
+    async stopActiveQueue({ dispatch, getters }) {
+      const league_id = getters["queuedLeague"];
+      dispatch("stopQueue", { league_id });
+    },
+    async stopQueue({ commit }, { league_id }) {
+      console.info(`Stopping queue: ${league_id}`);
+      commit("websockets/removeSubscription", { channel: "MatchmakingChannel", room: league_id}, { root: true });
+      commit("setIdle");
+    },
+    async connectActiveQueue({ commit, dispatch }, { queue_id }) {
+      console.info(`Establishing WS connection ... for queue ${queue_id}`);
+
+      // NOTE: The MatchmakingChannel is connected to per-user per-league, thus we can strip out the player_id from the
+      // queue_id returned from server.
       dispatch("websockets/createSubscription", { channel: "MatchmakingChannel", 
-        room: queue_id, onReceived: (data) => readEvent({ commit, dispatch }, data)}, 
+        room: queue_id.split(":")[1], 
+        onReceived: (data) => readEvent({ commit, dispatch }, data)}, 
         { root: true });
-      commit("setStatus", { newStatus: STATUS["QUEUEING"] });
+      commit("setQueueing", { queue_id });
     }
   }
 };

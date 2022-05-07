@@ -22,8 +22,6 @@ class Match < ApplicationRecord
   include AASM
   # Since we use UUID for id, sort by created_at for correct ordering.
   self.implicit_order_column = "created_at"
-
-  logger = Rails.logger
   
   has_many :match_teams, dependent: :destroy
   has_many :match_players, through: :match_teams
@@ -33,6 +31,8 @@ class Match < ApplicationRecord
   belongs_to :league, required: true
 
   has_one :game, through: :league
+
+  after_create :spawn_matchmaking_worker
 
   aasm column: :state do
     # queued - for when the match has been created and is available to be found and the match contains no match teams
@@ -44,7 +44,8 @@ class Match < ApplicationRecord
     # aborted - for when a game is impacted due to technical difficulties of either clients or platform, aborted games are WARN level.
     state :queued, initial: true
     state :preparing, :readying, :live, :completed, :cancelled, :aborted
-    
+
+    after_all_transitions :broadcast_status
 
     event :prepare do
       transitions from: :queued, to: :preparing
@@ -71,6 +72,25 @@ class Match < ApplicationRecord
     end
   end
 
+  # Returns a boolean representation of whether each team for the match is full.
+  def full_teams?
+    match_teams.reduce(true) do |bool, team|
+      bool && team.full?
+    end
+  end
+
+  # Broadcasts the upcoming state of the match to the matchmaking channel.
+  def broadcast_status
+    logger.info "Match#broadcast_status | Broadcasting updated status of match: #{self.id} | #{aasm.from_state} -> #{aasm.to_state}"
+
+    # For all players in the match, broadcast to the user which owns the player.
+    players.each do |player|
+      MatchmakingChannel.broadcast_to(player.user, { status: aasm.to_state })
+    end
+  end
+
+  # Creates the match teams for a match, according to the 
+  # gametype of the match itself.
   def create_match_teams!
     match_teams = []
 
@@ -84,9 +104,15 @@ class Match < ApplicationRecord
     return match_teams
   end
 
+  # Returns the average rating of the match.
   def rating
     ratings = match_players.pluck(:start_rating)
     
     return ratings.reduce(:+).to_f / ratings.size
+  end
+
+  # Starts a Matchmaking::OrganizeMatchWorker to create the match.
+  def spawn_matchmaking_worker
+    Matchmaking::OrganizeMatchWorker.perform_async self.id
   end
 end

@@ -43,8 +43,9 @@ class User < ApplicationRecord
 
   has_many :players
   has_many :games, through: :players
+  has_many :leagues, through: :players
 
-  validates :username, uniqueness: true
+  validates :username, uniqueness: true, presence: true
   validates :password, length: { minimum: 8 }, confirmation: true
 
   def jwt_token(extended_expiry = false)

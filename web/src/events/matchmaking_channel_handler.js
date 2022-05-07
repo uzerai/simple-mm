@@ -23,11 +23,11 @@ const readEvent = (storeContext, matchmaking_channel_event) => {
     case "preparing":
       // This should instigate the ready-check for all users.
       // status should be 2
-      commit("setStatus", { newStatus: 2});
+      commit("setStatus", { status: 2});
       break;
     case "readying":
       // The stage at which point all users have accepted the match.
-      commit("setStatus", { newStatus: 3 });
+      commit("setStatus", { status: 3 });
       break;
     case "live":
       break;
