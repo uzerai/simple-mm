@@ -22,7 +22,12 @@ Best and coolest thing would be to integrate with calendars so that players in s
 
 - Maybe entirely unrated matchmaking leagues and systems, especially in tournament formats.
 
-
 -- ULTIMATELY: For now lets focus on games which are much easier to bring people together over; namely digital games.
 
 - AI? I'd have to sit down and really come to understand the term and the limits of what machines are capable of, but if the project sees some moderate use and a sizable dataset would emerge from its use, I think I would really enjoy attempting to employ AI-assisted modification of rating gain/loss to maintain viability of _any_ possible team in a league.
+
+- Definitely a feature where each player which was in a match can leave a comment on the match (fully public to enemy team), one message per player.
+
+- Switch to using redis and sidekiq in unison to manage the matchmaking queues. Write to DB only on status updates, each match should have its own worker which attempts to fetch all players within the available elo range. 
+
+- Add ability to have pick-teams phase as a setting per the league/game-mode.

@@ -18,8 +18,12 @@ class LeaguesController < BaseController
 
 		@results = {
       game: game.as_json,
-      leagues: League.where(game: game).as_json(methods: :player_count)
+      leagues: League.visible_for_user(current_user)
+      	.where(game: game)
+      	.as_json(methods: :player_count),
+    	user_leagues: current_user&.leagues.as_json(methods: :player_count) || []
     }
+    
 		render_response
 	end
 
@@ -35,6 +39,29 @@ class LeaguesController < BaseController
 
 		@results = {
 			league: league.as_json(include: [:game, :matches], methods: [:top_5, :player_count])
+		}
+		render_response
+	end
+
+	def join
+		league = League.joins(:game).find_by(id: params[:id])
+
+		unless league.present?
+			add_error(404, "League not found")
+			render_response(:not_found)
+			return
+		end
+
+		invitation = nil
+		status = :accepted
+
+		logger.info "LeaguesController#join | User:#{current_user.id} joining League:#{league.id}"
+		# For now, simply use the username of the user as thee player name
+		Player.create!(username: current_user.username, rating: league.starting_rating, league: league, game: league.game, user: current_user )
+
+		@results = {
+			invitation: invitation,
+			status: status
 		}
 		render_response
 	end

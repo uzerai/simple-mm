@@ -53,7 +53,8 @@ module Auth
       end
 
       user
-    else 
+    else
+      # Anonymous user
       nil
     end
   end
@@ -68,5 +69,4 @@ module Auth
       render_response(:unauthorized)
     end
   end
-
 end

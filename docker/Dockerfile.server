@@ -1,4 +1,4 @@
-FROM ruby:3.0.3 AS simple-mm-development
+FROM ruby:3.1.2 AS simple-mm-development
 
 ARG USER_ID
 ARG GROUP_ID
@@ -26,4 +26,3 @@ RUN bundle install
 RUN chown -R user:user /opt/app
 
 USER $USER_ID
-CMD bundle exec unicorn -c config/unicorn.rb

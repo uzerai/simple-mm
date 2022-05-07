@@ -1,12 +1,14 @@
 version: "3.9"
+
 services:
-  simple-mm:
-    build:
+  simple-mm: &app
+    build: 
       context: .
       dockerfile: ./docker/Dockerfile.server
       args:
         USER_ID: "${USER_ID:-1000}" 
         GROUP_ID: "${GROUP_ID:-1000}"
+    command: bundle exec unicorn -c config/unicorn.rb
     ports:
       - '8010:8010'
     env_file:
@@ -16,9 +18,22 @@ services:
       DATABASE_URL: postgresql://violet:evergarden@db-00:5432/test_db?encoding=utf8&pool=5&timeout=5000
       JOB_WORKER_URL: redis://redis-00:6379/0
       CACHE_URL: redis://redis-00:6379/1
+      MATCHMAKING_QUEUE_URL: redis://redis-00:6379/2
       WORKER_PROCESSES: 1
     volumes:
       - ./api:/opt/app
+    links:
+      - db-00
+      - redis-00
+    depends_on:
+      - db-00
+      - redis-00
+  
+  sidekiq-00: # Mimics build details for the server, but executes sidekiq instead, shares caches
+    <<: *app
+    command: bundle exec sidekiq
+    ports: 
+      - "8030:8010"
     links:
       - db-00
       - redis-00
@@ -37,11 +52,11 @@ services:
     ports:
       - '8020:8080'
 
-  db-00:
+  db-00: &db
     image: postgres:14.1
     volumes:
       - simple-mm-db:/var/lib/postgresql/data
-    ports:
+    ports: 
       - "5432:5432"
     environment:
       POSTGRES_USER: violet

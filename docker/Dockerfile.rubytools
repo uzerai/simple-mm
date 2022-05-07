@@ -1,4 +1,4 @@
-FROM ruby:3.0.3 AS rails_toolbox
+FROM ruby:3.1.2 AS rails_toolbox
 
 ARG USER_ID
 ARG GROUP_ID

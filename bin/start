@@ -5,12 +5,12 @@
 #
 if [[ $# -eq 0 ]]; then
 	echo "Starting all services..."
-	tmux new -s simple-mm -d "docker-compose up"
-	exit 01
+	tmux new -s simple-mm -d 'docker-compose up'
+	exit 0
 fi
 
 #
-# Specific service functionality allowing for the starting of the individual services.
+# Specific service functionality allowing for the starting of individual services.
 #
 # Note: Services which are required by the chosen service will also be started.
 #
@@ -21,12 +21,46 @@ case "$1" in
 		exit 0
 	;;
 
+	# Note: Rails is special in the context of this script, and is started with the
+	# 'rails s' command unlike the dockerized container which runs things in production mode
+	# with unicorn as the application server.
 	'rails' | 'r')
+		docker-compose up -d db-00
+		docker-compose up -d redis-00
 		export DATABASE_URL="postgresql://violet:evergarden@localhost:5432/test_db?encoding=utf8&pool=5&timeout=5000"
 		export JOB_WORKER_URL="redis://localhost:6379/0"
 		export CACHE_URL="redis://localhost:6379/1"
+		export MATCHMAKING_QUEUE_URL="redis://localhost:6379/2"
 		
-		cd api && bin/rails s
+		tmux new -s simple-mm-api -d 'api/bin/rails s'
+		exit 0
+	;;
+
+	'spec' | 's')
+		docker-compose up -d db-00
+		docker-compose up -d redis-00
+
+		export DATABASE_URL="postgresql://violet:evergarden@localhost:5432/test_db?encoding=utf8&pool=5&timeout=5000"
+		export JOB_WORKER_URL="redis://localhost:6379/0"
+		export CACHE_URL="redis://localhost:6379/1"
+		export MATCHMAKING_QUEUE_URL="redis://localhost:6379/2"
+
+		cd api && bundle exec rspec $2
+		exit 0
+	;;
+
+	'prod')
+		# exec the production command here
+		# TODO: implement production build on local.
+	;;
+
+	'web' | 'w')
+		tmux new -s simple-mm-web -d 'docker-compose up -d web-00'
+		exit 0
+	;;
+
+	'sidekiq' | 'sq')
+		tmux new -s simple-mm-web -d 'docker-compose up -d sidekiq-00'
 		exit 0
 	;;
 

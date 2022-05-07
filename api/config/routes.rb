@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get "/games", to: 'games#index', as: 'all-games'
   get "/games/:game_slug/leagues", to: 'leagues#game_leagues', as: 'game-leagues'
   get "/leagues/:id", to: "leagues#show", as: 'game-league'
+  post "/leagues/:id/join", to: "leagues#join", as: 'join_league'
   get "/matches/:id", to: "matches#show", as: "match"
 
   # Matchmaking related endpoints
