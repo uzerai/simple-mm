@@ -52,7 +52,7 @@ services:
     ports:
       - '8020:8080'
 
-  db-00: &db
+  db-00:
     image: postgres:14.1
     volumes:
       - simple-mm-db:/var/lib/postgresql/data
@@ -62,7 +62,16 @@ services:
       POSTGRES_USER: violet
       POSTGRES_PASSWORD: evergarden
       POSTGRES_DB: test_db
-    
+
+  db-test:
+    image: postgres:14.1
+    ports: 
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: violet
+      POSTGRES_PASSWORD: evergarden
+      POSTGRES_DB: test_db
+
   redis-00:
     image: redis:6.2.6-alpine
     command: redis-server

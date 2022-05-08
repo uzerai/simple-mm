@@ -26,7 +26,7 @@ class BaseController < ActionController::API
   # Validation function which is used for the 'before_action' hook
   # to ensure the received request content-type header is of the correct type(s)
   def ensure_content_type
-    return unless request.headers['Content-Type'] == 'application/json'
+    return unless request.headers['Content-Type'] != 'application/json'
 
     add_error(415, "Content-Type 'application/json' required.")
     render_response

@@ -37,7 +37,7 @@ case "$1" in
 	;;
 
 	'spec' | 's')
-		docker-compose up -d db-00
+		docker-compose up -d db-test
 		docker-compose up -d redis-00
 
 		export DATABASE_URL="postgresql://violet:evergarden@localhost:5432/test_db?encoding=utf8&pool=5&timeout=5000"

@@ -91,7 +91,7 @@
         <h3 class="mx-auto text-darkt-700 text-4xl whitespace-nowrap text-center font-bold bg-orange-700 italic">
           Top players
         </h3>
-        <players-list :players="league.top_5" />
+        <players-list :players="league.top5" />
       </div>
     </div>
   </div>

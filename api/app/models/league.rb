@@ -54,7 +54,7 @@ class League < ApplicationRecord
     players.select(:user_id).uniq.count
   end
 
-  def top_5
+  def top5
     players.order(rating: :desc).limit(5).as_json(include: :user)
   end
 
