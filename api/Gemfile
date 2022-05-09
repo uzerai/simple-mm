@@ -83,6 +83,9 @@ group :test do
   gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
   gem 'chromedriver-helper'
+
+  # Helps in cleaning database between spec/integration test runs.
+  gem 'database_cleaner-active_record'
 end
 
 # Using only certain parts of devise, specifically their entire

@@ -33,6 +33,7 @@ case "$1" in
 		export MATCHMAKING_QUEUE_URL="redis://localhost:6379/2"
 		
 		tmux new -s simple-mm-api -d 'api/bin/rails s'
+
 		exit 0
 	;;
 
@@ -46,6 +47,8 @@ case "$1" in
 		export MATCHMAKING_QUEUE_URL="redis://localhost:6379/2"
 
 		cd api && bundle exec rspec $2
+		
+		docker-compose kill
 		exit 0
 	;;
 
