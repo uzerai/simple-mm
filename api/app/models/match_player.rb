@@ -29,7 +29,7 @@ class MatchPlayer < ApplicationRecord
 
   def calculate_end_rating!
     # Can't calculate end rating if game hasn't ended.
-    return nil unless match.completed?
+    return nil unless match&.completed?
 
     enemy_teams = match.match_teams.where.not(id: match_team.id)
 

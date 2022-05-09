@@ -116,7 +116,7 @@ class Match < ApplicationRecord
       match_teams.push(team)
     end
 
-    logger.info("Match#create_match_teams | Created match teams: [#{match_teams.map(&:id).join(', ')}]")
+    logger.info "Match#create_match_teams | Created match teams: [#{match_teams.map(&:id).join(', ')}]"
 
     match_teams
   end

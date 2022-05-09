@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :match_type do
-    association :game
+    game { association :game }
 
     team_count { 2 }
     team_size { 1 }

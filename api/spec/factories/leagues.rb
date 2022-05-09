@@ -2,11 +2,11 @@
 
 FactoryBot.define do
   factory :league do
-    association :game
-    association :match_type
+    match_type { association :match_type }
+    game { match_type.game }
 
     desc { Faker::Lorem.paragraph }
-    name { Faker::Esport.league }
+    name { Faker::Esport.unique.league }
     cover_image { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'support', 'fixtures', 'assets', 'league_cover.jpg'), 'image/jpg') }
 
     official { false }
