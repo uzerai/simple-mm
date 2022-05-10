@@ -86,6 +86,7 @@ group :test do
 
   # Helps in cleaning database between spec/integration test runs.
   gem 'database_cleaner-active_record'
+  gem 'rspec-sidekiq'
 end
 
 # Using only certain parts of devise, specifically their entire

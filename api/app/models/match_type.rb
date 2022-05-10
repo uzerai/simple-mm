@@ -30,13 +30,12 @@ class MatchType < ApplicationRecord
 
   private
 
-  # a little bit of an ugly work-around for combining a slug from 2 fields.
-  # TODO: clean up to support multi-field slug
+  # TODO: clean up to properly support multi-field slug
   def sluggable
     :slug_string
   end
 
   def slug_string
-    "#{game.name}.#{name}"
+    "#{game.name} - #{name}"
   end
 end

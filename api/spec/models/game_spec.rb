@@ -3,15 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe Game, type: :model do
-  describe '#valid?' do
-    context 'when the game is valid' do
-      let(:game) { build :game }
+  describe '#initialize' do
+    subject { create described_class.to_s.underscore.to_sym }
 
-      it 'does not raise error on save' do
-        expect { game.save! }.not_to raise_error
-      end
+    it 'should not raise an error' do
+      expect { subject }.not_to raise_error
     end
+  end
 
+  describe '#valid?' do
     context 'when the game is invalid' do
       let(:game) { build :game, name: nil }
 

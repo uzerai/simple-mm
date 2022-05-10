@@ -3,6 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe MatchPlayer, type: :model do
+  describe '#initialize' do
+    subject { create described_class.to_s.underscore.to_sym }
+
+    it 'should not raise an error' do
+      expect { subject }.not_to raise_error
+    end
+  end
+
   describe '#calculate_end_rating!' do
     # Override match to test with other match states.
     let(:match) { create :match, :with_full_teams, state: :preparing }
@@ -25,11 +33,11 @@ RSpec.describe MatchPlayer, type: :model do
       end
 
       it 'sets the rating on the match_player' do
-        expect{ subject }.to change(match_player, :end_rating)
+        expect { subject }.to change(match_player, :end_rating)
       end
 
       it 'updates the overall rating for the user' do
-        expect{ subject }.to change(match_player.player, :rating)
+        expect { subject }.to change(match_player.player, :rating)
       end
     end
   end

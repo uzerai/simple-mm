@@ -20,7 +20,7 @@ class MatchTeam < ApplicationRecord
   # Since we use UUID for id, sort by created_at for correct ordering.
   self.implicit_order_column = 'created_at'
 
-  belongs_to :match
+  belongs_to :match, required: true
 
   has_one :match_type, through: :match
   has_many :match_players, dependent: :destroy
@@ -29,9 +29,13 @@ class MatchTeam < ApplicationRecord
   enum :outcome, %i[draw win loss]
 
   def calculate_rating!
+    return unless match_players.any?
+
     ratings = match_players.pluck(:start_rating)
 
-    update!(avg_rating: (ratings.reduce(:+).to_f / ratings.size)) if ratings.any?
+    update!(avg_rating: (ratings.reduce(:+).to_f / ratings.size).floor.to_i)
+
+    avg_rating
   end
 
   def full?

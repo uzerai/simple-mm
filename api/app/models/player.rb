@@ -37,7 +37,7 @@ class Player < ApplicationRecord
   has_many :match_players
   has_many :match_teams, through: :match_players
 
-  validates :game, :user, presence: true
+  validates :game, :user, :username, presence: true
 
   def matches
     match_teams

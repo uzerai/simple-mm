@@ -6,7 +6,7 @@ FactoryBot.define do
     game { match_type.game }
 
     desc { Faker::Lorem.paragraph }
-    name { Faker::Esport.unique.league }
+    name { Faker::Esport.league }
     cover_image { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'support', 'fixtures', 'assets', 'league_cover.jpg'), 'image/jpg') }
 
     official { false }

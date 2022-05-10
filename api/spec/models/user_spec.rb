@@ -3,17 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  describe '#valid?' do
-    context 'when the user is valid' do
-      let(:user) { build :user }
+  describe '#initialize' do
+    subject { create described_class.to_s.underscore.to_sym }
 
-      # I know this may introduce false negatives, in the context of validations
-      # but I'd rather make sure saving valid users throws _no_ errors.
-      it 'does not raise error on save' do
-        expect { user.save! }.not_to raise_error
-      end
+    it 'should not raise an error' do
+      expect { subject }.not_to raise_error
     end
+  end
 
+  describe '#valid?' do
     context 'when the user is invalid' do
       let(:user) { build :user, username: nil, email: nil }
 

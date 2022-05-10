@@ -33,7 +33,7 @@ module Auth
         nil
       end
     rescue JWT::DecodeError
-      logger.warn('Decode Error: Could not decode token.')
+      logger.warn 'Decode Error: Could not decode token.'
       nil
     end
   end
@@ -45,8 +45,9 @@ module Auth
 
                         if user.nil?
                           # This should ideally never happen (but did happen during testing, deleted without invalidating)
-                          @logger.warn("Valid token with missing User:#{user_id}.")
-                          @logger.warn("This could signify someone signing tokens with the same secret --\n or the user has been deleted and a token was still active.")
+                          logger.warn "Valid token with missing User:#{user_id}."
+                          logger.warn "This could signify someone signing tokens with the same secret --\
+                            \n or the user has been deleted and a token was still active."
 
                           return nil
                         end

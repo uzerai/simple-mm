@@ -27,6 +27,8 @@ class MatchPlayer < ApplicationRecord
   has_one :match, through: :match_team
   has_one :user, through: :player
 
+  # after_save :'calculate_team_rating!'
+
   def calculate_end_rating!
     # Can't calculate end rating if game hasn't ended.
     return nil unless match&.completed?
@@ -53,5 +55,15 @@ class MatchPlayer < ApplicationRecord
     player.update(rating: end_rating)
 
     end_rating
+  end
+
+  private
+
+  # TODO: maybe implement this?
+  # For use on-save, so that we force the match_team to always have
+  # correct representation of the team's rating. Might not be necessary later,
+  # when the queue manager ensures the rating of players added to the team.
+  def calculate_team_rating!
+    match_team.calculate_rating!
   end
 end
