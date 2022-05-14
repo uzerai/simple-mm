@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :player do
     association :user
-    association :game
+    game { association :game }
     league { association :league, game: }
 
     username { Faker::Internet.username }

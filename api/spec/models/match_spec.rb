@@ -13,7 +13,6 @@ RSpec.describe Match, type: :model do
 
   describe '#spawn_matchmaking_worker' do
     let(:match) { create :match }
-
     subject { match.spawn_matchmaking_worker! }
 
     it 'creates a job in the sidekiq job queue' do

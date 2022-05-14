@@ -15,8 +15,10 @@ RSpec.describe League, type: :model do
     context 'when the league is invalid' do
       let(:league) { build :league, name: nil }
 
+      subject { league.save! }
+
       it 'raises a RecordInvalid error on save' do
-        expect { league.save! }.to raise_error ActiveRecord::RecordInvalid
+        expect { subject }.to raise_error ActiveRecord::RecordInvalid
         expect(league.errors).to contain_exactly "Name can't be blank"
       end
     end
