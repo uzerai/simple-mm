@@ -36,6 +36,6 @@ class MatchType < ApplicationRecord
   end
 
   def slug_string
-    "#{game.name} - #{name}"
+    "#{game&.name} - #{name}"
   end
 end

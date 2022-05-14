@@ -5,16 +5,14 @@ module Matchmaking
     include Sidekiq::Worker
     sidekiq_options queue: 'matchmaking', retry: false
 
-    @logger = Rails.logger
-
-    attr_accessor :target_match, :player, :league, :logger
+    attr_accessor :player, :league, :existing_matched
 
     def perform(league_id, player_id)
       @league = League.find(league_id)
       @player = Player.find(player_id)
 
       # Add the player to queue
-      MatchmakingQueue.add_to_queue(league, player)
+      Matchmaking::Queue.new(league).add player
 
       # TODO: Check if there are any matches in a given elo range
       # If there are, check for the existence of matchmaking workers for those matches
@@ -41,7 +39,7 @@ module Matchmaking
     end
 
     def create_new_match
-      @target_match = Match.create!(match_type: league.match_type, league:, spawn_matchmaking_worker: true)
+      target_match = Match.create!(match_type: league.match_type, league:, spawn_matchmaking_worker: true)
       logger.info("OrganizeMatchWorker#create_new_match | Created match #{target_match.id}")
 
       match_teams = target_match.create_match_teams!
