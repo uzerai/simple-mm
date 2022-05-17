@@ -49,7 +49,7 @@ RSpec.describe Matchmaking::Match, type: :model do
     end
 
     it 'removes players from the ready check' do
-      expect { subject }.to change{ matchmaking_match.ready_players.count }.from(1).to(0)
+      expect { subject }.to change { matchmaking_match.ready_players.count }.from(1).to(0)
     end
 
     it 'removes players from the match representation' do
@@ -63,7 +63,7 @@ RSpec.describe Matchmaking::Match, type: :model do
       before do
         matchmaking_match.add player_two
       end
-      
+
       it 'adds only the ready players back to queue' do
         expect { subject }.to change { matchmaking_queue.count(no_cache: true) }.from(0).to(1)
       end

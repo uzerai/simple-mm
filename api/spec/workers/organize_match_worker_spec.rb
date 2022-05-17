@@ -36,7 +36,7 @@ RSpec.describe Matchmaking::OrganizeMatchWorker, typer: :worker do
       end
 
       it 'removes players from queue' do
-        expect{ subject }.to change { mm_queue.count(no_cache: true) }.from(players.count).to(0)
+        expect { subject }.to change { mm_queue.count(no_cache: true) }.from(players.count).to(0)
       end
 
       it 'creates a match representation in redis' do
@@ -55,13 +55,13 @@ RSpec.describe Matchmaking::OrganizeMatchWorker, typer: :worker do
 
       context 'time runs out' do
         before do
-          stub_const "Matchmaking::OrganizeMatchWorker::MATCHMAKING_READY_CHECK_WAIT_TIME", 1
+          stub_const 'Matchmaking::OrganizeMatchWorker::MATCHMAKING_READY_CHECK_WAIT_TIME', 1
           allow_any_instance_of(Matchmaking::Match).to receive(:ready?).and_return(false)
         end
 
         it 'raises a MatchNotFinalizedError and cancels the match' do
-          expect { subject }.to change{ match.reload.state }.from("queued").to("cancelled")
-            .and raise_error(Matchmaking::MatchNotFinalizedError)
+          expect { subject }.to change { match.reload.state }.from('queued').to('cancelled')
+                                                             .and raise_error(Matchmaking::MatchNotFinalizedError)
         end
       end
     end

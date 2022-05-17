@@ -2,14 +2,12 @@
 
 module Matchmaking
   module Client
-    attr_accessor :matchmaking_client
-
     def self.client
       Matchmaking::Client.new.client
     end
 
     def client
-      @matchmaking_client ||= Redis.new(url: ENV.fetch('MATCHMAKING_QUEUE_URL', 'redis://localhost:6379/2'))
+      @client ||= Redis.new(url: ENV.fetch('MATCHMAKING_QUEUE_URL', 'redis://localhost:6379/2'))
     end
 
     private

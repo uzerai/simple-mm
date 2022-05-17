@@ -17,10 +17,12 @@ module Matchmaking
 
       # TODO: if there are any players in the queue, check their eligibility to join the match
       raise Matchmaking::NoPlayersError unless available_player_count.positive?
+
       logger.info "OrganizeMatchWorker#perform | #{match.id} | Players in queue, attempting to organize."
 
       raise Matchmaking::MatchNotFinalizedError unless enough_players_in_queue?
-      logger.info "OrganizeMatchWorker#perform | #{match.id} | Enough players for match. Filling teams."      
+
+      logger.info "OrganizeMatchWorker#perform | #{match.id} | Enough players for match. Filling teams."
 
       # For each player; keep putting them into candidate teams until teams are full
       until mm_match.full?
@@ -33,7 +35,7 @@ module Matchmaking
 
         # No Error-guard necessary for player, since highly unlikely they won't exist.
         player = ::Player.select(:id, :username)
-                          .find(Matchmaking::Player.id(reserved_queue_player))
+                         .find(Matchmaking::Player.id(reserved_queue_player))
 
         mm_match.add player # Silent errors ftw
       end
@@ -52,9 +54,10 @@ module Matchmaking
 
         # Update only once every 1s
         next unless (time_in_loop - time_since_last_update) > 1
-        logger.info "OrganizeMatchWorker#perform | Readying match ..."
 
-        next unless (time_in_loop - started_at) > Matchmaking::OrganizeMatchWorker::MATCHMAKING_READY_CHECK_WAIT_TIME 
+        logger.info 'OrganizeMatchWorker#perform | Readying match ...'
+
+        next unless (time_in_loop - started_at) > Matchmaking::OrganizeMatchWorker::MATCHMAKING_READY_CHECK_WAIT_TIME
 
         mm_match.cancel!
         match.cancel!
@@ -64,8 +67,8 @@ module Matchmaking
 
       match.reload.ready!
       match.live!
-      
-      return true
+
+      true
     end
 
     private

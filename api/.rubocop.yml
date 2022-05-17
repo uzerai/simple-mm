@@ -1,6 +1,7 @@
 AllCops:
   Exclude:
     - bin/*
+    - db/*
 
 
 Layout/LineLength:
@@ -36,5 +37,10 @@ Lint/SuppressedException:
     - config/*
 
 Style/Documentation:
-  Exclude:
-    - ./**/*
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
