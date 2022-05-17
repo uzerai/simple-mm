@@ -8,11 +8,18 @@ module Matchmaking
     attr_accessor :player, :league, :existing_matched
 
     def perform(league_id, player_id)
-      @league = League.find(league_id)
-      @player = Player.find(player_id)
+      @league = ::League.find(league_id)
+      @player = ::Player.find(player_id)
+
+      # Guard clause for if the player is in another match already.
+      if current_match.present?
+        logger.warn "FindMatchWorker#perform | Player already in existing Match: #{current_match.id}"
+
+        return
+      end
 
       # Add the player to queue
-      Matchmaking::Queue.new(league).add player
+      Matchmaking::Queue.new(league:).add player
 
       # TODO: Check if there are any matches in a given elo range
       # If there are, check for the existence of matchmaking workers for those matches
@@ -28,21 +35,19 @@ module Matchmaking
 
     # Checks for existing matches for the league; if there are any.
     def existing_matches
-      @existing_matches ||= Match.where(league:, state: [Match::STATE_QUEUED])
+      @existing_matches ||= ::Match.where(league:, state: [::Match::STATE_QUEUED])
     end
 
     # Checks for a current match where the player is already in.
     def current_match
-      @current_match ||= Match.where(league:, state: [Match::STATE_PREPARING, Match::STATE_QUEUED])
-                              .joins(match_teams: :match_players)
-                              .merge(MatchPlayer.where(player:))
+      @current_match ||= ::Match.where(league:)
+                                .joins(match_teams: :match_players)
+                                .merge(::MatchPlayer.where(player:))
     end
 
     def create_new_match
-      target_match = Match.create!(match_type: league.match_type, league:, spawn_matchmaking_worker: true)
-      logger.info("OrganizeMatchWorker#create_new_match | Created match #{target_match.id}")
-
-      match_teams = target_match.create_match_teams!
+      target_match = ::Match.create!(match_type: league.match_type, league:, spawn_matchmaking_worker: true)
+      logger.info "OrganizeMatchWorker#create_new_match | Created match #{target_match.id}"
     end
   end
 end

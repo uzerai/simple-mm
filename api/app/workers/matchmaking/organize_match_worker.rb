@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-# Errors for instigating the job to be retried.
-module Matchmaking
-  class MatchNotFinalizedError < StandardError; end
-  class NoPlayersError < StandardError; end
-end
-
 module Matchmaking
   class OrganizeMatchWorker
     include Sidekiq::Worker
@@ -13,59 +7,75 @@ module Matchmaking
 
     attr_accessor :match, :mm_match, :mm_queue
 
-    def perform(match_id)
-      @match = Match.find(match_id)
-      @mm_match = Matchmaking::Match.new match
-      @mm_queue = Matchmaking::Queue.new match.league
+    # 30s max wait time for ready checks.
+    MATCHMAKING_READY_CHECK_WAIT_TIME = 30
 
-      # PSEUDO-TODO:
-      # Find the match, and the league
-      # recurringly (via sidekiq retries) attempt to assemble players
-      # if there are enough players in queue available to play in the match
-      # remove the players from queue, set the match to preparing,
-      # send a matchmaking channel event to instigate ready-check
-      # if players accept, create the match teams
-      # if the players do not accept, return everyone to queue and try again.
+    def perform(match_id)
+      @match = ::Match.find(match_id)
+      @mm_match = Matchmaking::Match.new(match:)
+      @mm_queue = Matchmaking::Queue.new(league: match.league)
 
       # TODO: if there are any players in the queue, check their eligibility to join the match
-      raise Matchmaking::NoPlayersError unless available_players.any?
-
+      raise Matchmaking::NoPlayersError unless available_player_count.positive?
       logger.info "OrganizeMatchWorker#perform | #{match.id} | Players in queue, attempting to organize."
 
-      # If there are enough players in queue -- create the match teams and pla
-      if enough_players_in_queue?
-        logger.info "OrganizeMatchWorker#perform | #{match.id} | Enough players for match. Filling teams."
+      raise Matchmaking::MatchNotFinalizedError unless enough_players_in_queue?
+      logger.info "OrganizeMatchWorker#perform | #{match.id} | Enough players for match. Filling teams."      
 
-        # For each player; keep putting them into candidate teams until teams are full
-        until match.full_teams?
-          reserved_queue_player = mm_queue.reserve_player
+      # For each player; keep putting them into candidate teams until teams are full
+      until mm_match.full?
+        reserved_queue_player = mm_queue.reserve_player
 
-          unless reserved_queue_player.present?
-            logger.info "OrganizeMatchWorker#perform | #{match.id} | Failed to reserve player from queue."
-            raise Matchmaking::MatchNotFinalizedError
-          end
-
-          # No Error-guard necessary for player, since highly unlikely they won't exist.
-          player = Player.find_by(id: reserved_queue_player.first.split('|').first)
-          create_match_player player unless player.nil? # Silent errors ftw
+        unless reserved_queue_player.present?
+          logger.info "OrganizeMatchWorker#perform | #{match.id} | Failed to reserve player from queue."
+          raise Matchmaking::MatchNotFinalizedError
         end
 
-        match.prepare!
+        # No Error-guard necessary for player, since highly unlikely they won't exist.
+        player = ::Player.select(:id, :username)
+                          .find(Matchmaking::Player.id(reserved_queue_player))
 
-        return true
+        mm_match.add player # Silent errors ftw
       end
 
-      raise Matchmaking::MatchNotFinalizedError
+      match.prepare!
+
+      # In the scenario that a user may disconnect in the moment before
+      mm_match.ready_check! if mm_match.full?
+
+      # Clock-based precision timestamps
+      started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      time_since_last_update = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+      until mm_match.ready?
+        time_in_loop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+        # Update only once every 1s
+        next unless (time_in_loop - time_since_last_update) > 1
+        logger.info "OrganizeMatchWorker#perform | Readying match ..."
+
+        next unless (time_in_loop - started_at) > Matchmaking::OrganizeMatchWorker::MATCHMAKING_READY_CHECK_WAIT_TIME 
+
+        mm_match.cancel!
+        match.cancel!
+
+        raise Matchmaking::MatchNotFinalizedError
+      end
+
+      match.reload.ready!
+      match.live!
+      
+      return true
     end
 
     private
 
     def enough_players_in_queue?
-      available_players >= (match.match_type.team_size * match.match_type.team_count)
+      available_player_count >= (match.match_type.team_size * match.match_type.team_count)
     end
 
-    def available_players
-      mm_queue.queue_count
+    def available_player_count
+      mm_queue.count
     end
 
     def candidate_teams(player)
@@ -82,7 +92,7 @@ module Matchmaking
     def create_match_player(player)
       target_team = candidate_teams(player).sample
 
-      logger.info("OrganizeMatchWorker#create_match_player | Creating MatchPlayer { player: #{player.id}, team: #{target_team.id} }")
+      logger.info "OrganizeMatchWorker#create_match_player | Creating MatchPlayer { player: #{player.id}, team: #{target_team.id} }"
       # Create the match player for the match.
       MatchPlayer.create!(match_team: target_team, player:, start_rating: player.rating)
 
