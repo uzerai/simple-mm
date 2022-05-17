@@ -60,7 +60,7 @@ RSpec.describe User, type: :model do
         expect(subject).not_to be_nil
         expect { decoded_token }.not_to raise_error
         # Extended expiry makes the expire-time +1year, so check if expire contains next year, same day.
-        expected_expire_date = Time.now + 1.year
+        expected_expire_date = Time.zone.now + 1.year
         expect(decoded_token.fetch('expire')).to include(
           expected_expire_date.day.to_s,
           expected_expire_date.month.to_s,
