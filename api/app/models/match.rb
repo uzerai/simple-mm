@@ -37,6 +37,7 @@ class Match < ApplicationRecord
 
   # Such that we can conditionally create workers
   attr_writer :spawn_matchmaking_worker
+  attr_accessor :matchmaking_match
 
   aasm column: :state do
     # queued - for when the match has been created and is available to be found and the match contains no match teams
@@ -52,7 +53,7 @@ class Match < ApplicationRecord
     after_all_transitions :broadcast_status
 
     event :prepare do
-      transitions from: :queued, to: :preparing, guard: :full_teams?
+      transitions from: :queued, to: :preparing
     end
 
     event :ready do
@@ -62,28 +63,28 @@ class Match < ApplicationRecord
     event :live do
       transitions from: :readying, to: :live
       after do
-        update(started_at: Time.now)
+        update(started_at: Time.zone.now)
       end
     end
 
     event :complete do
       transitions from: :live, to: :completed
       after do
-        update(ended_at: Time.now)
+        update(ended_at: Time.zone.now)
       end
     end
 
     event :cancel do
-      transitions from: %i[readying live], to: :cancelled
+      transitions from: %i[preparing readying live], to: :cancelled
       after do
-        update(ended_at: Time.now)
+        update(ended_at: Time.zone.now)
       end
     end
 
     event :abort, before: :log_game_aborted do
       transitions to: :aborted
       after do
-        update(ended_at: Time.now)
+        update(ended_at: Time.zone.now)
       end
     end
   end
@@ -131,6 +132,11 @@ class Match < ApplicationRecord
   # Starts a Matchmaking::OrganizeMatchWorker to create the match.
   def spawn_matchmaking_worker!
     Matchmaking::OrganizeMatchWorker.perform_async id
+  end
+
+  # Returns a memoized instance of a Matchmaking::Match instance created for this match.
+  def matchmaking_state
+    @matchmaking_match ||= Matchmaking::Match.new(match: self)
   end
 
   private
