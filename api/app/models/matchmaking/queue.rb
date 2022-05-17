@@ -11,8 +11,6 @@ module Matchmaking
       @league = league
     end
 
-    def disconnect_user(user); end
-
     # Add the player to a set of other players who are currently in queue for the given league.
     def add(player)
       logger.info "Matchmaking::Queue#add | Adding player #{player.id} to queue #{league.id}"
@@ -26,7 +24,9 @@ module Matchmaking
     end
 
     # Get amount of players currently in queue for a given game.
-    def queue_count
+    def count(no_cache: false)
+      return client.zcard queue_key if no_cache
+
       count = client.get count_key
 
       unless count.present?
@@ -46,10 +46,11 @@ module Matchmaking
       client.zrange queue_key, 0, -1, with_scores: true
     end
 
-    # Returns a random player from the queue whilst
-    # removing them from the queue itself.
+    # Returns a random player, and their rating from the queue whilst
+    # removing them from the queue itself. Can return nil if the
+    # reservation fails.
     def reserve_player
-      player_value = client.zrandmember queue_key, 1
+      player_value = (client.zrandmember queue_key, 1)&.first
 
       client.zrem queue_key, player_value if player_value.present?
 
