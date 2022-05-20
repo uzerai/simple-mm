@@ -59,21 +59,21 @@ all_games.each do |game_array|
       result = ''
 
       if team_count > 2
-        result << "#{team_size}-man"
+        result.concat "#{team_size}-man"
       else
-        result << team_size.to_s
-        (team_count - 1).times { result << "v#{team_size}" }
+        result.concat(team_size.to_s)
+        (team_count - 1).times { result.concat "v#{team_size}" }
       end
 
-      result << ' - '
+      result.concat ' - '
 
-      result << if team_size == 1
-                  'SOLO'
-                elsif team_size > 1
-                  'TEAM'
-                else
-                  'FFA'
-                end
+      result.concat(if team_size == 1
+                      'SOLO'
+                    elsif team_size > 1
+                      'TEAM'
+                    else
+                      'FFA'
+                    end)
 
       result
     end

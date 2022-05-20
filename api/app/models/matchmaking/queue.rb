@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 module Matchmaking
-  class Queue
-    include Matchmaking::Client
-    include Matchmaking::Player
-
+  class Queue < Matchmaking::Client
     attr_accessor :league
 
     def initialize(league:)
@@ -14,13 +11,13 @@ module Matchmaking
     # Add the player to a set of other players who are currently in queue for the given league.
     def add(player)
       logger.info "Matchmaking::Queue#add | Adding player #{player.id} to queue #{league.id}"
-      client.zadd queue_key, player.rating, player_value(player)
+      client.zadd queue_key, player.rating, Matchmaking::Player.new(player:).value
     end
 
     # Remove the player from the set of other players currently in queue for the given league.
     def remove(player)
       logger.info "Matchmaking::Queue#remove | Removing player #{player.id} from queue #{league.id}"
-      client.zrem queue_key, player_value(player)
+      client.zrem queue_key, Matchmaking::Player.new(player:).value
     end
 
     # Get amount of players currently in queue for a given game.

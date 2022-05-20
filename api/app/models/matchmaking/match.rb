@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 module Matchmaking
-  class Match
-    include Matchmaking::Client
-    include Matchmaking::Player
+  class Match < Matchmaking::Client
+    QUEUED_MATCHES_SET_KEY = 'MATCHMAKING_QUEUED'
 
     attr_accessor :match
+
+    def self.queued_keys
+      # This is a static method; so use a new client
+      Matchmaking::Client.client.smembers QUEUED_MATCHES_SET_KEY
+    end
 
     def initialize(match:)
       @match = match
@@ -13,12 +17,13 @@ module Matchmaking
 
     def add(player)
       logger.info "Matchmaking::Match#add | Adding player #{player.id} to match #{match.id}"
-      client.sadd match_key, player_value(player)
+      client.sadd match_key, Matchmaking::Player.new(player:).value
+      client.sadd QUEUED_MATCHES_SET_KEY, match_key
     end
 
     def remove(player)
       logger.info "Matchmaking::Match#remove | Removing player #{player.id} from match #{match.id}"
-      client.srem match_key, player_value(player)
+      client.srem match_key, Matchmaking::Player.new(player:).value
     end
 
     def cancel!
@@ -28,8 +33,7 @@ module Matchmaking
         mm_queue.add player
       end
 
-      client.del ready_check_key
-      client.del match_key
+      cleanup!
     end
 
     # Instigates a ready check for players, and persists the match, match_teams & match_players
@@ -49,9 +53,9 @@ module Matchmaking
     # Readies up a player in the context of a ready check for the current match.
     def ready_up(player)
       logger.info "Matchmaking::Match#ready_up | Marking player #{player.id} as ready for match #{match.id}"
-
-      if client.sismember match_key, player_value(player)
-        client.sadd ready_check_key, player_value(player)
+      player_wrapper = Matchmaking::Player.new(player:)
+      if client.sismember match_key, player_wrapper.value
+        client.sadd ready_check_key, player_wrapper.value
       else
         logger.warn 'Matchmaking::Match#ready_up | Player not in match; aborting.'
         nil
@@ -96,6 +100,12 @@ module Matchmaking
     # Returns true if all match players have reported as ready.
     def ready?
       not_ready_players.empty?
+    end
+
+    def cleanup!
+      client.srem QUEUED_MATCHES_SET_KEY, match_key
+      client.del ready_check_key
+      client.del match_key
     end
 
     private

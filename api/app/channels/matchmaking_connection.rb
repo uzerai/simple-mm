@@ -10,8 +10,4 @@ class MatchmakingConnection < ApplicationCable::Connection
 
     self.user = current_user
   end
-
-  # def disconnect
-  #   MatchmakingQueue.
-  # end
 end

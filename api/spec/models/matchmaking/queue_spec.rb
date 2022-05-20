@@ -53,7 +53,7 @@ RSpec.describe Matchmaking::Queue, type: :model do
       end
 
       it 'returns a player from the queue' do
-        expect(subject).to eq(matchmaking_queue.player_value(player))
+        expect(subject).to eq(Matchmaking::Player.new(player:).value)
       end
 
       it 'removes the player from the queue' do

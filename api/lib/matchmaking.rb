@@ -2,7 +2,9 @@
 
 # Errors for instigating the job to be retried.
 module Matchmaking
-  class MatchNotFinalizedError < StandardError; end
-  class NoPlayersError < StandardError; end
-  class PlayerNotInMatchError < StandardError; end
+  module Errors
+    class MatchNotFinalizedError < StandardError; end
+    class NoPlayersError < StandardError; end
+    class PlayerNotInMatchError < StandardError; end
+  end
 end

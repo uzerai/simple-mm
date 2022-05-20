@@ -9,7 +9,7 @@ class UsersController < BaseController
                      password_confirmation: params[:password_confirm])
 
     if @user.save
-      @results = { token: current_user.jwt_token(params[:remember_me]) }
+      @results = { token: current_user.jwt_token(extended_expiry: params[:remember_me]) }
       render_response
     else
       add_model_errors @user
@@ -18,10 +18,10 @@ class UsersController < BaseController
   end
 
   def login
-    @user = User.find_by(email: params[:email])
+    @current_user = User.find_by(email: params[:email])
 
-    if @user&.valid_password?(params[:password])
-      @results = { token: current_user.jwt_token(params[:remember_me]) }
+    if current_user&.valid_password?(params[:password])
+      @results = { token: current_user.jwt_token(extended_expiry: params[:remember_me]) }
       render_response
     else
       add_error 403, 'Invalid username or password.'
@@ -32,7 +32,7 @@ class UsersController < BaseController
   # Called on the base front-end when the users' token
   # will expire in less than 15 minutes.
   def auto_login
-    @results = { token: current_user.jwt_token(false) }
+    @results = { token: current_user.jwt_token(extended_expiry: false) }
     render_response
   end
 

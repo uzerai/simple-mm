@@ -19,7 +19,7 @@ RSpec.describe Matchmaking::OrganizeMatchWorker, typer: :worker do
 
     context 'insufficient players in queue' do
       it 'raises a NoPlayersError' do
-        expect { subject }.to raise_exception Matchmaking::NoPlayersError
+        expect { subject }.to raise_exception Matchmaking::Errors::NoPlayersError
       end
     end
 
@@ -49,7 +49,7 @@ RSpec.describe Matchmaking::OrganizeMatchWorker, typer: :worker do
         end
 
         it 'raises a MatchNotFinalizedError' do
-          expect { subject }.to raise_error Matchmaking::MatchNotFinalizedError
+          expect { subject }.to raise_error Matchmaking::Errors::MatchNotFinalizedError
         end
       end
 
@@ -61,7 +61,7 @@ RSpec.describe Matchmaking::OrganizeMatchWorker, typer: :worker do
 
         it 'raises a MatchNotFinalizedError and cancels the match' do
           expect { subject }.to change { match.reload.state }.from('queued').to('cancelled')
-                                                             .and raise_error(Matchmaking::MatchNotFinalizedError)
+                                                             .and raise_error(Matchmaking::Errors::MatchNotFinalizedError)
         end
       end
     end

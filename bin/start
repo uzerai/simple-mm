@@ -5,7 +5,7 @@
 #
 if [[ $# -eq 0 ]]; then
 	echo "Starting all services..."
-	tmux new -s simple-mm -d 'docker-compose up'
+	tmux new -s simple-mm -d 'docker-compose --profile dev up '
 	exit 0
 fi
 
@@ -38,8 +38,7 @@ case "$1" in
 	;;
 
 	'spec' | 's')
-		docker-compose up -d db-test
-		docker-compose up -d redis-00
+		docker-compose --profile test up -d
 
 		export DATABASE_URL="postgresql://violet:evergarden@localhost:5432/test_db?encoding=utf8&pool=5&timeout=5000"
 		export JOB_WORKER_URL="redis://localhost:6379/0"
