@@ -18,7 +18,7 @@ module Matchmaking
 
     def initialize(match:)
       @match = match
-      super
+      super()
     end
 
     def add(player)

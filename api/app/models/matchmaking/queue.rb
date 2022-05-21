@@ -6,7 +6,7 @@ module Matchmaking
 
     def initialize(league:)
       @league = league
-      super
+      super()
     end
 
     # Add the player to a set of other players who are currently in queue for the given league.

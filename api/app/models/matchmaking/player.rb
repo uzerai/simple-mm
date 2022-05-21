@@ -6,12 +6,13 @@ module Matchmaking
 
     # Extracts the ID from a given Matchmaking::Client Player representation.
     def self.details(player_value)
+      # See https://apidock.com/ruby/String/match
       player_value.match(/^(?<id>.+)\|(?<username>.+)$/)
     end
 
     def initialize(player:)
       @player = player
-      super
+      super()
     end
 
     def value
