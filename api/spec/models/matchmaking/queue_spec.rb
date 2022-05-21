@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'matchmaking_helper'
 
 RSpec.describe Matchmaking::Queue, type: :model do
   # No factory for matchmaking queue, as it serves only as a API client

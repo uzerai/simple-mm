@@ -40,6 +40,8 @@ module Matchmaking
 
     # Checks for a current match where the player is already in.
     def current_match
+      Matchmaking::Player.new(player:).existing_match?
+
       @current_match ||= ::Match.where(league:)
                                 .joins(match_teams: :match_players)
                                 .merge(::MatchPlayer.where(player:))

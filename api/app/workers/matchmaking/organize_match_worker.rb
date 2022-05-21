@@ -37,7 +37,7 @@ module Matchmaking
 
         # No Error-guard necessary for player, since highly unlikely they won't exist.
         player = ::Player.select(:id, :username)
-                         .find(Matchmaking::Player.id(reserved_queue_player))
+                         .find(Matchmaking::Player.details(reserved_queue_player)[:id])
 
         mm_match.add player # Silent errors ftw
       end

@@ -1,12 +1,48 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'matchmaking_helper'
 
 RSpec.describe Matchmaking::Match, type: :model do
   let(:matchmaking_match) { create :'matchmaking/match', match: }
   let(:league) { create :league }
   let(:player) { create :player, league:, game: league.game }
   let(:match) { create :match, league:, game: league.game, match_type: league.match_type }
+
+  describe 'Matchmaking::Match.details' do
+    let(:formatted_match_key) { "@L#{match.league.id}@M#{match.id}" }
+    subject { Matchmaking::Match.details(formatted_match_key) }
+
+    it 'destructures the match_key correctly' do
+      expect(subject[:id]).to eq(match.id)
+      expect(subject[:league_id]).to eq(league.id)
+    end
+  end
+
+  describe 'Matchmaking::Match.queued_keys' do
+    subject { Matchmaking::Match.queued_keys }
+
+    context 'with no matches queued' do
+      it 'returns an empty list' do
+        expect(subject).to be_empty
+      end
+    end
+
+    context 'with arbitrary matches queued' do
+      let(:n_of_matches) { rand(1..50) }
+      let(:matches) { create_list :match, n_of_matches, league:, game: league.game, match_type: league.match_type }
+
+      before do
+        matches.each do |match|
+          Matchmaking::Match.new(match:).add player
+        end
+      end
+
+      it 'returns a list of equal length' do
+        expect(subject.count).to eq(n_of_matches)
+      end
+    end
+  end
 
   describe '#add' do
     subject { matchmaking_match.add player }

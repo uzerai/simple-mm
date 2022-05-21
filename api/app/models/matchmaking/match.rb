@@ -11,8 +11,14 @@ module Matchmaking
       Matchmaking::Client.client.smembers QUEUED_MATCHES_SET_KEY
     end
 
+    # Deconstructs the values from a given match_key.
+    def self.details(match_key)
+      match_key.match(/@L(?<league_id>.+)@M(?<id>.+)/)
+    end
+
     def initialize(match:)
       @match = match
+      super
     end
 
     def add(player)
@@ -67,7 +73,7 @@ module Matchmaking
     end
 
     def player_ids
-      players.map { |player_string| Matchmaking::Player.id player_string }
+      players.map { |player_string| Matchmaking::Player.details(player_string)[:id] }
     end
 
     def player_count
@@ -94,7 +100,7 @@ module Matchmaking
 
     # Returns a list of player uuids of players who are ready.
     def ready_player_ids
-      ready_players.map { |player_string| Matchmaking::Player.id player_string }
+      ready_players.map { |player_string| Matchmaking::Player.details(player_string)[:id] }
     end
 
     # Returns true if all match players have reported as ready.
