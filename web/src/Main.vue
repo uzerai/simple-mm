@@ -5,7 +5,14 @@
       id="content-background"
       class="fixed -z-10 w-screen h-screen bg-zinc-50 dark:bg-darkt-800"
     />
-    <MainBar :routes="routes" />
+    <main-bar :routes="routes" />
+    <ready-check />
+    <button
+      class="mt-24"
+      @click="openDialog"
+    >
+      CLick me
+    </button>
     <div id="main-content relative">
       <router-view v-slot="{ Component }">
         <transition
@@ -28,7 +35,7 @@
         name="notifications"
         tag="div"
       >
-        <Notification
+        <notification
           v-for="notif in notifications"
           :key="notif.uuid"
           :uuid="notif.uuid"
@@ -44,6 +51,7 @@
 <script>
 import routes from "./routes";
 import MainBar from "./components/common/MainBar";
+import ReadyCheck from "./components/ReadyCheck";
 import Notification from "./components/common/Notification";
 import { mapGetters } from "vuex";
 
@@ -51,7 +59,8 @@ export default {
   name: "Main",
   components: {
     MainBar,
-    Notification
+    Notification,
+    ReadyCheck
   },
   props: {},
   data() {
@@ -64,7 +73,12 @@ export default {
       "notifications"
     ])
   },
-  methods: {},
+  methods: {
+    openDialog() {
+      const league_id = this.$store.getters["matchmaking/queuedLeague"];
+      this.$store.dispatch("ready_check/startReadyCheck", { league_id });
+    }
+  },
 };
 </script>
 

@@ -37,7 +37,7 @@ class LeaguesController < BaseController
     end
 
     @results = {
-      league: league.as_json(include: %i[game matches], methods: %i[top5 player_count])
+      league: league.as_json(include: %i[game match_type matches], methods: %i[top5 player_count])
     }
     render_response
   end

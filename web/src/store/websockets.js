@@ -24,7 +24,7 @@ export default {
     },
     createSubscription(state, { channel, room, onReceived }) {
       // Ensure we don't resubscribe to something we're already subscribing to.
-      if(!Object.keys(state.subscriptions).includes(channel)) {
+      if(!Object.keys(state.subscriptions).includes(`${channel}:${room}`)) {
         console.info(`Creating websocket subscription to ${channel}:${room} ...`);
         const subscription = state.consumer?.subscriptions.create({
           channel,
@@ -71,7 +71,7 @@ export default {
         }});
       }
     },
-    // Loads queues which were open since the last 
+    // Loads queues which were open since the last time the page was closed. 
     async loadQueues({ commit, dispatch, getters, rootGetters }){
       const loadedQueue = window.localStorage.getItem("active_queue");
 

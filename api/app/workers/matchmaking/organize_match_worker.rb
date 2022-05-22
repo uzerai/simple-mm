@@ -3,7 +3,6 @@
 module Matchmaking
   class OrganizeMatchWorker
     include Sidekiq::Worker
-    include Matchmaking::Errors
 
     sidekiq_options queue: 'matchmaking'
 
@@ -13,6 +12,8 @@ module Matchmaking
     MATCHMAKING_READY_CHECK_WAIT_TIME = 30
 
     def perform(match_id)
+      return unless ApplicationVariable.get("matchmaking_enabled") == "true"
+      
       @match = ::Match.find(match_id)
       @mm_match = Matchmaking::Match.new(match:)
       @mm_queue = Matchmaking::Queue.new(league: match.league)
@@ -51,14 +52,19 @@ module Matchmaking
       started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
       time_since_last_update = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
+      # This loop continues to run every second, and checks if the 
+      # players of the match have readied up -- if they have not within
+      # ::MATCHMAKING_READY_CHECK_WAIT_TIME the match will be cancelled.
       until mm_match.ready?
         time_in_loop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
         # Update only once every 1s
-        next unless (time_in_loop - time_since_last_update) > 1
+        next unless (time_in_loop - time_since_last_update ) > 1
+        time_since_last_update = time_in_loop
 
         logger.info 'OrganizeMatchWorker#perform | Readying match ...'
 
+        # Guard clause, if the time_in_loop ever exceeds MATCHMAKING_READY_CHECK_WAIT_TIME, the match is cancelled
         next unless (time_in_loop - started_at) > Matchmaking::OrganizeMatchWorker::MATCHMAKING_READY_CHECK_WAIT_TIME
 
         mm_match.cancel!

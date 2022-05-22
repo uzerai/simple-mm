@@ -21,6 +21,7 @@ services:
       JOB_WORKER_URL: redis://redis-00:6379/0
       CACHE_URL: redis://redis-00:6379/1
       MATCHMAKING_QUEUE_URL: redis://redis-00:6379/2
+      APPLICATION_VARIABLE_URL: redis://redis-00:6379/12
       WORKER_PROCESSES: 1
     volumes:
       - ./api:/opt/app
