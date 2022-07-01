@@ -1,4 +1,10 @@
 #!/bin/bash
 
-docker exec -t -i simple-mm-simple-mm-1 bin/rails db
+if [ `uname` = "Linux" ]; then
+	docker exec -t -i simple-mm-simple-mm-1 bin/rails db
+fi
+
+if [ `uname` = "Darwin" ]; then
+	docker exec -t -i simple-mm_simple-mm_1 bin/rails db
+fi
 # psql -h localhost -p 5432 -U violet -d test_db

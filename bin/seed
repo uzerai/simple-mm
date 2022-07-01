@@ -1,3 +1,9 @@
 #!/bin/bash
 
-docker exec -t -i simple-mm-simple-mm-1 bin/rails db:seed
+if [ `uname` = "Linux" ] ; then
+	docker exec -t -i simple-mm-simple-mm-1 bin/rails db:seed
+fi
+
+if [ `uname` = "Darwin" ]; then
+	docker exec -t -i simple-mm_simple-mm_1 bin/rails db:seed
+fi
