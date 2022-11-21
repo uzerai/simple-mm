@@ -3,11 +3,14 @@
 module Matchmaking
   class FindMatchWorker
     include Sidekiq::Worker
+    
     sidekiq_options queue: 'matchmaking', retry: false
 
     attr_accessor :player, :league, :existing_matched
 
     def perform(league_id, player_id)
+      return unless ApplicationVariable.get("matchmaking_enabled") == "true"
+
       @league = ::League.find(league_id)
       @player = ::Player.find(player_id)
 
@@ -39,12 +42,22 @@ module Matchmaking
     end
 
     # Checks for a current match where the player is already in.
+    # TODO: support being in multiple matches so long as they are not in the same league (dunno which yet)
     def current_match
-      Matchmaking::Player.new(player:).existing_match?
+      # This section checks with the current matchmaking state for the player we've been given.
+      # If they are in any match; they will be removed from the first match 
+      # returned by Matchmaking::Player#matches. Support multiple later.
+      mm_match_keys = Matchmaking::Player.new(player:).matches
+      if mm_match_keys.any?
+        return @current_match ||= ::Match.find(Matchmaking::Match.details(mm_match_keys.first)[:id])
+      end
 
+      # Here we load just any last match we can find where the player is in which is not complete.
       @current_match ||= ::Match.where(league:)
-                                .joins(match_teams: :match_players)
-                                .merge(::MatchPlayer.where(player:))
+                            .where.not(state: [::Match::STATE_COMPLETED, ::Match::STATE_CANCELLED, ::Match::STATE_ABORTED])
+                            .joins(match_teams: :match_players)
+                            .merge(::MatchPlayer.where(player:))
+                            .first
     end
 
     def create_new_match

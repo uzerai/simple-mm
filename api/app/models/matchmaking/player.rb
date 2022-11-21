@@ -27,8 +27,9 @@ module Matchmaking
       end
     end
 
-    def existing_match?
-      Rails.logger.info "Matchmaking::Player#existing_match? | Testing for existing matches for player #{player.id}"
+    # TODO: Allow for scoping by league.
+    def matches
+      Rails.logger.info "Matchmaking::Player#matches? | Testing for existing matches for player #{player.id}"
 
       existing_matches = []
       Matchmaking::Match.queued_keys.each do |match_key|

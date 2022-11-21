@@ -15,7 +15,9 @@ const readEvent = (storeContext, matchmaking_channel_event) => {
   console.info("MatchmakingChannel: Received event");
   console.dir(matchmaking_channel_event);
 
-  switch (matchmaking_channel_event?.status) {
+  const { status, match_id } = matchmaking_channel_event;
+
+  switch (status) {
     case "queued":
       // Setting to 'queued' is handled in the matchmaking store 
       // setActiveQueue action.
@@ -23,11 +25,14 @@ const readEvent = (storeContext, matchmaking_channel_event) => {
     case "preparing":
       // This should instigate the ready-check for all users.
       // status should be 2
-      commit("setStatus", { status: 2});
+      // ALWAYS USE { root: true } IN HANDLERS. THEY ARE BOUND IN WEBSOCKETS.JS STORE CONTEXT WHEN LOADED
+      // FROM LOCAL STORE.
+      commit("matchmaking/setStatus", { status: 2 }, { root: true });
+      dispatch("ready_check/startReadyCheck", { league_id: rootGetters["matchmaking/queuedLeague"], match_id }, { root: true });
       break;
     case "readying":
       // The stage at which point all users have accepted the match.
-      commit("setStatus", { status: 3 });
+      commit("matchmaking/setStatus", { status: 3 }, { root: true });
       break;
     case "live":
       break;

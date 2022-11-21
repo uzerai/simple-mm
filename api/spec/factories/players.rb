@@ -6,7 +6,7 @@ FactoryBot.define do
     game { association :game }
     league { association :league, game: }
 
-    username { Faker::Internet.username }
+    username { Faker::Internet.unique.username }
     rating { Faker::Number.between(from: 1000, to: 2400) }
   end
 end

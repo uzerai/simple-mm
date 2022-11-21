@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-screen absolute -top-16 pointer-events-none">
+  <div class="w-full h-screen pointer-events-none">
     <main
       id="absolute-centered"
       class="w-full h-full flex items-center justify-center"

@@ -12,6 +12,9 @@ RSpec.describe Matchmaking::FindMatchWorker, typer: :worker do
   describe '#perform' do
     let(:league) { create :league }
     let(:player) { create :player, league:, game: league.game }
+    let(:matchmaking_queue) do 
+      Matchmaking::Queue.new(league:)
+    end
 
     subject { Matchmaking::FindMatchWorker.new.perform(league.id, player.id) }
 
@@ -31,10 +34,47 @@ RSpec.describe Matchmaking::FindMatchWorker, typer: :worker do
     end
 
     context 'there are existing Matches' do
-      before { create :match, league:, match_type: league.match_type }
+      let(:state) { Match::STATE_QUEUED }
 
-      it 'should not create a match' do
-        expect { subject }.not_to change(Match, :count)
+      before { create :match, league:, state:, match_type: league.match_type }
+
+      context 'in non-complete states' do
+        it 'should not create a match' do
+          expect { subject }.not_to change(Match, :count)
+        end
+      end
+
+      context 'in completed states' do
+        let(:state) { Match::STATE_COMPLETED }
+        it 'should create a match' do
+          expect { subject }.to change(Match, :count).from(1).to(2)
+        end
+      end
+    end
+
+    context 'the user has already found a match' do
+      let(:matchmaking_match) do
+        Matchmaking::Match.new(match: create(:match, league:, match_type: league.match_type))
+      end
+
+      before do 
+        matchmaking_match.add player
+      end
+
+      it 'does not add the player to queue' do
+        expect { subject }.not_to change{ matchmaking_queue.count(no_cache: true) }
+      end
+    end
+
+    context 'the user is already playing in a match' do
+      let(:match) { create :match, league:, match_type: league.match_type }
+      
+      before do 
+        create :match_player, player:, match:
+      end
+
+      it 'does not add the player to queue' do
+        expect { subject }.not_to change { matchmaking_queue.count(no_cache: true) }
       end
     end
   end

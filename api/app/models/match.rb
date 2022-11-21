@@ -102,7 +102,7 @@ class Match < ApplicationRecord
 
     # For all players in the match, broadcast to the user which owns the player.
     players.each do |player|
-      MatchmakingChannel.broadcast_to(player.user, { status: aasm.to_state })
+      MatchmakingChannel.broadcast_to(player.user, { status: aasm.to_state, match_id: id })
     end
   end
 

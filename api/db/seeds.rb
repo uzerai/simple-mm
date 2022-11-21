@@ -84,8 +84,8 @@ all_games.each do |game_array|
   # Randomly decide on an official match type.
   official_match_type = MatchType.where(game:).first
 
-  league_unrated = League.create!(name: 'PUBLIC LEAGUE UNRATED', match_type: official_match_type, game:, public: true, official: true, rated: false)
-  league_rated = League.create!(name: 'PUBLIC LEAGUE', match_type: official_match_type, game:, public: true, official: true)
+  league_unrated = League.create!(name: 'PUBLIC LEAGUE UNRATED', match_type: official_match_type, game:, public: true, official: true, rated: false, description: 'Description')
+  league_rated = League.create!(name: 'PUBLIC LEAGUE', match_type: official_match_type, game:, public: true, official: true, description: 'Description')
   leagues = League.all
 
   # User.find_each.with_index do |user, index|

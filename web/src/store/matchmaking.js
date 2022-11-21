@@ -20,7 +20,7 @@ export default {
       window.localStorage.setItem("queue_status", status);
     },
     /**
-     *  Queue id should always have a format of <current_user#player_id>:<league_id>
+     *  Queue id should always have a format of '<current_user#player_id>:<league_id>'
      */
     setQueueId(state, { queue_id }) {
       state.queue_id = queue_id;
@@ -87,14 +87,14 @@ export default {
       commit("websockets/removeSubscription", { channel: "MatchmakingChannel", room: league_id}, { root: true });
       commit("setIdle");
     },
-    async connectActiveQueue({ commit, dispatch }, { queue_id }) {
+    async connectActiveQueue({ commit, dispatch, rootGetters }, { queue_id }) {
       console.info(`Establishing WS connection ... for queue ${queue_id}`);
 
       // NOTE: The MatchmakingChannel is connected to per-user per-league, thus we can strip out the player_id from the
       // queue_id returned from server.
       dispatch("websockets/createSubscription", { channel: "MatchmakingChannel", 
         room: queue_id.split(":")[1], 
-        onReceived: (data) => readEvent({ commit, dispatch }, data)}, 
+        onReceived: (data) => readEvent({ commit, dispatch, rootGetters }, data)}, 
         { root: true });
       commit("setQueueing", { queue_id });
     }

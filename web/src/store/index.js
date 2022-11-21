@@ -1,8 +1,9 @@
 import { v4 as new_uuid } from "uuid";
 import { createStore } from "vuex";
 import auth from "./auth";
-import websockets from "./websockets";
 import matchmaking from "./matchmaking";
+import ready_check from "./ready_check";
+import websockets from "./websockets";
 
 // Global store for all globally-required information.
 export default createStore({
@@ -14,6 +15,7 @@ export default createStore({
     auth,
     websockets,
     matchmaking,
+    ready_check,
   },
   mutations: {
     // The default method for adding a notification to be 

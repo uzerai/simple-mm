@@ -36,8 +36,8 @@ RSpec.describe Matchmaking::Player, type: :model do
     end
   end
 
-  describe '#existing_match?' do
-    subject { matchmaking_player.existing_match? }
+  describe '#matches' do
+    subject { matchmaking_player.matches }
 
     context 'player is in match' do
       let(:matchmaking_match) { Matchmaking::Match.new(match:) }
@@ -46,7 +46,7 @@ RSpec.describe Matchmaking::Player, type: :model do
         matchmaking_match.add player
       end
 
-      it 'returns an array contiaining number of matches items' do
+      it 'returns an array containing number of matches items' do
         expect(subject.count).to eq(1)
       end
     end
