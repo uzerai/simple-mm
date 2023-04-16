@@ -50,7 +50,7 @@ case "$1" in
 			tmux new -s simple-mm-test -d 'docker-compose --profile test up'
 		fi
 
-		docker-compose run -it simple-mm-test $2
+		docker-compose run --rm -it simple-mm-test $2
 	;;
 
 	'prod')
@@ -64,7 +64,7 @@ case "$1" in
 	;;
 
 	'sidekiq' | 'sq')
-		tmux new -s simple-mm-web -d 'docker-compose up sidekiq-00'
+		tmux new -s simple-mm-sidekiq -d 'docker-compose up sidekiq-00'
 		exit 0
 	;;
 

@@ -13,12 +13,9 @@ of the problem space.
 
 # Project setup
 
-This project is a `ruby 3.0.3`, `rails 7.0.0+` project.
+This project is a `ruby 3.1.2`, `rails 7.0.0+` project.
 
-To get up and running quickly, the project uses [asdf-vm](https://asdf-vm.com/) to handle dependencies, and [docker](https://www.docker.com/) (and subsequently `docker-compose`)
-to ensure ease of setup across devices.
-
-## ASDF/on-local setup
+## ASDF/baremetal setup
 
 *Although not necessary*, other than for access from local machine, and local running,
 dependencies for the project are installed via [asdf-vm](https://asdf-vm.com/), follow the instructions for asdf and ensure it is installed.
@@ -31,7 +28,16 @@ Thereafter you'll need 3 plugins,
 
 all of which can be installed via `asdf plugin add <plugin-name>` as each is found on the [shortname list](https://github.com/asdf-vm/asdf-plugins) for asdf.
 
-## Docker-compose setup
+After these plugins are installed, run `asdf install` and each dependency should be built at the project level.
+From there,
+
+`bundle install`
+
+and a test run of `bin/rails s` will start the local environment, though it will most likely error due to no database being set up (unless you've already taken care of this).
+
+One can then use the provided database and redis containers to start the required additional services and detail the connection to them in `api/.env`.
+
+## Containerized setup
 
 All of the application is containerized by dockerfiles found under `./docker`. 
 
@@ -44,6 +50,9 @@ To this extent, the scripts found in `bin/` are mostly docker-based, and help by
 docker setup.
 
 ## Root directory bin/ scripts
+
+*Note: A lot of these scripts require the `tmux` commandline installed.*
+
 - console:
 
     Starts an irb connection to the rails console on the `api/` rails docker container (as if running `bin/rails c` locally).
@@ -68,14 +77,50 @@ docker setup.
 
     Seeds the database with seed data (as if running `bin/rails db:seed` locally).
 
-- start <<container_name>>
+- start \<option\>
 
-    Starts a single container (if specified) or starts all docker containers for this project (if not specified).
+    The main container orchestration command, used to optionally start a variety of services required by the application.
+    These options are:
+    - `db` / `d`
 
+        Starts a new `tmux` session (`simple-mm-db`) and the database container image @ `localhost:5432` (see docker-compose `db` service).
+    - `rails` / `r`
+
+        starts a new `tmux` session (`simple-mm-api`) and a rails-served development application server. Additionally starts the `db` and `redis` services to provide the storage layers for the app.
+    - `test` / `t`
+
+        starts a new `tmux` session (`simple-mm-test`) and the `db` and `redis` services in 'test' mode.
+    - `spec $arg` / `s $arg`
+
+        starts an interactive shell into the default server container image running the `bundle exec rspec` command. Additionally will create a `tmux` session (`simple-mm-test`) and start the `db` and `redis` services in 'test' mode if the session does not already exist.
+
+        Providing an additonal argument (`$arg`) is possible, in an effort to allow individual spec running, but doing so will need to assume that the relative path starts from within `/api`, ie: `./spec/models/game_spec.rb` would be akin to the full path from this README's parent directory: `./api/spec/models/game_spec.rb`.
+    - `prod` / `p`
+
+        Currently does nothing, but should most likely do something similar to no-option invocation.
+    - `web` / `w`
+
+        starts a new `tmux` session (`simple-mm-web`) and the `node-js` front-end server to serve the contents of the `./web` directory `vuejs` front-end.
+    - `sidekiq` / `sq`
+
+        starts a new `tmux` session (`simple-mm-sidekiq`) and the `sidekiq` queue-processing server to handle jobs/workers.
+    - `redis` / `rd`
+
+        starts a new `tmux` session (`simple-mm-redis`) and the `redis` service.
 - stop
 
     Kills all docker containers running for this project.
 
 ### Running tests
 
-* There are no tests, lol
+To run all specs see: 
+
+`bin/start spec`
+
+and the section above concerning `bin/start` scripts.
+
+OR 
+
+run the script suite on local baremetal
+
+`cd ./api && bin/rspec`
