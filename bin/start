@@ -23,7 +23,7 @@ case "$1" in
 
 	# Note: Rails is special in the context of this script, and is started with the
 	# 'rails s' command unlike the dockerized container which runs things in production mode
-	# with unicorn as the application server.
+	# with unicorn as the application server. 
 	'rails' | 'r')
 		docker-compose up -d db-00
 		docker-compose up -d redis-00
@@ -39,12 +39,18 @@ case "$1" in
 
 	# Starts the services required to run the spec suite.
 	'test' | 't')
-		tmux new -s simple-mm-test -d 'docker-compose --profile test up -d'
+		tmux new -s simple-mm-test -d 'docker-compose --profile test up'
 	;;
 
 	# Runs the spec suite (or spec specified) in the production-ready image
 	'spec' | 's')
-		docker-compose run simple-mm-test $2
+		# if the test services aren't running already -- run them
+		tmux has-session -t simple-mm-test 2>/dev/null
+		if [ $? != 0 ]; then
+			tmux new -s simple-mm-test -d 'docker-compose --profile test up'
+		fi
+
+		docker-compose run -it simple-mm-test $2
 	;;
 
 	'prod')
@@ -53,17 +59,17 @@ case "$1" in
 	;;
 
 	'web' | 'w')
-		tmux new -s simple-mm-web -d 'docker-compose up -d web-00'
+		tmux new -s simple-mm-web -d 'docker-compose up web-00'
 		exit 0
 	;;
 
 	'sidekiq' | 'sq')
-		tmux new -s simple-mm-web -d 'docker-compose up -d sidekiq-00'
+		tmux new -s simple-mm-web -d 'docker-compose up sidekiq-00'
 		exit 0
 	;;
 
 	'redis' | 'rd')
-		tmux new -s simple-mm-redis -d 'docker-compose up -d redis-00'
+		tmux new -s simple-mm-redis -d 'docker-compose up redis-00'
 		exit 0
 	;;
 esac

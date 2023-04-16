@@ -45,7 +45,7 @@ services:
     environment:
       RACK_ENV: test
       DATABASE_URL: postgresql://violet:evergarden@db-test:5432/test_db?encoding=utf8&pool=5&timeout=5000
-      DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL: true
+      DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL: 1
       JOB_WORKER_URL: redis://redis-00:6379/0
       CACHE_URL: redis://redis-00:6379/1
       MATCHMAKING_QUEUE_URL: redis://redis-00:6379/2
