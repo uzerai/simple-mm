@@ -17,7 +17,7 @@ services:
       - ./api/.env
     environment:
       RACK_ENV: development
-      DATABASE_URL: postgresql://violet:evergarden@db-00:5432/test_db?encoding=utf8&pool=5&timeout=5000
+      DATABASE_URL: postgresql://violet:evergarden@db-00:5432/development_db?encoding=utf8&pool=5&timeout=5000
       JOB_WORKER_URL: redis://redis-00:6379/0
       CACHE_URL: redis://redis-00:6379/1
       MATCHMAKING_QUEUE_URL: redis://redis-00:6379/2
@@ -31,6 +31,28 @@ services:
     depends_on:
       - db-00
       - redis-00
+
+  simple-mm-test:
+    build: 
+      context: .
+      dockerfile: ./docker/Dockerfile.server
+      args:
+        USER_ID: "${USER_ID:-1000}" 
+        GROUP_ID: "${GROUP_ID:-1000}"
+    profiles:
+      - standalone
+    entrypoint: ["bundle", "exec", "rspec"]
+    environment:
+      RACK_ENV: test
+      DATABASE_URL: postgresql://violet:evergarden@db-test:5432/test_db?encoding=utf8&pool=5&timeout=5000
+      DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL: true
+      JOB_WORKER_URL: redis://redis-00:6379/0
+      CACHE_URL: redis://redis-00:6379/1
+      MATCHMAKING_QUEUE_URL: redis://redis-00:6379/2
+      APPLICATION_VARIABLE_URL: redis://redis-00:6379/12 
+      WORKER_PROCESSES: 1
+    volumes:
+      - ./api:/opt/app
   
   sidekiq-00: # Mimics build details for the server, but executes sidekiq instead, shares caches
     <<: *app
@@ -68,13 +90,15 @@ services:
     environment:
       POSTGRES_USER: violet
       POSTGRES_PASSWORD: evergarden
-      POSTGRES_DB: test_db
+      POSTGRES_DB: development_db
 
   db-test:
     profiles:
       - test
     image: postgres:14.1
-    ports: 
+    volumes:
+      - simple-mm-db-test:/var/lib/postgresql/data
+    ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: violet
@@ -97,4 +121,5 @@ services:
 
 volumes:
   simple-mm-db:
+  simple-mm-db-test:
   simple-mm-redis:
