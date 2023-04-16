@@ -52,7 +52,7 @@ module Matchmaking
       # accept will send a message with their ID and will be
       # removed via WebSocket message to do so.
       match.players.each do |player|
-        broadcast_to_players({ status: match.status, not_ready: not_ready_players , match_id: match.id })
+        broadcast_to_players({ status: match.state, not_ready: not_ready_players , match_id: match.id })
       end
     end
 
@@ -63,7 +63,7 @@ module Matchmaking
       if client.sismember match_key, player_wrapper.value
         client.sadd ready_check_key, player_wrapper.value
         
-        broadcast_to_players({ status: match.status, not_ready: not_ready_players, match_id: match.id })
+        broadcast_to_players({ status: match.state, not_ready: not_ready_players, match_id: match.id })
       else
         logger.warn 'Matchmaking::Match#ready_up | Player not in match; aborting.'
         nil

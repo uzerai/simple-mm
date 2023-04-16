@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :game do
-    name { Faker::Esport.game }
+    name { Faker::Lorem.word }
     physical { false }
     cover_image { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'support', 'fixtures', 'assets', 'game_cover.jpg'), 'image/jpg') }
 

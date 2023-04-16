@@ -17,6 +17,7 @@ module Matchmaking
       @match = ::Match.find(match_id)
       @mm_match = Matchmaking::Match.new(match:)
       @mm_queue = Matchmaking::Queue.new(league: match.league)
+      
 
       # TODO: if there are any players in the queue, check their eligibility to join the match
       raise Matchmaking::Errors::NoPlayersError unless available_player_count.positive?

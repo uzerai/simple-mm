@@ -5,6 +5,10 @@ require 'sidekiq/testing'
 Sidekiq::Testing.fake!
 
 RSpec.describe Matchmaking::FindMatchWorker, typer: :worker do
+  before do
+    allow(ApplicationVariable).to receive(:get).with("matchmaking_enabled").and_return("true")
+  end
+
   it 'responds to #perform' do
     expect(Matchmaking::FindMatchWorker.new).to respond_to(:perform)
   end

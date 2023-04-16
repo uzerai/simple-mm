@@ -7,8 +7,13 @@ require 'sidekiq/testing'
 require 'matchmaking'
 
 Sidekiq::Testing.fake!
+
 RSpec.describe Matchmaking::OrganizeMatchWorker, typer: :worker do
   let(:match) { create :match }
+
+  before do
+    allow(ApplicationVariable).to receive(:get).with("matchmaking_enabled").and_return("true")
+  end
 
   it 'responds to #perform' do
     expect(Matchmaking::OrganizeMatchWorker.new).to respond_to(:perform)
