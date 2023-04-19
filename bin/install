@@ -1,0 +1,22 @@
+#!/bin/bash
+
+HOOK_NAMES="pre-commit"
+# assuming the script is in a bin directory, one level into the repo
+GIT_HOOK_DIR=$(git rev-parse --show-toplevel)/.git/hooks
+HOOK_DIR=$(git rev-parse --show-toplevel)/bin/hooks
+
+# Make all scripts in this directory 
+chmod +x $(git rev-parse --show-toplevel)/bin/*
+
+for hook in $HOOK_NAMES; do
+    # If the hook already exists, is executable, and is not a symlink
+    if [ ! -h $GIT_HOOK_DIR/$hook -a -x $GIT_HOOK_DIR/$hook ]; then
+        mv $GIT_HOOK_DIR/$hook $GIT_HOOK_DIR/$hook.bkp
+    fi
+    # create the symlink, overwriting the file if it exists
+    # probably the only way this would happen is if you're using an old version of git
+    # -- back when the sample hooks were not executable, instead of being named ____.sample
+    ln -s -f $HOOK_DIR/$hook.local $GIT_HOOK_DIR/$hook
+done
+
+chmod +x $HOOK_DIR/*

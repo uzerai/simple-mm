@@ -2,14 +2,14 @@
 
 if [[ $# -eq 0 ]]; then
 	echo "Running rubocop from docker image ..."
-	docker-compose run --rm toolbox rubocop
+	docker-compose run --rm -T toolbox rubocop -c .rubocop.yml
 	exit $?
 fi
 
 case "$1" in
   'fix' | 'a' | 'auto')
     echo "Running rubocop in auto-fix mode ..."
-    docker-compose run --rm toolbox rubocop -A
+    docker-compose run --rm -T toolbox rubocop -A -c .rubocop.yml
     exit $?
   ;;
 esac

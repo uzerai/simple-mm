@@ -3,17 +3,6 @@ AllCops:
     - bin/*
     - db/*
 
-
-Layout/LineLength:
-  Max: 120
-  Exclude:
-    - db/**/*
-    - spec/**/*
-    - features/**/*
-    - lib/tasks/**/*
-  IgnoredPatterns:
-    - '\s*#\s.*'
-
 Metrics/BlockLength:
   Max: 50
   Exclude:
@@ -30,7 +19,9 @@ Layout/LineLength:
   Max: 160
   Exclude:
     - db/**/*
-    - lib/tasks/*
+    - spec/**/*
+    - features/**/*
+    - lib/tasks/**/*
 
 Lint/SuppressedException:
   Exclude:
@@ -43,4 +34,7 @@ Metrics/AbcSize:
   Enabled: false
 
 Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
   Enabled: false
