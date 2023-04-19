@@ -40,6 +40,8 @@ case "$1" in
 	# Starts the services required to run the spec suite.
 	'test' | 't')
 		tmux new -s simple-mm-test -d 'docker-compose --profile test up'
+
+		exit 0
 	;;
 
 	# Runs the spec suite (or spec specified) in the production-ready image
