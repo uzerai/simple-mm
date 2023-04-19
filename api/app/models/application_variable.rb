@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationVariable
   def self.client
     new.client

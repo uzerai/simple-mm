@@ -22,7 +22,7 @@ class UsersController < BaseController
 
     if current_user&.valid_password?(params[:password])
       @token = current_user.jwt_token(extended_expiry: params[:remember_me])
-      
+
       render_response
     else
       add_error 403, 'Invalid username or password.'

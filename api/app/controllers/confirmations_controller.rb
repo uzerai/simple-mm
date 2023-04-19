@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
+# Class exists almost entirely to customize devise functionality.
+# DO NOT ALTER unless changes are made to the general authentication flow.
 class ConfirmationsController < Devise::ConfirmationsController
-  # Class exists almost entirely to customize devise functionality.
-
   private
 
   # Overriden to avoid an error where devise would assume the sessions-helper

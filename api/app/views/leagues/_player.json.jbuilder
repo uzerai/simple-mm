@@ -1,7 +1,9 @@
-json.(player, :id, :rating, :username, :created_at)
+# frozen_string_literal: true
+
+json.call(player, :id, :rating, :username, :created_at)
 
 if local_assigns[:include]&.include? :user
   json.user do
-    json.partial! "users/user", user: player.user
+    json.partial! 'users/user', user: player.user
   end
 end

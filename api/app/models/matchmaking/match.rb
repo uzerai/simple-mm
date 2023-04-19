@@ -51,8 +51,8 @@ module Matchmaking
       # Sends a list of not prepared users, users who click
       # accept will send a message with their ID and will be
       # removed via WebSocket message to do so.
-      match.players.each do |player|
-        broadcast_to_players({ status: match.state, not_ready: not_ready_players , match_id: match.id })
+      match.players.each do |_player|
+        broadcast_to_players({ status: match.state, not_ready: not_ready_players, match_id: match.id })
       end
     end
 
@@ -62,7 +62,7 @@ module Matchmaking
       player_wrapper = Matchmaking::Player.new(player:)
       if client.sismember match_key, player_wrapper.value
         client.sadd ready_check_key, player_wrapper.value
-        
+
         broadcast_to_players({ status: match.state, not_ready: not_ready_players, match_id: match.id })
       else
         logger.warn 'Matchmaking::Match#ready_up | Player not in match; aborting.'

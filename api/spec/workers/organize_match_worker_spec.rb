@@ -12,7 +12,7 @@ RSpec.describe Matchmaking::OrganizeMatchWorker, typer: :worker do
   let(:match) { create :match }
 
   before do
-    allow(ApplicationVariable).to receive(:get).with("matchmaking_enabled").and_return("true")
+    allow(ApplicationVariable).to receive(:get).with('matchmaking_enabled').and_return('true')
   end
 
   it 'responds to #perform' do

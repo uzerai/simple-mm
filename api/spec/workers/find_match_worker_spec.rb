@@ -6,7 +6,7 @@ Sidekiq::Testing.fake!
 
 RSpec.describe Matchmaking::FindMatchWorker, typer: :worker do
   before do
-    allow(ApplicationVariable).to receive(:get).with("matchmaking_enabled").and_return("true")
+    allow(ApplicationVariable).to receive(:get).with('matchmaking_enabled').and_return('true')
   end
 
   it 'responds to #perform' do
@@ -16,7 +16,7 @@ RSpec.describe Matchmaking::FindMatchWorker, typer: :worker do
   describe '#perform' do
     let(:league) { create :league }
     let(:player) { create :player, league:, game: league.game }
-    let(:matchmaking_queue) do 
+    let(:matchmaking_queue) do
       Matchmaking::Queue.new(league:)
     end
 
@@ -61,24 +61,24 @@ RSpec.describe Matchmaking::FindMatchWorker, typer: :worker do
         Matchmaking::Match.new(match: create(:match, league:, match_type: league.match_type))
       end
 
-      before do 
+      before do
         matchmaking_match.add player
       end
 
       it 'does not add the player to queue' do
-        expect { subject }.not_to change{ matchmaking_queue.count(no_cache: true) }
+        expect { subject }.not_to change(matchmaking_queue.count(no_cache: true))
       end
     end
 
     context 'the user is already playing in a match' do
       let(:match) { create :match, league:, match_type: league.match_type }
-      
-      before do 
+
+      before do
         create :match_player, player:, match:
       end
 
       it 'does not add the player to queue' do
-        expect { subject }.not_to change { matchmaking_queue.count(no_cache: true) }
+        expect { subject }.not_to change(matchmaking_queue.count(no_cache: true))
       end
     end
   end

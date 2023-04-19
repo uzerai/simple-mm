@@ -6,7 +6,7 @@ class LeaguesController < BaseController
 
   def show
     @league = League.eager_load(:game, :match_type, :matches)
-                   .find_by(id: params[:id])
+                    .find_by(id: params[:id])
 
     unless @league.present?
       add_error(404, 'League not found')

@@ -23,9 +23,9 @@ class MatchmakingChannel < ApplicationCable::Channel
     # and currently awaiting players.
     begin
       match = Match.find(match_id)
-      player = match.players.find_by(user_id: user_id)
+      player = match.players.find_by(user_id:)
       Matchmaking::Match.new(match).ready_up(player)
-    rescue
+    rescue StandardError
       logger.warn "Could not ready_check for user: #{user_id} in match: #{match_id}"
     end
   end

@@ -12,7 +12,7 @@ FactoryBot.define do
 
     trait :with_league do
       after :create do |game|
-        match_type = create :match_type, game: game
+        match_type = create(:match_type, game:)
         create :league, game:, match_type:
       end
     end
