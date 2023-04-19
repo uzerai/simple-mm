@@ -118,7 +118,17 @@ services:
       - ./api/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
       - REDIS_REPLICATION_MODE=master
-
+      
+  toolbox:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.rubytools
+      args:
+        USER_ID: "${USER_ID:-1000}" 
+        GROUP_ID: "${GROUP_ID:-1000}"
+    
+    volumes:
+      - ./api:/opt/app
 volumes:
   simple-mm-db:
   simple-mm-db-test:

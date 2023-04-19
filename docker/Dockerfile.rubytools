@@ -9,7 +9,7 @@ RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID user
 ENV INSTALL_PATH /opt/app
 RUN mkdir -p $INSTALL_PATH
 
-RUN gem install rails bundler
+RUN gem install rails bundler rubocop
 RUN chown -R user:user $INSTALL_PATH
 WORKDIR $INSTALL_PATH
 

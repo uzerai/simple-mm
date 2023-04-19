@@ -7,5 +7,5 @@ fi
 # Since the docker desktop client uses different naming for Mac machines -- this is required to make 
 # things work across the machines I use. I just wish this wasn't the case.
 if [ `uname` = "Darwin" ]; then
-	docker exec -t -i simple-mm_simple-mm_1 bin/rails db:migrate
+	docker exec -t -i simple-mm_simple-mm_1 bin/rails db:reset
 fi

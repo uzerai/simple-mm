@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [[ $# -eq 0 ]]; then
+	echo "Running rubocop from docker image ..."
+	docker-compose run --rm toolbox rubocop
+	exit $?
+fi
+
+case "$1" in
+  'fix' | 'a' | 'auto')
+    echo "Running rubocop in auto-fix mode ..."
+    docker-compose run --rm toolbox rubocop -A
+    exit $?
+  ;;
+esac
+
+exit 1
