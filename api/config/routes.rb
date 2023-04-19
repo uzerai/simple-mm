@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   resources :players
   get '/games', to: 'games#index', as: 'all-games'
   get '/games/:game_slug', to: 'games#show', as: 'game'
-  get '/leagues/:id', to: 'leagues#show', as: 'game-league'
+  get '/leagues/:id', to: 'leagues#show', as: 'league'
   post '/leagues/:id/join', to: 'leagues#join', as: 'join_league'
   get '/matches/:id', to: 'matches#show', as: 'match'
 
