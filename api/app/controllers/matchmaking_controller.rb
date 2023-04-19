@@ -11,7 +11,7 @@ class MatchmakingController < BaseController
     logger.info 'MatchmakingController#queue | Creating match worker for match'
     Matchmaking::FindMatchWorker.perform_async(league.id, player.id)
 
-    @results = { queue: "#{player.id}:#{league.id}" }
+    @queue_id = "#{player.id}:#{league.id}"
 
     render_response
   end

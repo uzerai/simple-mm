@@ -3,6 +3,8 @@
 class BaseController < ActionController::API
   include Auth
 
+  helper JsonEnvelopeHelper
+
   # This class contains sections of code intended to serve utility in _all_ functions of the application.
 
   # --- Before action section:
@@ -58,9 +60,6 @@ class BaseController < ActionController::API
   end
 
   def render_response(status = :ok)
-    render json: {
-      results: @results,
-      errors: @errors
-    }, status:
+    render status:
   end
 end

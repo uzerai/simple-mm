@@ -27,18 +27,15 @@ class LeaguesController < BaseController
   end
 
   def show
-    league = League.joins(:game)
+    @league = League.eager_load(:game, :match_type, :matches)
                    .find_by(id: params[:id])
 
-    unless league.present?
+    unless @league.present?
       add_error(404, 'League not found')
       render_response(:not_found)
       return
     end
 
-    @results = {
-      league: league.as_json(include: %i[game match_type matches], methods: %i[top5 player_count])
-    }
     render_response
   end
 

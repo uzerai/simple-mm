@@ -2,14 +2,14 @@
 
 class PlayersController < BaseController
   def index
-    @results = Player.all.order(rating: :desc).as_json
+    @players = Player.all.order(rating: :desc)
     render_response
   end
 
   def show
-    @results = Player.find(params[:id]).as_json(include: :matches)
+    @player = Player.eager_load(:matches).find_by(id: params[:id])
 
-    if @results.present?
+    if @player.present?
       render_response
     else
       add_error(404, 'Player not found.')

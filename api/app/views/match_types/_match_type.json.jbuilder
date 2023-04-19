@@ -1,0 +1,1 @@
+json.(match_type, :id, :name, :slug, :team_size, :team_count, :created_at)
