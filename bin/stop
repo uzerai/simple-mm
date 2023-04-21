@@ -1,2 +1,8 @@
 #!/bin/bash
 docker-compose kill
+
+# Close dangling session in case exists.
+tmux has-session -t simple-mm 2>/dev/null
+if [ $? != 0 ]; then
+  tmux kill-session -t simple-mm
+fi
