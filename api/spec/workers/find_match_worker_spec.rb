@@ -66,7 +66,7 @@ RSpec.describe Matchmaking::FindMatchWorker, typer: :worker do
       end
 
       it 'does not add the player to queue' do
-        expect { subject }.not_to change(matchmaking_queue.count(no_cache: true))
+        expect { subject }.not_to change{ matchmaking_queue.count(no_cache: true) }
       end
     end
 
@@ -78,7 +78,7 @@ RSpec.describe Matchmaking::FindMatchWorker, typer: :worker do
       end
 
       it 'does not add the player to queue' do
-        expect { subject }.not_to change(matchmaking_queue.count(no_cache: true))
+        expect { subject }.not_to change { matchmaking_queue.count(no_cache: true) }
       end
     end
   end

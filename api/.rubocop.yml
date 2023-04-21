@@ -27,6 +27,9 @@ Lint/SuppressedException:
   Exclude:
     - config/*
 
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
 Style/Documentation:
   Enabled: false
 

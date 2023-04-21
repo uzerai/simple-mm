@@ -19,11 +19,11 @@ module Matchmaking
       @mm_queue = Matchmaking::Queue.new(league: match.league)
 
       # TODO: if there are any players in the queue, check their eligibility to join the match
-      raise Matchmaking::Errors::NoPlayersError unless available_player_count.positive?
+      raise Matchmaking::Errors::NoPlayersError, 'No available players currently -- retrying later' unless available_player_count.positive?
 
       logger.info "OrganizeMatchWorker#perform | #{match.id} | Players in queue, attempting to organize."
 
-      raise Matchmaking::Errors::MatchNotFinalizedError unless enough_players_in_queue?
+      raise Matchmaking::Errors::MatchNotFinalizedError, 'Match could not be finalized -- retrying later' unless enough_players_in_queue?
 
       logger.info "OrganizeMatchWorker#perform | #{match.id} | Enough players for match. Filling teams."
 
@@ -33,7 +33,7 @@ module Matchmaking
 
         unless reserved_queue_player.present?
           logger.info "OrganizeMatchWorker#perform | #{match.id} | Failed to reserve player from queue."
-          raise Matchmaking::Errors::MatchNotFinalizedError
+          raise Matchmaking::Errors::MatchNotFinalizedError, 'Failed to reserve a player from queue -- retrying later'
         end
 
         # No Error-guard necessary for player, since highly unlikely they won't exist.
@@ -71,7 +71,7 @@ module Matchmaking
         mm_match.cancel!
         match.cancel!
 
-        raise Matchmaking::Errors::MatchNotFinalizedError
+        raise Matchmaking::Errors::MatchNotFinalizedError, 'Players failed to accept ready-check, cancelling match.'
       end
 
       match.reload.ready!
