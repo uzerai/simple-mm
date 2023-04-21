@@ -42,7 +42,7 @@ class Game < ApplicationRecord
   # Although called player_count, this actually counts unique users which have participated in at
   # least one league of the game.
   def player_count
-    players.select(:user_id).map(&:user_id).uniq.count
+    players.distinct(:user_id).count
   end
 
   private

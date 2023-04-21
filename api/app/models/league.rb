@@ -51,7 +51,7 @@ class League < ApplicationRecord
   }
 
   def player_count
-    players.select(:user_id).uniq.count
+    players.distinct(:user_id).count
   end
 
   def top5
