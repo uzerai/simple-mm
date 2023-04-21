@@ -10,7 +10,7 @@ class GamesController < BaseController
   end
 
   def show
-    @game = Game.eager_load(:leagues).find_by(slug: params[:game_slug])
+    @game = Game.eager_load(:leagues).find_by!(slug: params[:game_slug])
 
     if @game.present?
       render_response
