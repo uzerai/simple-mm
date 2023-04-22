@@ -4,7 +4,7 @@ if [[ $# -eq 0 ]]; then
 	echo "Running rubocop from docker image ..."
   # we provide .rubocop.yml as a config instead of api/.rubocop.yml due to the 
   # docker-container having it's root working directory within api/
-	docker-compose run --rm -T toolbox rubocop -c .rubocop.yml
+	docker-compose run --rm -T toolbox rubocop -c .rubocop.yml $(git diff --staged --name-only --relative=api)
 	exit $?
 fi
 
