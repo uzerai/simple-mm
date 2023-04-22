@@ -8,7 +8,15 @@ module Auth
   # Override auth_param if you ever need to use a different method for token retrieval.
   # Default is the 'Authorization' header as recommended by the JWT pattern.
   def auth_param
-    request.headers['Authorization'].split(' ')[1]
+    # Special handling to use the refresh token body parameter if the path is the autologin path.
+    if request.fullpath.start_with?('/autologin')
+      token = request.request_parameters['refresh_token']
+      raise CustomApiError.new(401, 'No refresh token') unless token.present?
+
+      return token
+    end
+
+    request.authorization.split(' ')[1]
   end
 
   def encode_token(payload)
@@ -33,7 +41,8 @@ module Auth
         nil
       end
     rescue JWT::DecodeError
-      logger.warn 'Decode Error: Could not decode token.'
+      add_error(401, 'Decode Error: Could not decode token.')
+
       nil
     end
   end

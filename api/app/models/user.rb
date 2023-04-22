@@ -58,7 +58,7 @@ class User < ApplicationRecord
                                 valid: Time.zone.now.iso8601,
                                 avatar: avatar.url,
                                 expire: (Time.zone.now + (if extended_expiry
-                                                            1.years
+                                                            2.weeks
                                                           else
                                                             ENV.fetch(
                                                               'JWT_TOKEN_EXPIRE_MINUTES', 720
@@ -66,5 +66,13 @@ class User < ApplicationRecord
                                                           end)).iso8601,
                                 permissions: []
                               }, ENV.fetch('JWT_SIGN_SECRET', 'defaultsecret'))
+  end
+
+  def refresh_token
+    @refresh_token ||= JWT.encode({
+                                    id:,
+                                    valid: Time.zone.now.iso8601,
+                                    expire: (Time.zone.now + 6.months).iso8601
+                                  }, ENV.fetch('JWT_SIGN_SECRET', 'defaultsecret'))
   end
 end

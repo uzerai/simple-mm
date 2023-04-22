@@ -2,7 +2,8 @@
 
 class UsersController < BaseController
   before_action :configure_permitted_parameters, if: :devise_controller? # For devise config override
-  before_action :ensure_authorized, only: [:auto_login]
+
+  skip_before_action :ensure_authorized, only: %i[create login]
 
   def create
     @user = User.new(username: params[:username], email: params[:email], password: params[:password],
@@ -10,6 +11,7 @@ class UsersController < BaseController
 
     if @user.save
       @token = current_user.jwt_token(extended_expiry: params[:remember_me])
+      @refresh_token = current_user.refresh_token
       render_response
     else
       add_model_errors @user
@@ -22,6 +24,7 @@ class UsersController < BaseController
 
     if current_user&.valid_password?(params[:password])
       @token = current_user.jwt_token(extended_expiry: params[:remember_me])
+      @refresh_token = current_user.refresh_token
 
       render_response
     else
@@ -36,6 +39,8 @@ class UsersController < BaseController
     @token = current_user.jwt_token(extended_expiry: false)
     render_response
   end
+
+  protected
 
   # Custom devise configuratio overrides for permitted parameters
   # during certain methods on this controller.
