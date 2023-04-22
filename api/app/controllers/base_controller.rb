@@ -16,7 +16,7 @@ class BaseController < ActionController::API
   rescue_from CustomApiError, with: :handle_custom_api_error
 
   # The basic logger in all controllers
-  attr_accessor :logger, :user, :current_user_token, :errors, :results
+  attr_accessor :logger, :errors, :results
 
   def initialize
     @logger = Rails.logger
@@ -29,13 +29,11 @@ class BaseController < ActionController::API
   # Validation function which is used for the 'before_action' hook
   # to ensure the received request content-type header is of the correct type(s)
   def ensure_content_type
-    if request.request_method_symbol == :get && request.headers['Accept'] != 'application/json'
-      raise CustomApiError.new(422, "'Accept' header must be 'application/json'")
-    end
+    raise CustomApiError.new(412, "Cannot satisfy request. Client must accept 'application/json'") if request.headers['Accept'] != 'application/json'
 
-    if request.request_method_symbol == :post && request.headers['Content-Type'] != 'application/json' && request.headers['Accept'] != 'application/json'
-      raise CustomApiError.new(422, "'Content-Type' and 'Accept' headers must be 'application/json'")
-    end
+    return unless request.headers['Content-Type'] != 'application/json' && request.method_symbol != :get
+
+    raise CustomApiError.new(412, "Cannot satisfy request. Expected 'Content-Type' to be 'application/json'")
   end
 
   def handle_custom_api_error(error)
@@ -49,22 +47,14 @@ class BaseController < ActionController::API
   #
   # --- Very simple consistent response format. Works for now.
   def add_error(code = 500, message = 'Error.')
-    @errors ||= []
-    @errors.push({
-                   code:,
-                   message:
-                 })
+    (@errors ||= []).push(CustomApiError.new(code, message))
   end
 
   def add_model_errors(model)
-    @errors ||= []
     return unless model.present?
 
     model.errors.each do |error|
-      @errors.push({
-                     code: 422,
-                     message: "#{error.attribute} #{error.message}"
-                   })
+      (@errors ||= []).push(CustomApiError.new(422, "#{error.attribute} #{error.message}"))
     end
   end
 
