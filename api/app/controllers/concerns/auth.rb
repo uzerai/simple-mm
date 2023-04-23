@@ -16,7 +16,7 @@ module Auth
       return token
     end
 
-    request.authorization&.split(' ')&[1]
+    request.authorization&.split(' ') & [1]
   end
 
   def encode_token(payload)

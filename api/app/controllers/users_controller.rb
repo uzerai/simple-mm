@@ -10,9 +10,9 @@ class UsersController < BaseController
                      password_confirmation: params[:password_confirm])
 
     if @user.save
-      @token = current_user.jwt_token(extended_expiry: params[:remember_me])
-      @refresh_token = current_user.refresh_token
-      render_response
+      @token = @user.jwt_token(extended_expiry: params[:remember_me])
+      @refresh_token = @user.refresh_token
+      render_response 201
     else
       add_model_errors @user
       render_response 422
@@ -22,13 +22,13 @@ class UsersController < BaseController
   def login
     @current_user = User.find_by(email: params[:email])
 
-    if current_user&.valid_password?(params[:password])
-      @token = current_user.jwt_token(extended_expiry: params[:remember_me])
-      @refresh_token = current_user.refresh_token
+    if @current_user&.valid_password?(params[:password])
+      @token = @current_user.jwt_token(extended_expiry: params[:remember_me])
+      @refresh_token = @current_user.refresh_token
 
       render_response
     else
-      add_error 403, 'Invalid username or password.'
+      add_error 403, 'Invalid username or password'
       render_response 403
     end
   end
