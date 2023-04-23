@@ -34,12 +34,12 @@ RSpec.describe User, type: :model do
   end
 
   describe '#jwt_token' do
+    subject { user.jwt_token }
+
     let(:user) { create :user }
     let(:decoded_token) { JWT.decode(subject, ENV.fetch('JWT_SIGN_SECRET', 'defaultsecret'), true, algorithm: 'HS256').first }
 
     context 'without extended expiry' do
-      subject { user.jwt_token }
-
       it 'returns a signed, valid token' do
         expect(subject).not_to be_nil
         expect { decoded_token }.not_to raise_error
@@ -68,6 +68,25 @@ RSpec.describe User, type: :model do
           expected_expire_date.year.to_s
         )
       end
+    end
+  end
+
+  describe '#refresh_token' do
+    subject { user.refresh_token }
+
+    let(:user) { create :user }
+    let(:decoded_token) { JWT.decode(subject, ENV.fetch('JWT_SIGN_SECRET', 'defaultsecret'), true, algorithm: 'HS256').first }
+
+    it 'returns a signed, valid token' do
+      expect(subject).not_to be_nil
+        expect { decoded_token }.not_to raise_error
+        expected_expire_date = Time.now + 6.months
+
+        expect(decoded_token.fetch('expire')).to include(
+          expected_expire_date.day.to_s,
+          expected_expire_date.month.to_s,
+          expected_expire_date.year.to_s
+        )
     end
   end
 end
