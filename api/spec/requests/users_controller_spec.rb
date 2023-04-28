@@ -7,11 +7,11 @@ RSpec.describe UsersController, type: :request do
 
   describe '#create' do
     subject { post user_signup_url, headers:, params: params.to_json }
+
     let(:params) { { username:, email:, password:, password_confirmation: password } }
     let(:password) { Faker::Internet.password }
     let(:username) { Faker::Internet.unique.username }
     let(:email) { Faker::Internet.unique.email }
-    let(:headers) { { Accept: 'application/json', 'Content-Type': 'application/json' } }
 
     context 'when unauthenticated' do
       context 'with valid user parameters' do
@@ -93,6 +93,49 @@ RSpec.describe UsersController, type: :request do
         response_body = JSON.parse(response.body)
         expect(response_body['data']['token']).to be_present
         expect(response_body['data']['refresh_token']).to be_present
+      end
+    end
+  end
+
+  describe '#auto_login' do
+    subject { post user_auto_login_url, headers:, params: params.to_json }
+
+    let(:user) { create :user }
+    let!(:params) { { refresh_token: user.refresh_token } }
+
+    context 'without an existing user' do
+      before do
+        user.destroy!
+      end
+
+      it 'should fail' do
+        subject
+
+        expect(response).to have_http_status(401)
+        response_body = JSON.parse(response.body)
+        expect(response_body['errors'].first['message']).to eq('Please log in.')
+      end
+    end
+
+    context 'with refresh_token for an existing user' do
+      it 'should succeed' do
+        subject
+
+        expect(response).to have_http_status(200)
+        response_body = JSON.parse(response.body)
+        expect(response_body['data']['token']).to be_present
+      end
+    end
+
+    context 'with no refresh_token' do
+      let(:params) { { refresh_token: nil } }
+
+      it 'should fail' do
+        subject
+
+        expect(response).to have_http_status(401)
+        response_body = JSON.parse(response.body)
+        expect(response_body['errors'].first['message']).to eq('No refresh token')
       end
     end
   end

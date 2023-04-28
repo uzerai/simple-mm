@@ -8,15 +8,17 @@ module Auth
   # Override auth_param if you ever need to use a different method for token retrieval.
   # Default is the 'Authorization' header as recommended by the JWT pattern.
   def auth_param
-    # Special handling to use the refresh token body parameter if the path is the autologin path.
-    if request.fullpath.start_with?('/autologin')
-      token = request.request_parameters['refresh_token']
-      raise CustomApiError.new(401, 'No refresh token') unless token.present?
+    @auth_param ||= begin
+      # Special handling to use the refresh token body parameter if the path is the autologin path.
+      if request.fullpath.start_with?('/autologin')
+        token = request.request_parameters['refresh_token']
+        raise CustomApiError.new(401, 'No refresh token') unless token.present?
 
-      return token
+        return token
+      end
+
+      request.authorization&.split(' ') & [1]
     end
-
-    request.authorization&.split(' ') & [1]
   end
 
   def encode_token(payload)

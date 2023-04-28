@@ -79,14 +79,14 @@ RSpec.describe User, type: :model do
 
     it 'returns a signed, valid token' do
       expect(subject).not_to be_nil
-        expect { decoded_token }.not_to raise_error
-        expected_expire_date = Time.now + 6.months
+      expect { decoded_token }.not_to raise_error
+      expected_expire_date = Time.now + 6.months
 
-        expect(decoded_token.fetch('expire')).to include(
-          expected_expire_date.day.to_s,
-          expected_expire_date.month.to_s,
-          expected_expire_date.year.to_s
-        )
+      expect(decoded_token.fetch('expire')).to include(
+        expected_expire_date.day.to_s,
+        expected_expire_date.month.to_s,
+        expected_expire_date.year.to_s
+      )
     end
   end
 end
