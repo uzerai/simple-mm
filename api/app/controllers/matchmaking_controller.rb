@@ -3,10 +3,14 @@
 class MatchmakingController < BaseController
   attr_accessor :player, :league
 
-  # Should return a match_id which the user will listen to for progress on queue.
+  ## 
+  # Returns a match_id which the user will listen to for progress on queue.
+  # This queue_id is a key String representing the 
   def queue
     @player = Player.find(queue_params[:player_id])
     @league = League.find(queue_params[:league_id])
+
+    throw 
 
     logger.info 'MatchmakingController#queue | Creating match worker for match'
     Matchmaking::FindMatchWorker.perform_async(league.id, player.id)

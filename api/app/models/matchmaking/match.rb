@@ -2,16 +2,21 @@
 
 module Matchmaking
   class Match < Matchmaking::Client
+    extend Forwardable
+
     QUEUED_MATCHES_SET_KEY = 'MATCHMAKING_QUEUED'
 
     attr_accessor :match
+    def_delegators :@match, :league
 
     def self.queued_keys
       # This is a static method; so use a new client
       Matchmaking::Client.client.smembers QUEUED_MATCHES_SET_KEY
     end
 
+    ##
     # Deconstructs the values from a given match_key.
+    #
     def self.details(match_key)
       match_key.match(/@L(?<league_id>.+)@M(?<id>.+)/)
     end
@@ -39,12 +44,14 @@ module Matchmaking
         mm_queue.add player
       end
 
-      cleanup!
+      remove_keys!
     end
 
+    ##
     # Instigates a ready check for players, and persists the match, match_teams & match_players
     # when successfully completed by all players; otherwise, removes non-accepting players
     # from the match, and raises a Matchmaking::MatchNotFinalized error.
+    # 
     def ready_check!
       # TODO: The match should instigate a ready check here, and depending on
       # strategy of match type allow for pick / ban of players and or maps.
@@ -56,16 +63,19 @@ module Matchmaking
       end
     end
 
+    ##
     # Readies up a player in the context of a ready check for the current match.
+    #
     def ready_up(player)
       logger.info "Matchmaking::Match#ready_up | Marking player #{player.id} as ready for match #{match.id}"
       player_wrapper = Matchmaking::Player.new(player:)
+
       if client.sismember match_key, player_wrapper.value
         client.sadd ready_check_key, player_wrapper.value
 
         broadcast_to_players({ status: match.state, not_ready: not_ready_players, match_id: match.id })
       else
-        logger.warn 'Matchmaking::Match#ready_up | Player not in match; aborting.'
+        logger.warn 'Matchmaking::Match#ready_up | Player not in match; no ready check made.'
         nil
       end
     end
@@ -96,27 +106,39 @@ module Matchmaking
     # Ready check related #
     #######################
 
+    ##
     # Returns a list of player values of players who are not ready.
+    #
     def not_ready_players
       client.sdiff([match_key, ready_check_key])
     end
 
+    ##
     # Returns a list of player values of players who are ready.
+    #
     def ready_players
       client.smembers ready_check_key
     end
 
+    ##
     # Returns a list of player uuids of players who are ready.
+    #
     def ready_player_ids
       ready_players.map { |player_string| Matchmaking::Player.details(player_string)[:id] }
     end
 
+    ##
     # Returns true if all match players have reported as ready.
+    #
     def ready?
       not_ready_players.empty?
     end
 
-    def cleanup!
+    ##
+    # Removes all active keys related ot the match from the
+    # redis instance for matchmaking.
+    #
+    def remove_keys!
       client.srem QUEUED_MATCHES_SET_KEY, match_key
       client.del ready_check_key
       client.del match_key
@@ -130,10 +152,6 @@ module Matchmaking
 
     def match_key
       "@L#{match.league.id}@M#{match.id}"
-    end
-
-    def league
-      match.league
     end
 
     def mm_queue

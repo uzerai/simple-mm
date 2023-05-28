@@ -1,5 +1,13 @@
 # frozen_string_literal: true
 
+##
+# The Matchmaking Module is an abstraction module for interfacing with a Redis client 
+# which contains the information of current matchmaking information, such as active Queues
+# active Matches and currently queued Players.
+# 
+# The classes within this module are most likely used only in the context of 2-way communication
+# in the MatchmakingChannel.
+# 
 module Matchmaking
   class Client
     def self.client
