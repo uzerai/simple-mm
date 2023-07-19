@@ -7,6 +7,7 @@ module Matchmaking
     QUEUED_MATCHES_SET_KEY = 'MATCHMAKING_QUEUED'
 
     attr_accessor :match
+
     def_delegators :@match, :league
 
     def self.queued_keys
@@ -51,7 +52,7 @@ module Matchmaking
     # Instigates a ready check for players, and persists the match, match_teams & match_players
     # when successfully completed by all players; otherwise, removes non-accepting players
     # from the match, and raises a Matchmaking::MatchNotFinalized error.
-    # 
+    #
     def ready_check!
       # TODO: The match should instigate a ready check here, and depending on
       # strategy of match type allow for pick / ban of players and or maps.
