@@ -12,12 +12,13 @@ module Auth
       # Special handling to use the refresh token body parameter if the path is the autologin path.
       if request.fullpath.start_with?('/autologin')
         token = request.request_parameters['refresh_token']
-        raise CustomApiError.new(401, 'No refresh token') unless token.present?
+        logger.warn "Autologin with token: #{token}"
+        add_error(401, 'No refresh token') and return unless token.present?
 
         return token
       end
 
-      request.authorization&.split(' ') & [1]
+      request.authorization&.split(' ')&.second
     end
   end
 
