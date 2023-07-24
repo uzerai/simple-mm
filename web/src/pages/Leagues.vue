@@ -132,13 +132,14 @@ export default {
   },
   async created() {
     const slug = this.$route.params.slug;
-    const request = this.$store.dispatch("get", { path: `/games/${slug}/leagues` });
+    const request = this.$store.dispatch("get", { path: `/games/${slug}` });
     const body = await request;
 
-    const { game, leagues, user_leagues } = body.results;
-    this.game = game;
+    console.info(body);
+
+    const { leagues} = body.data;
+    this.game = body.data;
     this.leagues = leagues;
-    this.user_leagues = user_leagues;
   },
   methods: {},
 };

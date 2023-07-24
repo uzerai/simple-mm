@@ -53,8 +53,8 @@ export default {
       // We ensure that there is a league which can be queued for here.
       const body = await request;
 
-      if (body?.results) {
-        const { league } = body.results;
+      if (body?.data) {
+        const { league } = body.data;
         console.info(`! Matchmaking READY CHECK for ${league.id} initialized !`);
         commit("setQueue", { league_id: league.id, match_type: league.match_type });
         commit("setMatchId", { match_id });

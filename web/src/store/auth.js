@@ -1,8 +1,9 @@
 // Extracts the user data from a response from a successful login or auto-login.
-const extractUserdata = (data) => {
+const extractUserdata = (body) => {
   return {
-    user: JSON.parse(window.atob(data.results.token.split(".")[1])),
-    token: data.results.token,
+    user: JSON.parse(window.atob(body.data.token.split(".")[1])),
+    token: body.data.token,
+    refresh_token: body.data.refresh_token,
     permissions: [],
   };
 };
@@ -13,23 +14,27 @@ export default {
     return {
       user: undefined,
       token: undefined,
+      refresh_token: undefined,
       permissions: [],
     };
   },
   mutations: {
-    setAuth(state, { user, token, permissions }) {
+    setAuth(state, { user, token, refresh_token, permissions }) {
       console.info("Setting auth ...");
       state.user = user;
       state.token = token;
+      state.refresh_token = refresh_token;
       state.permissions = permissions;
 
       // Set in local storage so that we can persist it through refresh.
       window.localStorage.setItem("authToken", token);
+      window.localStorage.setItem("refreshToken", refresh_token);
     },
     clearAuth(state) {
       console.warn("Clearing auth ...");
       state.user = undefined;
       state.token = undefined;
+      state.refresh_token = undefined;
       state.permissions = [];
       window.localStorage.removeItem("authToken");
     },
@@ -77,7 +82,8 @@ export default {
 
       const body = await request;
 
-      if (body.errors) {
+      if (body.errors?.length != 0) {
+        console.info(body);
         console.error("auth/login | There were errors:");
         console.dir(body.errors);
       } else {
@@ -86,15 +92,15 @@ export default {
         dispatch("showSuccess", "Signed in successfully.", { root: true });
       }
     },
-    async autologin({ commit, dispatch }) {
+    async autologin({ commit, dispatch, getters }) {
       console.info("Autologin ...");
       
       // Fetches this in-sync, as we want the entire sequence of auto-login to be
       // performed during the loadAuth() sequences.
-      const request = dispatch("get", { path: "/autologin" }, { root: true });
+      const request = dispatch("post", { path: "/autologin", body: { refresh_token: getters.refresh_token } }, { root: true });
       const body = await request;
 
-      if (body.results?.token) {
+      if (body.data?.token) {
         await commit("setAuth", extractUserdata(body));
       } else {
         // Immediately log out if autologin fails.

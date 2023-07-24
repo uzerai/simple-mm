@@ -79,7 +79,7 @@ export default {
     const request = this.$store.dispatch("get", { path: "/games" });
     const body = await request;
 
-    this.all_games = body.results;
+    this.all_games = body.data;
   },
   methods: {},
 };

@@ -141,7 +141,7 @@ export default {
     const request = this.$store.dispatch("get", { path: `/leagues/${this.league_id}` });
     const body = await request;
 
-    const { league } = body.results;
+    const { league } = body.data;
     this.league = league;
     this.game = league.game;
   },

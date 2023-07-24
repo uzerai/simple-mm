@@ -51,7 +51,7 @@ docker setup.
 
 ## Root directory bin/ scripts
 
-*Note: A lot of these scripts require the `tmux` commandline installed.*
+*Note: A lot of these scripts require the `tmux` commandline utility installed.*
 
 - console:
 

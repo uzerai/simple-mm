@@ -2,5 +2,8 @@ FROM node:lts-alpine as npm-server
 COPY ./web /app
 
 WORKDIR /app
-EXPOSE 8080
+EXPOSE 8020
+
+RUN npm install
+
 CMD ["npm", "run", "serve"]

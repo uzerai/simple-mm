@@ -69,12 +69,12 @@ export default {
 
       const body = await request;
 
-      if (body?.results) {
+      if (body?.data) {
         console.log("Queue request OK -- Setting active queue ...");
-        dispatch("connectActiveQueue", { queue_id: body.results.queue });
+        dispatch("connectActiveQueue", { queue_id: body.data.queue });
 
         // Set a reminder for the active queues in the case the user disconnects.
-        window.localStorage.setItem("active_queue", body.results.queue);
+        window.localStorage.setItem("active_queue", body.data.queue);
       }
     },
     // TODO: Make it possible to have multiple queues going at the same time.

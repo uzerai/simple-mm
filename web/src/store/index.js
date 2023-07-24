@@ -68,6 +68,7 @@ export default createStore({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
           Authorization: `Bearer ${getters["auth/token"]}`,
         },
         body: JSON.stringify(body),
@@ -75,8 +76,9 @@ export default createStore({
         .then((resp) => resp.json())
         .then((data) => {
           const { errors } = data;
+          console.info(errors?.length);
 
-          if (errors && notifyOnError) {
+          if ((errors?.length != 0) && notifyOnError) {
             errors.forEach((error) => dispatch("showError", error.message));
           }
 
@@ -90,6 +92,7 @@ export default createStore({
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
           Authorization: `Bearer ${getters["auth/token"]}`,
         },
       })
@@ -97,7 +100,7 @@ export default createStore({
         .then((data) => {
           const { errors } = data;
 
-          if (errors && notifyOnError) {
+          if ((errors?.length != 0) && notifyOnError) {
             errors.forEach((error) => dispatch("showError", error.message));
           }
 

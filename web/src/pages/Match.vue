@@ -68,7 +68,7 @@ export default {
     const request = this.$store.dispatch("get", { path: `/matches/${this.match_id}` });
     const body = await request;
 
-    const { match, league, game, match_teams } = body.results;
+    const { match, league, game, match_teams } = body.data;
     
     this.league = league;
     this.game = game;
