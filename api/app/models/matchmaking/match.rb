@@ -59,9 +59,11 @@ module Matchmaking
       # Sends a list of not prepared users, users who click
       # accept will send a message with their ID and will be
       # removed via WebSocket message to do so.
-      match.players.each do |_player|
-        broadcast_to_players({ status: match.state, not_ready: not_ready_players, match_id: match.id })
-      end
+      broadcast_to_players({ status: match.state, not_ready: not_ready_players, match_id: match.id })
+    end
+
+    def broadcast_status
+      broadcast_to_players({ status: match.state, not_ready: not_ready_players, match_id: match.id })
     end
 
     ##
@@ -82,7 +84,7 @@ module Matchmaking
     end
 
     def broadcast_to_players(broadcast_body)
-      match.players.each do |player|
+      ::Player.where(id: player_ids).each do |player|
         MatchmakingChannel.broadcast_to(player.user, broadcast_body)
       end
     end

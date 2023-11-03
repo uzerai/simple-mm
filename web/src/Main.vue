@@ -7,12 +7,6 @@
     />
     <main-bar :routes="routes" />
     <ready-check />
-    <button
-      class="mt-24"
-      @click="openDialog"
-    >
-      CLick me
-    </button>
     <div id="main-content relative">
       <router-view v-slot="{ Component }">
         <transition
@@ -49,11 +43,11 @@
 </template>
 
 <script>
-import routes from "./routes";
-import MainBar from "./components/common/MainBar";
-import ReadyCheck from "./components/ReadyCheck";
-import Notification from "./components/common/Notification";
 import { mapGetters } from "vuex";
+import ReadyCheck from "./components/ReadyCheck";
+import MainBar from "./components/common/MainBar";
+import Notification from "./components/common/Notification";
+import routes from "./routes";
 
 export default {
   name: "Main",

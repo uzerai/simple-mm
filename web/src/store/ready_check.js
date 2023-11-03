@@ -18,7 +18,11 @@ export default {
     },
     setMatchId(state, { match_id }) {
       state.match_id = match_id;
-    }
+    },
+    updateReadyPlayersFromWebsocket(state, { not_ready }) {
+      console.info(`updating ready players from websocket: ${not_ready}`);
+      state.ready_players = state.total_players - not_ready.length;
+    },
   },
   getters: {
     matchId(state) {
@@ -39,10 +43,10 @@ export default {
   },
   actions: {
     async declareReady({ getters, rootGetters }) {
-      console.info("Declaring user ready.");
+      console.info("ReadyCheck | Declaring user ready ...");
       const matchmakingChannel = rootGetters["websockets/subscriptions"][`MatchmakingChannel:${getters["leagueId"]}`];
       console.dir(matchmakingChannel);
-      matchmakingChannel.perform("ready_check", { user: rootGetters["auth/user"] });
+      matchmakingChannel.perform("ready_check", { user_id: rootGetters["auth/user"].id, match_id: getters["matchId"] });
     },
     async startReadyCheck({ dispatch, commit }, { league_id, match_id }) {
       const request = dispatch(
@@ -54,7 +58,7 @@ export default {
       const body = await request;
 
       if (body?.data) {
-        const { league } = body.data;
+        const league = body.data;
         console.info(`! Matchmaking READY CHECK for ${league.id} initialized !`);
         commit("setQueue", { league_id: league.id, match_type: league.match_type });
         commit("setMatchId", { match_id });

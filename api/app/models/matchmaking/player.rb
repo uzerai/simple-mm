@@ -5,7 +5,7 @@ module Matchmaking
     attr_accessor :player
 
     ##
-    # Extracts the ID from a given Matchmaking::Client Player representation.
+    # Extracts the ID & username from a given Matchmaking::Client Player representation.
     #
     def self.details(player_value)
       # See https://apidock.com/ruby/String/match

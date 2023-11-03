@@ -15,7 +15,7 @@ const readEvent = (storeContext, matchmaking_channel_event) => {
   console.info("MatchmakingChannel: Received event");
   console.dir(matchmaking_channel_event);
 
-  const { status, match_id } = matchmaking_channel_event;
+  const { status, match_id, not_ready } = matchmaking_channel_event;
 
   switch (status) {
     case "queued":
@@ -32,7 +32,8 @@ const readEvent = (storeContext, matchmaking_channel_event) => {
       break;
     case "readying":
       // The stage at which point all users have accepted the match.
-      commit("matchmaking/setStatus", { status: 3 }, { root: true });
+      commit("matchmaking/setStatus", { status: 2 }, { root: true });
+      commit("ready_check/updateReadyPlayersFromWebsocket", { not_ready }, { root: true });
       break;
     case "live":
       break;
