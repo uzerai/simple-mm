@@ -101,9 +101,7 @@ class Match < ApplicationRecord
     logger.info "Match#broadcast_status | Broadcasting updated status of match: #{id} | #{aasm.from_state} -> #{aasm.to_state}"
 
     # For all players in the match, broadcast to the user which owns the player.
-    players.each do |player|
-      MatchmakingChannel.broadcast_to(player.user, { status: aasm.to_state, match_id: id })
-    end
+    matchmaking_match.update_status(aasm.to_state)
   end
 
   # Creates the match teams for a match, according to the

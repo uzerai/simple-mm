@@ -136,7 +136,7 @@
         matchmaking_status: "matchmaking/status"
       }),
       show_queue_bar() {
-        return this.matchmaking_status > 0 && this.matchmaking_status < 3;
+        return this.matchmaking_status > 0 && this.matchmaking_status < 4;
       },
       matchmaking_message() {
         switch(this.matchmaking_status) {
@@ -145,9 +145,9 @@
           case 1:
             return "Matchmaking ...";
           case 2:
-            return "Found match ";
+            return "Found match ...";
           case 3: 
-            return "Scheduling match ...";
+            return "Finalizing match ...";
           default:
             return "";
         }

@@ -17,7 +17,6 @@ module Matchmaking
       @mm_queue = Matchmaking::Queue.new(league: match.league)
 
       # In the scenario that a user may disconnect in the moment before
-      mm_match.ready_check!
       match.ready!
 
       # Clock-based precision timestamps
@@ -35,15 +34,16 @@ module Matchmaking
 
         time_since_last_update = time_in_loop
 
-        logger.info 'ReadyCheckWorker#perform | Readying match ...'
+        logger.info "ReadyCheckWorker#perform | Readying match (#{match.id})..."
 
         # Guard clause, if the time_in_loop ever exceeds MATCHMAKING_READY_CHECK_WAIT_TIME, the match is cancelled
         next unless (time_in_loop - started_at) > Matchmaking::ReadyCheckWorker::MATCHMAKING_READY_CHECK_WAIT_TIME
 
-        mm_match.cancel!
+        # mm_match.cancel!
         match.cancel!
-
-        raise Matchmaking::Errors::MatchNotFinalizedError, 'Players failed to accept ready-check, cancelling match.'
+        logger.warn "ReadyCheckWorker#perform | Match (#{match.id}) cancelled due to ready-check timeout"
+        # raise Matchmaking::Errors::MatchNotFinalizedError, 'Players failed to accept ready-check, cancelling match.'
+        return
       end
 
       match.live!

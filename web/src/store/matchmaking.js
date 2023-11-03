@@ -1,9 +1,10 @@
 import { readEvent } from "../events/matchmaking_channel_handler";
 
-const STATUS = {
+export const STATUS = {
   "IDLE": 0,
   "QUEUEING": 1,
-  "READY_CHECK": 2
+  "READY_CHECK": 2,
+  "FINALIZING": 3,
 };
 
 export default {
@@ -16,6 +17,7 @@ export default {
   },
   mutations: {
     setStatus(state, { status }) {
+      console.warn(`Matchmaking | Updating status to ${status}`);
       state.status = status;
       window.localStorage.setItem("queue_status", status);
     },

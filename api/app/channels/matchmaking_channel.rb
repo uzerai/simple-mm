@@ -28,7 +28,6 @@ class MatchmakingChannel < ApplicationCable::Channel
       player = match.league.players.find_by(user: data['user_id'])
       mm_match = Matchmaking::Match.new(match:)
       mm_match.ready_up(player)
-      mm_match.broadcast_status
     rescue StandardError
       logger.warn "Could not ready_check for user: #{data['user_id']} in match: #{data['match_id']}"
     end

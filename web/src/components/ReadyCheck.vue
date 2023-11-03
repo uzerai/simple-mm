@@ -35,8 +35,8 @@
   </Dialog>
 </template>
 <script>
-import Dialog from "./common/Dialog.vue";
 import { mapGetters } from "vuex";
+import Dialog from "./common/Dialog.vue";
 
 export default {
   name: "ReadyCheck",
@@ -46,7 +46,7 @@ export default {
   props: {},
   data() {
     return {
-      ready: false
+      ready: false,
     };
   },
   computed: {
@@ -54,26 +54,26 @@ export default {
       queuedLeague: "matchmaking/queuedLeague",
       totalPlayers: "ready_check/totalPlayers",
       readyPlayers: "ready_check/readyPlayers",
-      matchReady: "ready_check/matchReady"
-    })
+      matchReady: "ready_check/matchReady",
+    }),
   },
   watch: {
     matchReady(newMatchReady) {
       if (newMatchReady) {
+        console.info("ReadyCheck | Ready check completed successfully, closing dialog ... ");
         const dialog = document.getElementById("ready-check-dialog");
-        dialog.close();
-
-        console.info("ReadyCheck watcher triggered.");
+        this.$store.commit("matchmaking/setStatus", { status: 3 }, { root: true });
+        setTimeout(() => dialog.close(), 1000);
       }
-    }
+    },
   },
   methods: {
-    setReady() { 
-      this.ready = true;
+    setReady() {
+      // this.ready = true;
       this.$store.dispatch("ready_check/declareReady");
     },
     onClose() {
-      this.ready = false;
+      this.$store.commit("ready_check/reset");
     }
   },
 };

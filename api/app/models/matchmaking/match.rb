@@ -38,6 +38,12 @@ module Matchmaking
       client.srem match_key, Matchmaking::Player.new(player:).value
     end
 
+    def update_status(status)
+      broadcast_status(status)
+      this.live! if match.live?
+      this.cancel! if match.cancelled?
+    end
+
     def cancel!
       logger.warn "Matchmaking::Match#cancel! | Cancelling match #{match.id}"
 
@@ -48,22 +54,16 @@ module Matchmaking
       remove_keys!
     end
 
-    ##
-    # Instigates a ready check for players, and persists the match, match_teams & match_players
-    # when successfully completed by all players; otherwise, removes non-accepting players
-    # from the match, and raises a Matchmaking::MatchNotFinalized error.
-    #
-    def ready_check!
-      # TODO: The match should instigate a ready check here, and depending on
-      # strategy of match type allow for pick / ban of players and or maps.
-      # Sends a list of not prepared users, users who click
-      # accept will send a message with their ID and will be
-      # removed via WebSocket message to do so.
-      broadcast_to_players({ status: match.state, not_ready: not_ready_players, match_id: match.id })
+    def live!
+      logger.info "Matchmaking::Match#live! | Match (#{match.id} is live!)"
+      # TODO: Persist players to match here.
+      remove_keys!
     end
-
-    def broadcast_status
-      broadcast_to_players({ status: match.state, not_ready: not_ready_players, match_id: match.id })
+    
+    def broadcast_status(status)
+      status = this.match.status if status.nil?
+      
+      broadcast_to_players({ status:, not_ready: not_ready_players, match_id: match.id })
     end
 
     ##
@@ -75,8 +75,7 @@ module Matchmaking
 
       if client.sismember match_key, player_wrapper.value
         client.sadd ready_check_key, player_wrapper.value
-
-        broadcast_to_players({ status: match.state, not_ready: not_ready_players, match_id: match.id })
+        broadcast_status
       else
         logger.warn 'Matchmaking::Match#ready_up | Player not in match; no ready check made.'
         nil

@@ -7,7 +7,8 @@ export default {
       match_type: undefined,
       match_id: undefined,
       ready_players: 0,
-      total_players: 20,
+      total_players: 0,
+      current_player_ready: false,
     };
   },
   mutations: {
@@ -19,8 +20,18 @@ export default {
     setMatchId(state, { match_id }) {
       state.match_id = match_id;
     },
+    setReady(state, { ready }) {
+      state.current_player_ready = ready;
+    },
+    reset(state) {
+      state.current_player_ready = false;
+      state.ready_players = 0;
+      state.total_players = 0;
+      state.league_id = undefined;
+      state.match_id = undefined;
+      state.match_type = undefined;
+    },
     updateReadyPlayersFromWebsocket(state, { not_ready }) {
-      console.info(`updating ready players from websocket: ${not_ready}`);
       state.ready_players = state.total_players - not_ready.length;
     },
   },
@@ -37,16 +48,19 @@ export default {
     readyPlayers(state) {
       return state.ready_players;
     },
+    ready(state) {
+      return state.current_player_ready;
+    },
     matchReady(state) {
       return !(state.total_players - state.ready_players);
     }
   },
   actions: {
-    async declareReady({ getters, rootGetters }) {
+    async declareReady({ commit, getters, rootGetters }) {
       console.info("ReadyCheck | Declaring user ready ...");
       const matchmakingChannel = rootGetters["websockets/subscriptions"][`MatchmakingChannel:${getters["leagueId"]}`];
-      console.dir(matchmakingChannel);
       matchmakingChannel.perform("ready_check", { user_id: rootGetters["auth/user"].id, match_id: getters["matchId"] });
+      commit("setReady", { ready: true });
     },
     async startReadyCheck({ dispatch, commit }, { league_id, match_id }) {
       const request = dispatch(
@@ -62,10 +76,21 @@ export default {
         console.info(`! Matchmaking READY CHECK for ${league.id} initialized !`);
         commit("setQueue", { league_id: league.id, match_type: league.match_type });
         commit("setMatchId", { match_id });
-
-        const dialog = document.getElementById("ready-check-dialog");
-        dialog.showModal();
+        dispatch("openReadyCheck");
       }
     },
+    openReadyCheck() {
+      const dialog = document.getElementById("ready-check-dialog");
+      dialog.showModal();
+    },
+    async closeReadyCheck() {
+      const dialog = document.getElementById("ready-check-dialog");
+      dialog.close();
+    },
+    async closeReadyCheckNotReady({ dispatch }) {
+      console.warn("ReadyCheck | Closing ready check as not ready.");
+      dispatch("matchmaking/stopActiveQueue", {}, { root: true });
+      dispatch("closeReadyCheck");
+    }
   }
 };

@@ -12,6 +12,9 @@ module Matchmaking
       return unless ApplicationVariable.get('matchmaking_enabled') == 'true'
 
       @match = ::Match.find(match_id)
+
+      return unless match.present? && match.queued?
+
       @mm_match = Matchmaking::Match.new(match:)
       @mm_queue = Matchmaking::Queue.new(league: match.league)
 
