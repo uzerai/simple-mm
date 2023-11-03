@@ -46,7 +46,6 @@ module Matchmaking
         raise Matchmaking::Errors::MatchNotFinalizedError, 'Players failed to accept ready-check, cancelling match.'
       end
 
-      match.reload.ready!
       match.live!
     end
   end
