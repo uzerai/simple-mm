@@ -37,6 +37,7 @@ class UsersController < BaseController
   # will expire in less than 15 minutes.
   def auto_login
     @token = current_user.jwt_token(extended_expiry: false)
+    @refresh_token = current_user.refresh_token
     render_response
   end
 

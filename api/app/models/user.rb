@@ -61,18 +61,22 @@ class User < ApplicationRecord
                                                             2.weeks
                                                           else
                                                             ENV.fetch(
-                                                              'JWT_TOKEN_EXPIRE_MINUTES', 720
+                                                              'JWT_AUTH_EXPIRE_MINUTES', 720
                                                             ).to_i.minutes
                                                           end)).iso8601,
                                 permissions: []
-                              }, ENV.fetch('JWT_SIGN_SECRET', 'defaultsecret'))
+                              }, ENV.fetch('JWT_AUTH_SIGN_SECRET', 'defaultsecret'))
   end
 
   def refresh_token
     @refresh_token ||= JWT.encode({
                                     id:,
                                     valid: Time.zone.now.iso8601,
-                                    expire: (Time.zone.now + 6.months).iso8601
-                                  }, ENV.fetch('JWT_SIGN_SECRET', 'defaultsecret'))
+                                    expire: (
+                                      Time.zone.now +
+                                      ENV.fetch('JWT_REFRESH_EXPIRE_MINUTES', 262_980)
+                                        .to_i.minutes
+                                    ).iso8601
+                                  }, ENV.fetch('JWT_AUTH_SIGN_SECRET', 'defaultsecret'))
   end
 end

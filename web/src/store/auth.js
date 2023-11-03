@@ -1,9 +1,10 @@
 // Extracts the user data from a response from a successful login or auto-login.
 const extractUserdata = (body) => {
+  let { data } = body;
   return {
-    user: JSON.parse(window.atob(body.data.token.split(".")[1])),
-    token: body.data.token,
-    refresh_token: body.data.refresh_token,
+    user: JSON.parse(window.atob(data.token.split(".")[1])),
+    token: data.token,
+    refresh_token: data.refresh_token,
     permissions: [],
   };
 };
@@ -20,7 +21,6 @@ export default {
   },
   mutations: {
     setAuth(state, { user, token, refresh_token, permissions }) {
-      console.info("Setting auth ...");
       state.user = user;
       state.token = token;
       state.refresh_token = refresh_token;
@@ -47,6 +47,13 @@ export default {
       }
 
       return state.token;
+    },
+    refresh_token(state) {
+      if(!state.refresh_token) {
+        return localStorage.getItem("refreshToken");
+      }
+
+      return state.refresh_token;
     },
     isAuthenticated(state, getters) {
       if(!getters.user){
@@ -141,8 +148,8 @@ export default {
       dispatch("websockets/disconnect", null, { root: true });
       dispatch("matchmaking/stopActiveQueue", null, { root: true });
     },
-    setAuth({ commit }, { user, token, permissions }) {
-      commit("setAuth", { user, token, permissions });
+    setAuth({ commit }, { user, token, refresh_token, permissions }) {
+      commit("setAuth", { user, token, refresh_token, permissions });
     },
     async loadAuth({ dispatch, getters }) {
       // When attempting to load auth, the user can either have

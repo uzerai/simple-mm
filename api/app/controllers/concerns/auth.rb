@@ -23,7 +23,7 @@ module Auth
   end
 
   def encode_token(payload)
-    JWT.encode(payload, ENV.fetch('JWT_SIGN_SECRET', 'defaultsecret'))
+    JWT.encode(payload, ENV.fetch('JWT_AUTH_SIGN_SECRET', 'defaultsecret'))
   end
 
   def decoded_token
@@ -34,7 +34,7 @@ module Auth
     begin
       # TODO: Remove ENV.fetch: replace with more elegant fetch of secret.
       @decoded_token ||= begin
-        decoded_token_hash = JWT.decode(token, ENV.fetch('JWT_SIGN_SECRET', 'defaultsecret'), true,
+        decoded_token_hash = JWT.decode(token, ENV.fetch('JWT_AUTH_SIGN_SECRET', 'defaultsecret'), true,
                                         algorithm: 'HS256').first
         # Validate not-expired token
         expire_time = Time.zone.parse decoded_token_hash.fetch('expire')

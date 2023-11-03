@@ -137,7 +137,7 @@ export default {
 
     console.info(body);
 
-    const { leagues} = body.data;
+    const { leagues } = body.data;
     this.game = body.data;
     this.leagues = leagues;
   },
