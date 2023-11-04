@@ -27,7 +27,10 @@ class MatchPlayer < ApplicationRecord
   has_one :match, through: :match_team
   has_one :user, through: :player
 
-  # after_save :'calculate_team_rating!'
+  after_validation :set_start_rating
+  after_save :calculate_team_rating
+
+  # attribute :start_rating, :integer, default: -> { player.rating }
 
   def calculate_end_rating!
     # Can't calculate end rating if game hasn't ended.
@@ -59,11 +62,14 @@ class MatchPlayer < ApplicationRecord
 
   private
 
-  # TODO: maybe implement this?
+  def set_start_rating
+    self.start_rating = player.rating
+  end
+
   # For use on-save, so that we force the match_team to always have
   # correct representation of the team's rating. Might not be necessary later,
   # when the queue manager ensures the rating of players added to the team.
-  def calculate_team_rating!
+  def calculate_team_rating
     match_team.calculate_rating!
   end
 end

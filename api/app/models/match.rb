@@ -63,6 +63,7 @@ class Match < ApplicationRecord
       transitions from: :readying, to: :live
       after do
         update(started_at: Time.zone.now)
+        create_match_teams!
         matchmaking_match.live!
       end
     end
@@ -118,6 +119,15 @@ class Match < ApplicationRecord
     end
 
     logger.info "Match#create_match_teams | Created match teams: [#{match_teams.map(&:id).join(', ')}]"
+    logger.info 'Match#create_match_teams | Populating teams'
+    ready_users = matchmaking_match.player_ids
+
+    match_teams.each do |match_team|
+      until match_team.full?
+        player = Player.find_by(id: ready_users.pop)
+        MatchPlayer.create(match_team:, player:)
+      end
+    end
 
     match_teams
   end
