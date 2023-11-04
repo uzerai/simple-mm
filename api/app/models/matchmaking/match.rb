@@ -59,10 +59,10 @@ module Matchmaking
       # TODO: Persist players to match here.
       remove_keys!
     end
-    
-    def broadcast_status(status)
-      status = this.match.status if status.nil?
-      
+
+    def broadcast_status(status = nil)
+      status = match.state if status.nil?
+
       broadcast_to_players({ status:, not_ready: not_ready_players, match_id: match.id })
     end
 

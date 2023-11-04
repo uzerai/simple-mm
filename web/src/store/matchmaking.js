@@ -29,6 +29,7 @@ export default {
       window.localStorage.setItem("active_queue", queue_id);
     },
     setIdle(state) {
+      console.info("Matchmaking | Setting matchmaking bar to idle.");
       state.queue_id = undefined;
       state.status = STATUS["IDLE"];
       window.localStorage.removeItem("active_queue");
@@ -85,8 +86,10 @@ export default {
       dispatch("stopQueue", { league_id });
     },
     async stopQueue({ commit }, { league_id }) {
-      console.info(`Stopping queue: ${league_id}`);
-      commit("websockets/removeSubscription", { channel: "MatchmakingChannel", room: league_id}, { root: true });
+      if (league_id) {
+        console.info(`Stopping queue: ${league_id}`);
+        commit("websockets/removeSubscription", { channel: "MatchmakingChannel", room: league_id}, { root: true });
+      }
       commit("setIdle");
     },
     async connectActiveQueue({ commit, dispatch, rootGetters }, { queue_id }) {

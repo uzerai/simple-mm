@@ -10,7 +10,7 @@
       </h1>
       <hr class="my-8 border-2 w-full">
       <button
-        v-if="!ready"
+        v-if="!playerReady"
         class="w-1/2 my-4"
         @click="setReady"
       >
@@ -44,36 +44,29 @@ export default {
     Dialog,
   },
   props: {},
-  data() {
-    return {
-      ready: false,
-    };
-  },
   computed: {
     ...mapGetters({ 
       queuedLeague: "matchmaking/queuedLeague",
       totalPlayers: "ready_check/totalPlayers",
       readyPlayers: "ready_check/readyPlayers",
       matchReady: "ready_check/matchReady",
+      playerReady: "ready_check/playerReady",
     }),
   },
   watch: {
     matchReady(newMatchReady) {
       if (newMatchReady) {
         console.info("ReadyCheck | Ready check completed successfully, closing dialog ... ");
-        const dialog = document.getElementById("ready-check-dialog");
-        this.$store.commit("matchmaking/setStatus", { status: 3 }, { root: true });
-        setTimeout(() => dialog.close(), 1000);
       }
     },
   },
   methods: {
     setReady() {
       // this.ready = true;
-      this.$store.dispatch("ready_check/declareReady");
+      this.$store.dispatch("ready_check/declareReady", {}, { root: true });
     },
     onClose() {
-      this.$store.commit("ready_check/reset");
+      this.$store.commit("ready_check/reset", {}, { root: true });
     }
   },
 };

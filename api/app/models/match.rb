@@ -63,6 +63,7 @@ class Match < ApplicationRecord
       transitions from: :readying, to: :live
       after do
         update(started_at: Time.zone.now)
+        matchmaking_match.live!
       end
     end
 
@@ -77,6 +78,7 @@ class Match < ApplicationRecord
       transitions from: %i[preparing readying live], to: :cancelled
       after do
         update(ended_at: Time.zone.now)
+        matchmaking_match.cancel!
       end
     end
 
@@ -84,6 +86,7 @@ class Match < ApplicationRecord
       transitions to: :aborted
       after do
         update(ended_at: Time.zone.now)
+        matchmaking_match.cancel!
       end
     end
   end

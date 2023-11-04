@@ -20,7 +20,7 @@ export default {
     setMatchId(state, { match_id }) {
       state.match_id = match_id;
     },
-    setReady(state, { ready }) {
+    setPlayerReady(state, { ready }) {
       state.current_player_ready = ready;
     },
     reset(state) {
@@ -32,7 +32,14 @@ export default {
       state.match_type = undefined;
     },
     updateReadyPlayersFromWebsocket(state, { not_ready }) {
-      state.ready_players = state.total_players - not_ready.length;
+      console.info("Updating nr of ready players.");
+      if (state.total_players === 0) {
+        console.info("total_players is 0");
+        state.ready_players = 0;
+      } else {
+        state.ready_players = state.total_players - not_ready.length;
+        console.info(`ready players are ${state.ready_players}`);
+      }
     },
   },
   getters: {
@@ -48,19 +55,20 @@ export default {
     readyPlayers(state) {
       return state.ready_players;
     },
-    ready(state) {
+    playerReady(state) {
       return state.current_player_ready;
     },
     matchReady(state) {
-      return !(state.total_players - state.ready_players);
+      return (state.total_players - state.ready_players) === 0 && state.total_players != 0;
     }
   },
   actions: {
+    /* eslint-disable-next-line */
     async declareReady({ commit, getters, rootGetters }) {
       console.info("ReadyCheck | Declaring user ready ...");
       const matchmakingChannel = rootGetters["websockets/subscriptions"][`MatchmakingChannel:${getters["leagueId"]}`];
-      matchmakingChannel.perform("ready_check", { user_id: rootGetters["auth/user"].id, match_id: getters["matchId"] });
-      commit("setReady", { ready: true });
+      await matchmakingChannel.perform("ready_check", { user_id: rootGetters["auth/user"].id, match_id: getters["matchId"] });
+      await commit("setPlayerReady", { ready: true });
     },
     async startReadyCheck({ dispatch, commit }, { league_id, match_id }) {
       const request = dispatch(
@@ -73,24 +81,28 @@ export default {
 
       if (body?.data) {
         const league = body.data;
-        console.info(`! Matchmaking READY CHECK for ${league.id} initialized !`);
-        commit("setQueue", { league_id: league.id, match_type: league.match_type });
-        commit("setMatchId", { match_id });
-        dispatch("openReadyCheck");
+        console.info(`ReadyCheck | ! Matchmaking READY CHECK for ${league.id} initialized !`);
+        await commit("setQueue", { league_id: league.id, match_type: league.match_type });
+        await commit("setMatchId", { match_id });
+        dispatch("openReadyCheck", null);
       }
     },
     openReadyCheck() {
       const dialog = document.getElementById("ready-check-dialog");
       dialog.showModal();
     },
-    async closeReadyCheck() {
+    async closeReadyCheckMatchLive({ dispatch, commit }) {
+      await commit("matchmaking/setStatus", { status: 3 }, { root: true });
+      dispatch("closeReadyCheck");
+    },
+    closeReadyCheck() {
       const dialog = document.getElementById("ready-check-dialog");
-      dialog.close();
+      setTimeout(() =>dialog.close(), 1000);
     },
     async closeReadyCheckNotReady({ dispatch }) {
       console.warn("ReadyCheck | Closing ready check as not ready.");
-      dispatch("matchmaking/stopActiveQueue", {}, { root: true });
-      dispatch("closeReadyCheck");
+      await dispatch("closeReadyCheck");
+      dispatch("matchmaking/stopActiveQueue", null, { root: true });
     }
   }
 };
